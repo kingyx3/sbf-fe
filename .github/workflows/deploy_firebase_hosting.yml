@@ -35,12 +35,12 @@ jobs:
         run: npm ci
 
       - name: Build the project (Development)
-        if: github.ref != 'refs/heads/main'
+        if: github.ref == 'refs/heads/main'
         run: REACT_APP_NODE_ENV=development npm run build
 
-      - name: Build the project (Production)
-        if: github.ref == 'refs/heads/main'
-        run: REACT_APP_NODE_ENV=production npm run build
+      # - name: Build the project (Production)
+      #   if: github.ref == 'refs/heads/main'
+      #   run: REACT_APP_NODE_ENV=production npm run build
 
       - name: Deploy to Firebase (Development)
         if: github.ref == 'refs/heads/main'
