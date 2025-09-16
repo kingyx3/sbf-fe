@@ -35,15 +35,15 @@ jobs:
         run: npm ci
 
       - name: Build the project (Development)
-        if: github.ref == 'refs/heads/main'
+        if: github.ref != 'refs/heads/main'
         run: REACT_APP_NODE_ENV=development npm run build
 
-      # - name: Build the project (Production)
-      #   if: github.ref == 'refs/heads/main'
-      #   run: REACT_APP_NODE_ENV=production npm run build
+      - name: Build the project (Production)
+        if: github.ref == 'refs/heads/main'
+        run: REACT_APP_NODE_ENV=production npm run build
 
       - name: Deploy to Firebase (Development)
-        if: github.ref == 'refs/heads/main'
+        if: github.ref != 'refs/heads/main'
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
@@ -52,12 +52,12 @@ jobs:
           projectId: sbfhero-dev
           entryPoint: app
 
-      # - name: Deploy to Firebase (Production)
-      #   if: github.ref == 'refs/heads/main'
-      #   uses: FirebaseExtended/action-hosting-deploy@v0
-      #   with:
-      #     repoToken: ${{ secrets.GITHUB_TOKEN }}
-      #     firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SBFHERO_92C25 }}
-      #     channelId: live
-      #     projectId: sbfhero-92c25
-      #     entryPoint: app
+      - name: Deploy to Firebase (Production)
+        if: github.ref == 'refs/heads/main'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SBFHERO_92C25 }}
+          channelId: live
+          projectId: sbfhero-92c25
+          entryPoint: app
