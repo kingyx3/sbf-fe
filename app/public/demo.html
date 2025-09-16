@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flat Type Ordering Fix Demonstration</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8fafc;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        .section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .section h3 {
+            color: #1e293b;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .before {
+            border-left: 4px solid #ef4444;
+        }
+        .after {
+            border-left: 4px solid #10b981;
+        }
+        .flat-type-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 8px 0;
+            background: #f8fafc;
+        }
+        .flat-type-name {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 4px;
+        }
+        .price {
+            color: #10b981;
+            font-weight: 700;
+        }
+        .emoji {
+            font-size: 20px;
+        }
+        .issue-description {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        .fix-description {
+            background: #dcfce7;
+            border: 1px solid #10b981;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Issue #275 - Flat Type Ordering Fix</h1>
+    <p class="subtitle">Most Affordable Option by Flat Type - Size Order Correction</p>
+    
+    <div class="issue-description">
+        <strong>Issue:</strong> In the "Most Affordable Option by Flat Type" section, flat types were displayed in whatever order they appeared in the data, causing confusing ordering like "4-room" before "3-room".
+    </div>
+
+    <div class="fix-description">
+        <strong>Fix:</strong> Added a sorting function to ensure flat types are always displayed in logical size order: 1-room → 2-room → 3-room → 4-room → 5-room → Executive.
+    </div>
+
+    <div class="container">
+        <div class="section before">
+            <h3><span class="emoji">❌</span>Before Fix (Data-Dependent Order)</h3>
+            <p>Flat types appear in whatever order they exist in the data:</p>
+            
+            <div class="flat-type-card">
+                <div class="flat-type-name">Executive</div>
+                <div class="price">$400,000</div>
+            </div>
+            <div class="flat-type-card">
+                <div class="flat-type-name">4-room</div>
+                <div class="price">$350,000</div>
+            </div>
+            <div class="flat-type-card">
+                <div class="flat-type-name">1-room</div>
+                <div class="price">$300,000</div>
+            </div>
+            <div class="flat-type-card">
+                <div class="flat-type-name">5-room</div>
+                <div class="price">$250,000</div>
+            </div>
+            <div class="flat-type-card">
+                <div class="flat-type-name">2-room</div>
+                <div class="price">$200,000</div>
+            </div>
+            <div class="flat-type-card">
+                <div class="flat-type-name">3-room</div>
+                <div class="price">$150,000</div>
+            </div>
+            
+            <p style="color: #ef4444; font-style: italic; margin-top: 16px;">
+                ⚠️ Confusing ordering makes it hard for users to compare by size
+            </p>
+        </div>
+
+        <div class="section after">
+            <h3><span class="emoji">✅</span>After Fix (Logical Size Order)</h3>
+            <p>Flat types are sorted in logical size order:</p>
+            
+            <div class="flat-type-card">
+                <div class="flat-type-name">1-room</div>
+                <div class="price">$300,000</div>
+            </div>
+            <div class="flat-type-card">
+                <div class="flat-type-name">2-room</div>
+                <div class="price">$200,000</div>
+            </div>
+            <div class="flat-type-card">
+                <div class="flat-type-name">3-room</div>
+                <div class="price">$150,000</div>
+            </div>
+            <div class="flat-type-card">
+                <div class="flat-type-name">4-room</div>
+                <div class="price">$350,000</div>
+            </div>
+            <div class="flat-type-card">
+                <div class="flat-type-name">5-room</div>
+                <div class="price">$250,000</div>
+            </div>
+            <div class="flat-type-card">
+                <div class="flat-type-name">Executive</div>
+                <div class="price">$400,000</div>
+            </div>
+            
+            <p style="color: #10b981; font-style: italic; margin-top: 16px;">
+                ✅ Intuitive ordering helps users quickly compare options by size
+            </p>
+        </div>
+    </div>
+
+    <div style="background: white; border-radius: 8px; padding: 20px; margin-top: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <h3>Technical Changes Made</h3>
+        <ul>
+            <li><strong>Added sorting function:</strong> <code>sortFlatTypes()</code> that orders flat types by size</li>
+            <li><strong>Modified flat type processing:</strong> Sort the flat types before creating <code>mostAffordableByType</code></li>
+            <li><strong>Comprehensive support:</strong> Handles various formats (1-room, 1 room, 1-ROOM, etc.)</li>
+            <li><strong>Added tests:</strong> Verify flat types are always displayed in correct order</li>
+        </ul>
+        
+        <h4>Files Modified:</h4>
+        <ul>
+            <li><code>app/src/components/dashboard/AffordabilityAnalysisChart.js</code> - Added sorting logic</li>
+            <li><code>app/src/components/dashboard/AffordabilityAnalysisChart.test.js</code> - Added ordering test</li>
+        </ul>
+    </div>
+</body>
+</html>

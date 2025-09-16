@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom text size for ultra-compact popups */
+.text-2xs {
+  font-size: 0.65rem;
+  line-height: 0.8rem;
+}
+
+/* Hide scrollbar for mobile tab navigation */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar { 
+  display: none;  /* Safari and Chrome */
+}
+
+/* Remove modal shadows globally */
+.ant-modal-content,
+.ant-modal-close,
+.ant-modal-close-icon {
+  box-shadow: none !important;
+}
+
+/* Base modal styles */
+.ant-modal,
+.ant-modal-content,
+.ant-modal-header,
+.ant-modal-body,
+.ant-modal-footer {
+  border: none !important;
+}
+
+/* Theme-specific overrides using Tailwind */
+.filters-modal .ant-modal-content {
+  @apply bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-200 p-0;
+}
+
+.filters-modal .ant-modal-header {
+  @apply bg-gray-100 dark:bg-gray-800;
+}
+
+.filters-modal .ant-modal-body {
+  @apply p-0;
+}
+
+.filters-modal .ant-modal-close,
+.filters-modal .ant-modal-close-icon {
+  @apply text-gray-900 dark:text-gray-200;
+}
+
+/* For dark mode slider mark labels */
+.slider-dark .ant-slider-mark-text {
+  color: #e5e7eb !important; /* Tailwind gray-200 */
+}
+
+/* For light mode slider mark labels */
+.slider-light .ant-slider-mark-text {
+  color: #111827 !important; /* Tailwind gray-900 */
+}
+
+/* Custom marker styles */
+.custom-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Enhanced popup styles */
+.leaflet-popup-content-wrapper {
+  border-radius: 8px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  width: auto !important;
+}
+
+/* Mobile-specific popup adjustments */
+@media (max-width: 640px) {
+  .leaflet-popup-content-wrapper {
+    max-width: 200px !important;
+  }
+  
+  .leaflet-popup-content {
+    max-width: 200px !important;
+  }
+}
+
+@media (min-width: 641px) {
+  .leaflet-popup-content-wrapper {
+    max-width: 220px !important;
+  }
+  
+  .leaflet-popup-content {
+    max-width: 220px !important;
+  }
+}
+
+.leaflet-popup-tip {
+  background: white !important;
+}
+
+/* Dark mode popup tip */
+.dark .leaflet-popup-tip {
+  background: rgb(31, 41, 55) !important;
+}
+
+/* Custom cluster styles */
+.marker-cluster-small {
+  background-color: rgba(107, 114, 128, 0.8) !important;
+}
+
+.marker-cluster-medium {
+  background-color: rgba(75, 85, 99, 0.8) !important;
+}
+
+.marker-cluster-large {
+  background-color: rgba(55, 65, 81, 0.8) !important;
+}
+
+.marker-cluster {
+  background-clip: padding-box !important;
+  border-radius: 50% !important;
+}
+
+.marker-cluster div {
+  background-clip: padding-box !important;
+  border-radius: 50% !important;
+}
+
+.marker-cluster span {
+  color: white !important;
+  font-weight: bold !important;
+  font-size: 12px !important;
+}

@@ -1,0 +1,55 @@
+# Prevent all bots from accessing sensitive directories
+User-agent: *
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /private/
+Disallow: /backend/
+Disallow: /server/
+Disallow: /user-data/
+Disallow: /config/
+
+# Prevent specific aggressive bots and scrapers
+User-agent: MJ12bot
+Disallow: /
+User-agent: AhrefsBot
+Disallow: /
+User-agent: SemrushBot
+Disallow: /
+User-agent: dotbot
+Disallow: /
+User-agent: PetalBot
+Disallow: /
+User-agent: BLEXBot
+Disallow: /
+
+# Allow only essential pages to be indexed
+User-agent: Googlebot
+Allow: /
+User-agent: Bingbot
+Allow: /
+
+# Prevent search engines from indexing query parameters (helps reduce duplicate content issues)
+Disallow: /*?*
+Disallow: /*&*
+
+# Prevent indexing of temporary or unused files
+Disallow: /*.json$
+Disallow: /*.xml$
+Disallow: /*.csv$
+Disallow: /*.txt$
+Disallow: /*.pdf$
+Disallow: /*.zip$
+Disallow: /*.tar.gz$
+
+# Allow important assets for rendering
+Allow: /public/
+Allow: /static/
+
+# Prevent crawling of login, signup, and checkout pages
+Disallow: /login/
+Disallow: /signup/
+Disallow: /checkout/
+
+# Sitemap Location
+Sitemap: https://yourwebsite.com/sitemap.xml

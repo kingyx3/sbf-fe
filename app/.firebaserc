@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "sbfhero-dev",
+    "dev": "sbfhero-dev",
+    "prod": "sbfhero-92c25"
+  }
+}
