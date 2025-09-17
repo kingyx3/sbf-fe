@@ -11,13 +11,13 @@ const Navbar = ({ userEmail, isDarkMode, toggleDarkMode }) => {
   const { isAdmin } = useAdminAuth();
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-gray-800 dark:bg-gray-900 text-white dark:text-gray-200 shadow-lg z-[9999]">
+    <nav className="fixed top-0 left-0 w-full bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 shadow-lg z-[9999] border-b border-gray-200 dark:border-gray-700">
       <div className="container mx-auto flex justify-between items-center p-4">
         {/* App Logo & Name */}
         <div className="flex items-center">
           <img src="/favicon-32x32.png" alt="SBFHERO Logo" className="h-8 w-8 mr-2" /> {/* Replace 'logo.png' with your asset */}
           <h1 className="text-2xl font-bold">
-            <Link to="/" className="hover:text-gray-400 transition-colors">
+            <Link to="/" className="hover:text-gray-600 dark:hover:text-gray-400 transition-colors">
               {envVars.REACT_APP_NAME}
             </Link>
           </h1>
@@ -29,7 +29,7 @@ const Navbar = ({ userEmail, isDarkMode, toggleDarkMode }) => {
           {isAdmin && (
             <Link
               to="/business"
-              className="flex items-center px-3 py-2 rounded-md hover:bg-gray-700 transition-colors"
+              className="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >
               <FiShield className="mr-2" size={16} />
               Admin
@@ -79,7 +79,7 @@ const SettingsDropdown = ({
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        className="focus:outline-none hover:text-gray-400 transition-colors"
+        className="focus:outline-none hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
       >
         <FiSettings size={24} />
       </button>
@@ -87,7 +87,7 @@ const SettingsDropdown = ({
       {isDropdownOpen && (
         <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-lg shadow-lg z-10 overflow-hidden">
           {userEmail && (
-            <div className="px-4 py-3 border-b dark:border-gray-700">
+            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Logged in as:
               </p>
