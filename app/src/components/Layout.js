@@ -6,7 +6,7 @@ const Layout = ({ children, userEmail, isDarkMode, toggleDarkMode }) => {
   const footerRef = useRef(null);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-200 select-none"
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-200 select-none"
       // onContextMenu={(e) => e.preventDefault()}
       onCopy={(e) => e.preventDefault()}>
       {/* Navbar - Fixed at Top */}
