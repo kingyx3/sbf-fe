@@ -1,18 +1,21 @@
 import React, { useMemo } from "react";
-import { Bubble } from "react-chartjs-2";
+import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
+  LineElement,
   PointElement,
+  TimeScale,
   Tooltip,
   Legend,
 } from "chart.js";
+import 'chartjs-adapter-date-fns';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, TimeScale, Tooltip, Legend);
 
-const UserGrowthBubbleChart = ({ loginEvents = [], payments = [], isDarkMode }) => {
-  const bubbleData = useMemo(() => {
+const UserGrowthLineChart = ({ loginEvents = [], payments = [], isDarkMode }) => {
+  const chartData = useMemo(() => {
     if (!loginEvents.length && !payments.length) {
       return { datasets: [] };
     }
@@ -55,15 +58,10 @@ const UserGrowthBubbleChart = ({ loginEvents = [], payments = [], isDarkMode }) 
     // Sort events by timestamp
     allEvents.sort((a, b) => a.timestamp - b.timestamp);
 
-    // Calculate cumulative counts and create bubble data points
-    const bubblePoints = [];
-    let cumulativeUsers = 0;
-    let cumulativePurchases = 0;
+    // Group events by day and calculate cumulative values
+    const dailyData = new Map();
     const seenUsers = new Set();
     const purchasingUsers = new Set();
-
-    // Group events by day for better visualization
-    const dailyData = new Map();
     
     allEvents.forEach(event => {
       const date = new Date(event.timestamp);
@@ -71,10 +69,10 @@ const UserGrowthBubbleChart = ({ loginEvents = [], payments = [], isDarkMode }) 
       
       if (!dailyData.has(dayKey)) {
         dailyData.set(dayKey, {
-          timestamp: date.setHours(0, 0, 0, 0),
+          date: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
           newUsers: 0,
           newPurchases: 0,
-          totalAmount: 0
+          dailyRevenue: 0
         });
       }
       
@@ -88,51 +86,74 @@ const UserGrowthBubbleChart = ({ loginEvents = [], payments = [], isDarkMode }) 
           purchasingUsers.add(event.email);
           dayData.newPurchases++;
         }
-        dayData.totalAmount += event.amount;
+        dayData.dailyRevenue += event.amount;
       }
     });
 
-    // Convert daily data to bubble points
-    Array.from(dailyData.values())
-      .sort((a, b) => a.timestamp - b.timestamp)
-      .forEach(dayData => {
-        cumulativeUsers += dayData.newUsers;
-        cumulativePurchases += dayData.newPurchases;
-        
-        // Create bubble point
-        if (cumulativeUsers > 0 || cumulativePurchases > 0) {
-          bubblePoints.push({
-            x: cumulativeUsers,
-            y: cumulativePurchases, 
-            r: Math.max(Math.sqrt(dayData.totalAmount) * 2, 5), // Size based on daily payment amount
-            timestamp: dayData.timestamp,
-            dailyAmount: dayData.totalAmount,
-            dailyUsers: dayData.newUsers,
-            dailyPurchases: dayData.newPurchases
-          });
-        }
-      });
+    // Convert to time series data
+    const timeSeriesData = Array.from(dailyData.values())
+      .sort((a, b) => a.date - b.date);
 
-    return {
-      datasets: [
-        {
-          label: 'User Growth & Purchases',
-          data: bubblePoints,
-          backgroundColor: isDarkMode 
-            ? 'rgba(59, 130, 246, 0.6)'  // blue-500 with opacity
-            : 'rgba(37, 99, 235, 0.6)',  // blue-600 with opacity
-          borderColor: isDarkMode 
-            ? 'rgba(59, 130, 246, 1)'
-            : 'rgba(37, 99, 235, 1)',
-          borderWidth: 2,
-        },
-      ],
-    };
+    let cumulativeUsers = 0;
+    let cumulativePurchases = 0;
+
+    const dataPoints = timeSeriesData.map(dayData => {
+      cumulativeUsers += dayData.newUsers;
+      cumulativePurchases += dayData.newPurchases;
+      
+      return {
+        x: dayData.date,
+        cumulativeUsers,
+        cumulativePurchases,
+        dailyRevenue: dayData.dailyRevenue
+      };
+    });
+
+    // Create datasets for the chart
+    const datasets = [
+      {
+        label: 'Cumulative Users',
+        data: dataPoints.map(point => ({ x: point.x, y: point.cumulativeUsers })),
+        borderColor: isDarkMode ? 'rgba(59, 130, 246, 1)' : 'rgba(37, 99, 235, 1)',
+        backgroundColor: isDarkMode ? 'rgba(59, 130, 246, 0.1)' : 'rgba(37, 99, 235, 0.1)',
+        borderWidth: 2,
+        fill: false,
+        tension: 0.1,
+        yAxisID: 'y',
+      },
+      {
+        label: 'Cumulative Paying Users',
+        data: dataPoints.map(point => ({ x: point.x, y: point.cumulativePurchases })),
+        borderColor: isDarkMode ? 'rgba(34, 197, 94, 1)' : 'rgba(22, 163, 74, 1)',
+        backgroundColor: isDarkMode ? 'rgba(34, 197, 94, 0.1)' : 'rgba(22, 163, 74, 0.1)',
+        borderWidth: 2,
+        fill: false,
+        tension: 0.1,
+        yAxisID: 'y',
+      },
+      {
+        label: 'Daily Revenue (SGD)',
+        data: dataPoints.map(point => ({ x: point.x, y: point.dailyRevenue })),
+        borderColor: isDarkMode ? 'rgba(251, 191, 36, 1)' : 'rgba(245, 158, 11, 1)',
+        backgroundColor: isDarkMode ? 'rgba(251, 191, 36, 0.1)' : 'rgba(245, 158, 11, 0.1)',
+        borderWidth: 2,
+        fill: false,
+        tension: 0.1,
+        yAxisID: 'y1',
+        type: 'line',
+      }
+    ];
+
+    return { datasets };
   }, [loginEvents, payments, isDarkMode]);
 
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
+    interaction: {
+      mode: 'index',
+      intersect: false,
+    },
     plugins: {
       legend: {
         display: true,
@@ -148,28 +169,48 @@ const UserGrowthBubbleChart = ({ loginEvents = [], payments = [], isDarkMode }) 
         borderWidth: 1,
         callbacks: {
           title: (tooltipItems) => {
-            const point = tooltipItems[0];
-            const data = point.raw;
-            return `Date: ${new Date(data.timestamp).toLocaleDateString()}`;
+            const date = new Date(tooltipItems[0].parsed.x);
+            return `Date: ${date.toLocaleDateString()}`;
           },
           label: (tooltipItem) => {
-            const data = tooltipItem.raw;
-            const lines = [
-              `Total Users: ${data.x}`,
-              `Total Purchasers: ${data.y}`,
-              `Daily Revenue: SGD $${data.dailyAmount.toFixed(2)}`,
-              `New Users Today: ${data.dailyUsers}`,
-              `New Purchasers Today: ${data.dailyPurchases}`
-            ];
-            return lines;
+            const datasetLabel = tooltipItem.dataset.label;
+            const value = tooltipItem.parsed.y;
+            if (datasetLabel.includes('Revenue')) {
+              return `${datasetLabel}: SGD $${value.toFixed(2)}`;
+            }
+            return `${datasetLabel}: ${value}`;
           },
         },
       },
     },
     scales: {
       x: {
+        type: 'time',
+        time: {
+          unit: 'day',
+          displayFormats: {
+            day: 'MMM dd',
+            month: 'MMM yyyy'
+          },
+          tooltipFormat: 'MMM dd, yyyy'
+        },
+        title: {
+          display: true,
+          text: 'Date',
+          color: isDarkMode ? '#f8fafc' : '#1e293b',
+        },
+        ticks: {
+          color: isDarkMode ? '#e2e8f0' : '#4b5563',
+          maxTicksLimit: 10,
+        },
+        grid: {
+          color: isDarkMode ? '#374151' : '#e5e7eb',
+        },
+      },
+      y: {
         type: 'linear',
-        position: 'bottom',
+        display: true,
+        position: 'left',
         title: {
           display: true,
           text: 'Cumulative Users',
@@ -182,17 +223,23 @@ const UserGrowthBubbleChart = ({ loginEvents = [], payments = [], isDarkMode }) 
           color: isDarkMode ? '#374151' : '#e5e7eb',
         },
       },
-      y: {
+      y1: {
+        type: 'linear',
+        display: true,
+        position: 'right',
         title: {
           display: true,
-          text: 'Cumulative Users with Purchases',
+          text: 'Revenue (SGD)',
           color: isDarkMode ? '#f8fafc' : '#1e293b',
         },
         ticks: {
           color: isDarkMode ? '#e2e8f0' : '#4b5563',
+          callback: function(value) {
+            return '$' + value.toFixed(0);
+          }
         },
         grid: {
-          color: isDarkMode ? '#374151' : '#e5e7eb',
+          drawOnChartArea: false,
         },
       },
     },
@@ -217,7 +264,7 @@ const UserGrowthBubbleChart = ({ loginEvents = [], payments = [], isDarkMode }) 
             User Growth & Purchase Analytics
           </h3>
           <div className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
-            Cumulative growth over time (bubble size = daily revenue)
+            Cumulative user growth and daily revenue over time
           </div>
         </div>
       </div>
@@ -251,8 +298,8 @@ const UserGrowthBubbleChart = ({ loginEvents = [], payments = [], isDarkMode }) 
       </div>
 
       <div style={{ height: "400px" }} className="mb-4">
-        {bubbleData.datasets.length > 0 && bubbleData.datasets[0].data.length > 0 ? (
-          <Bubble data={bubbleData} options={chartOptions} />
+        {chartData.datasets.length > 0 && chartData.datasets[0].data.length > 0 ? (
+          <Line data={chartData} options={chartOptions} />
         ) : (
           <div
             className={`h-full flex items-center justify-center ${
@@ -265,10 +312,10 @@ const UserGrowthBubbleChart = ({ loginEvents = [], payments = [], isDarkMode }) 
       </div>
 
       <div className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
-        Each bubble represents a day with user activity. X-axis shows cumulative users, Y-axis shows cumulative purchasing users, bubble size represents daily revenue amount.
+        Time series showing cumulative user growth (left Y-axis) and daily revenue (right Y-axis) over time with monthly intervals.
       </div>
     </div>
   );
 };
 
-export default UserGrowthBubbleChart;
+export default UserGrowthLineChart;

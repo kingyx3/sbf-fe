@@ -5,7 +5,7 @@ import { db, realtimeDb } from "../config/firebaseConfig";
 import { envVars } from "../config/envConfig";
 import { setAdminClaims, listAllUsers } from "../utils/adminClaimsUtils";
 import { useAdminAuth } from "../hooks/useAdminAuth";
-import UserGrowthBubbleChart from "../components/dashboard/UserGrowthBubbleChart";
+import UserGrowthLineChart from "../components/dashboard/UserGrowthBubbleChart";
 
 const AdminDashboard = ({ isDarkMode }) => {
   const { user } = useAdminAuth();
@@ -663,8 +663,8 @@ const AdminDashboard = ({ isDarkMode }) => {
               </div>
             </div>
 
-            {/* User Growth Bubble Chart */}
-            <UserGrowthBubbleChart 
+            {/* User Growth Line Chart */}
+            <UserGrowthLineChart 
               loginEvents={loginEvents}
               payments={payments}
               isDarkMode={isDarkMode}
