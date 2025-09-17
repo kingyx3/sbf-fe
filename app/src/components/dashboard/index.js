@@ -7,6 +7,7 @@ import LocationValueChart from "./LocationValueChart";
 import AffordabilityAnalysisChart from "./AffordabilityAnalysisChart";
 import CompletionTimelineChart from "./CompletionTimelineChart";
 import RemainingLeaseAnalysisChart from "./RemainingLeaseAnalysisChart";
+import FloorLevelAnalysisChart from "./FloorLevelAnalysisChart";
 import Filters from "./Filters";
 import WarningBanner from "./WarningBanner";
 import DashboardLoadingSpinner from "../DashboardLoadingSpinner";
@@ -223,6 +224,12 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode }) => {
             </div>
             <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
               <CompletionTimelineChart data={filteredData} isDarkMode={isDarkMode} />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 mb-6">
+            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+              <FloorLevelAnalysisChart data={filteredData} isDarkMode={isDarkMode} />
             </div>
           </div>
 
