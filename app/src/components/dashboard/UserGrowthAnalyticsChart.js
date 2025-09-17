@@ -14,7 +14,7 @@ import 'chartjs-adapter-date-fns';
 
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, TimeScale, Tooltip, Legend);
 
-const UserGrowthLineChart = ({ loginEvents = [], payments = [], isDarkMode }) => {
+const UserGrowthLineChart = ({ loginEvents = [], payments = [], allUsers = [], isDarkMode }) => {
   const chartData = useMemo(() => {
     if (!loginEvents.length && !payments.length) {
       return { datasets: [] };
@@ -246,23 +246,10 @@ const UserGrowthLineChart = ({ loginEvents = [], payments = [], isDarkMode }) =>
   };
 
   // Calculate summary stats
-  const totalUsers = new Set(
-    loginEvents
-      .filter(event => event.status === 'success')
-      .map(event => event.email)
-  ).size;
+  const totalUsers = allUsers.length;
 
-  // Only count purchasing users who are also total users (have successful logins)
-  const usersWithSuccessfulLogins = new Set(
-    loginEvents
-      .filter(event => event.status === 'success')
-      .map(event => event.email)
-  );
-  
   const totalPurchasingUsers = new Set(
-    payments
-      .filter(payment => usersWithSuccessfulLogins.has(payment.customerEmail))
-      .map(payment => payment.customerEmail)
+    payments.map(payment => payment.customerEmail)
   ).size;
 
   return (
