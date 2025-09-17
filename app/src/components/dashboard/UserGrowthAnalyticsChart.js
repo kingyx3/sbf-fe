@@ -252,8 +252,17 @@ const UserGrowthLineChart = ({ loginEvents = [], payments = [], isDarkMode }) =>
       .map(event => event.email)
   ).size;
 
+  // Only count purchasing users who are also total users (have successful logins)
+  const usersWithSuccessfulLogins = new Set(
+    loginEvents
+      .filter(event => event.status === 'success')
+      .map(event => event.email)
+  );
+  
   const totalPurchasingUsers = new Set(
-    payments.map(payment => payment.customerEmail)
+    payments
+      .filter(payment => usersWithSuccessfulLogins.has(payment.customerEmail))
+      .map(payment => payment.customerEmail)
   ).size;
 
   return (
