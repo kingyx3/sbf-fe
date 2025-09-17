@@ -5,7 +5,7 @@ import { db, realtimeDb } from "../config/firebaseConfig";
 import { envVars } from "../config/envConfig";
 import { setAdminClaims, listAllUsers } from "../utils/adminClaimsUtils";
 import { useAdminAuth } from "../hooks/useAdminAuth";
-import UserGrowthLineChart from "../components/dashboard/UserGrowthBubbleChart";
+import UserGrowthLineChart from "../components/dashboard/UserGrowthAnalyticsChart";
 
 const AdminDashboard = ({ isDarkMode }) => {
   const { user } = useAdminAuth();
