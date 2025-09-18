@@ -64,17 +64,74 @@ const FloorLevelAnalysisChart = ({ data, isDarkMode }) => {
     const minLevel = Math.min(...floorData.map(p => p.x));
     const maxLevel = Math.max(...floorData.map(p => p.x));
     
-    // Group by level ranges for better insights
-    const lowFloors = floorData.filter(p => p.x <= 5);
-    const midFloors = floorData.filter(p => p.x > 5 && p.x <= 15);
-    const highFloors = floorData.filter(p => p.x > 15);
+    // Dynamic floor categorization based on building-specific context
+    // Group by project/block to understand the max floors per building
+    const buildingGroups = floorData.reduce((acc, flat) => {
+        const key = `${flat.project}_${flat.block}`;
+        if (!acc[key]) {
+            acc[key] = [];
+        }
+        acc[key].push(flat);
+        return acc;
+    }, {});
+
+    // Calculate dynamic floor categories for each building
+    const floorDataWithCategories = floorData.map(flat => {
+        const buildingKey = `${flat.project}_${flat.block}`;
+        const buildingFloors = buildingGroups[buildingKey];
+        const buildingMaxLevel = Math.max(...buildingFloors.map(f => f.x));
+        const buildingMinLevel = Math.min(...buildingFloors.map(f => f.x));
+        
+        // Dynamic categorization based on building's floor range
+        let category;
+        if (buildingMaxLevel <= 10) {
+            // Low-rise building (≤10 floors)
+            if (flat.x <= Math.ceil(buildingMaxLevel * 0.33)) {
+                category = 'low';
+            } else if (flat.x <= Math.ceil(buildingMaxLevel * 0.67)) {
+                category = 'mid';
+            } else {
+                category = 'high';
+            }
+        } else if (buildingMaxLevel <= 20) {
+            // Mid-rise building (11-20 floors)
+            if (flat.x <= Math.ceil(buildingMaxLevel * 0.30)) {
+                category = 'low';
+            } else if (flat.x <= Math.ceil(buildingMaxLevel * 0.70)) {
+                category = 'mid';
+            } else {
+                category = 'high';
+            }
+        } else {
+            // High-rise building (>20 floors)
+            if (flat.x <= Math.ceil(buildingMaxLevel * 0.25)) {
+                category = 'low';
+            } else if (flat.x <= Math.ceil(buildingMaxLevel * 0.75)) {
+                category = 'mid';
+            } else {
+                category = 'high';
+            }
+        }
+        
+        return {
+            ...flat,
+            category,
+            buildingMaxLevel,
+            buildingType: buildingMaxLevel <= 10 ? 'Low-rise' : buildingMaxLevel <= 20 ? 'Mid-rise' : 'High-rise'
+        };
+    });
+
+    // Group by dynamic categories
+    const lowFloors = floorDataWithCategories.filter(p => p.category === 'low');
+    const midFloors = floorDataWithCategories.filter(p => p.category === 'mid');
+    const highFloors = floorDataWithCategories.filter(p => p.category === 'high');
 
     const avgPriceLow = lowFloors.length > 0 ? lowFloors.reduce((sum, p) => sum + p.y, 0) / lowFloors.length : 0;
     const avgPriceMid = midFloors.length > 0 ? midFloors.reduce((sum, p) => sum + p.y, 0) / midFloors.length : 0;
     const avgPriceHigh = highFloors.length > 0 ? highFloors.reduce((sum, p) => sum + p.y, 0) / highFloors.length : 0;
 
-    // ROI analysis by floor level
-    const roiData = floorData.filter(p => p.roi !== null);
+    // ROI analysis by dynamic floor categories
+    const roiData = floorDataWithCategories.filter(p => p.roi !== null);
     const avgROILow = lowFloors.filter(p => p.roi !== null).length > 0 
         ? lowFloors.filter(p => p.roi !== null).reduce((sum, p) => sum + p.roi, 0) / lowFloors.filter(p => p.roi !== null).length 
         : 0;
@@ -85,10 +142,21 @@ const FloorLevelAnalysisChart = ({ data, isDarkMode }) => {
         ? highFloors.filter(p => p.roi !== null).reduce((sum, p) => sum + p.roi, 0) / highFloors.filter(p => p.roi !== null).length 
         : 0;
 
-    // Group data by flat type for different colors
-    const flatTypes = [...new Set(floorData.map(item => item.flatType))];
+    // Building type distribution for insights
+    const buildingTypes = [...new Set(floorDataWithCategories.map(f => f.buildingType))];
+    const buildingTypeStats = buildingTypes.map(type => {
+        const typeFloors = floorDataWithCategories.filter(f => f.buildingType === type);
+        return {
+            type,
+            count: typeFloors.length,
+            avgMaxLevel: typeFloors.reduce((sum, f) => sum + f.buildingMaxLevel, 0) / typeFloors.length
+        };
+    });
+
+    // Group data by flat type for different colors (using enhanced data with building context)
+    const flatTypes = [...new Set(floorDataWithCategories.map(item => item.flatType))];
     const datasets = flatTypes.map(flatType => {
-        const typeData = floorData.filter(item => item.flatType === flatType);
+        const typeData = floorDataWithCategories.filter(item => item.flatType === flatType);
         
         // Color mapping for flat types (consistent with other charts)
         const flatTypeColors = {
@@ -144,7 +212,8 @@ const FloorLevelAnalysisChart = ({ data, isDarkMode }) => {
                         const point = tooltipItem.raw;
                         const labels = [
                             `Block ${point.block} • ${point.unit}`,
-                            `Floor Level: ${point.x}`,
+                            `Floor Level: ${point.x} (${point.category} for this building)`,
+                            `Building Type: ${point.buildingType} (${point.buildingMaxLevel} floors max)`,
                             `Price: ${formatCurrency(point.y)}`,
                         ];
                         
@@ -208,14 +277,36 @@ const FloorLevelAnalysisChart = ({ data, isDarkMode }) => {
                 </h3>
             </div>
             <p className={`text-sm mb-4 ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
-                How floor level affects SBF price and potential resale value across different flat types
+                How floor level affects SBF price and potential resale value across different flat types. Analysis adapts to building heights - floor categories are relative to each building's maximum height.
             </p>
+
+            {/* Building Type Distribution */}
+            <div className={`p-4 rounded-lg mb-6 ${isDarkMode ? "bg-slate-800" : "bg-blue-50"}`}>
+                <h4 className={`text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                    🏗️ Building Type Distribution
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {buildingTypeStats.map(stat => (
+                        <div key={stat.type} className="text-center">
+                            <div className={`text-sm font-medium ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
+                                {stat.type}
+                            </div>
+                            <div className="text-lg font-bold text-blue-500">
+                                {stat.count} units
+                            </div>
+                            <div className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
+                                Avg max: {stat.avgMaxLevel.toFixed(1)} floors
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
 
             {/* Summary Statistics */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <div className={`p-4 rounded-lg ${isDarkMode ? "bg-slate-800" : "bg-gray-100"}`}>
                     <h4 className={`text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
-                        Low Floors (1-5)
+                        Low Floors (Relative)
                     </h4>
                     <p className="text-lg font-bold text-blue-500">
                         {formatCurrency(avgPriceLow)}
@@ -228,11 +319,14 @@ const FloorLevelAnalysisChart = ({ data, isDarkMode }) => {
                             {avgROILow.toFixed(1)}% avg ROI
                         </p>
                     )}
+                    <p className={`text-xs mt-1 ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}>
+                        Bottom 25-33% of building height
+                    </p>
                 </div>
 
                 <div className={`p-4 rounded-lg ${isDarkMode ? "bg-slate-800" : "bg-gray-100"}`}>
                     <h4 className={`text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
-                        Mid Floors (6-15)
+                        Mid Floors (Relative)
                     </h4>
                     <p className="text-lg font-bold text-green-500">
                         {formatCurrency(avgPriceMid)}
@@ -245,11 +339,14 @@ const FloorLevelAnalysisChart = ({ data, isDarkMode }) => {
                             {avgROIMid.toFixed(1)}% avg ROI
                         </p>
                     )}
+                    <p className={`text-xs mt-1 ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}>
+                        Middle 30-45% of building height
+                    </p>
                 </div>
 
                 <div className={`p-4 rounded-lg ${isDarkMode ? "bg-slate-800" : "bg-gray-100"}`}>
                     <h4 className={`text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
-                        High Floors (16+)
+                        High Floors (Relative)
                     </h4>
                     <p className="text-lg font-bold text-orange-500">
                         {formatCurrency(avgPriceHigh)}
@@ -262,6 +359,9 @@ const FloorLevelAnalysisChart = ({ data, isDarkMode }) => {
                             {avgROIHigh.toFixed(1)}% avg ROI
                         </p>
                     )}
+                    <p className={`text-xs mt-1 ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}>
+                        Top 25-30% of building height
+                    </p>
                 </div>
             </div>
 
@@ -273,25 +373,31 @@ const FloorLevelAnalysisChart = ({ data, isDarkMode }) => {
             {/* Insights */}
             <div className={`mt-6 p-4 rounded-lg ${isDarkMode ? "bg-slate-800" : "bg-blue-50"}`}>
                 <h4 className={`text-sm font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                    💡 Key Insights
+                    💡 Key Insights (Building-Adaptive Analysis)
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
                     <div className={isDarkMode ? "text-gray-300" : "text-gray-600"}>
-                        • Floor range: Level {minLevel} to {maxLevel}
+                        • Floor range: Level {minLevel} to {maxLevel} across all buildings
                     </div>
                     <div className={isDarkMode ? "text-gray-300" : "text-gray-600"}>
                         • Average price: {formatCurrency(avgPrice)}
                     </div>
+                    <div className={isDarkMode ? "text-gray-300" : "text-gray-600"}>
+                        • Building types: {buildingTypeStats.map(s => s.type).join(', ')}
+                    </div>
                     {avgPriceMid > avgPriceLow && (
                         <div className={isDarkMode ? "text-gray-300" : "text-gray-600"}>
-                            • Mid floors cost {(((avgPriceMid - avgPriceLow) / avgPriceLow) * 100).toFixed(1)}% more than low floors
+                            • Mid floors cost {(((avgPriceMid - avgPriceLow) / avgPriceLow) * 100).toFixed(1)}% more than low floors (relative)
                         </div>
                     )}
                     {avgPriceHigh > avgPriceMid && (
                         <div className={isDarkMode ? "text-gray-300" : "text-gray-600"}>
-                            • High floors cost {(((avgPriceHigh - avgPriceMid) / avgPriceMid) * 100).toFixed(1)}% more than mid floors
+                            • High floors cost {(((avgPriceHigh - avgPriceMid) / avgPriceMid) * 100).toFixed(1)}% more than mid floors (relative)
                         </div>
                     )}
+                    <div className={isDarkMode ? "text-gray-300" : "text-gray-600"}>
+                        • Analysis adapts floor categories to each building's maximum height
+                    </div>
                     {roiData.length > 0 && (
                         <div className={isDarkMode ? "text-gray-300" : "text-gray-600"}>
                             • {roiData.length} units have resale value data

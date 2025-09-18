@@ -7,7 +7,7 @@ import LocationValueChart from "./LocationValueChart";
 import AffordabilityAnalysisChart from "./AffordabilityAnalysisChart";
 import CompletionTimelineChart from "./CompletionTimelineChart";
 import RemainingLeaseAnalysisChart from "./RemainingLeaseAnalysisChart";
-import FloorLevelAnalysisChart from "./FloorLevelAnalysisChart";
+import FloorLevelAnalysisChart from "../admin_dashboard/FloorLevelAnalysisChart";
 import Filters from "./Filters";
 import WarningBanner from "./WarningBanner";
 import DashboardLoadingSpinner from "../DashboardLoadingSpinner";
