@@ -667,6 +667,7 @@ const AdminDashboard = ({ isDarkMode }) => {
             <UserGrowthLineChart 
               loginEvents={loginEvents}
               payments={payments}
+              allUsers={currentAdmins}
               isDarkMode={isDarkMode}
             />
           </div>
