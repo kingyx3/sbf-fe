@@ -3,6 +3,7 @@ import DataTable from "./DataTable";
 import FlatMap from "./FlatMap";
 import CountChart from "./CountChart";
 import ROIAnalysisChart from "./ROIAnalysisChart";
+import FloorLevelChart from "./FloorLevelChart";
 import LocationValueChart from "./LocationValueChart";
 import AffordabilityAnalysisChart from "./AffordabilityAnalysisChart";
 import CompletionTimelineChart from "./CompletionTimelineChart";
@@ -195,6 +196,12 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode }) => {
           <div className="grid grid-cols-1 gap-6 mb-6">
             <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
               <ROIAnalysisChart data={filteredData} isDarkMode={isDarkMode} />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 mb-6">
+            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+              <FloorLevelChart data={filteredData} isDarkMode={isDarkMode} />
             </div>
           </div>
 
