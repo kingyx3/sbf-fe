@@ -16,32 +16,25 @@ ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, TimeScal
 
 const UserGrowthLineChart = ({ loginEvents = [], payments = [], allUsers = [], isDarkMode }) => {
   const chartData = useMemo(() => {
-    if (!loginEvents.length && !payments.length) {
+    if (!allUsers.length && !payments.length) {
       return { datasets: [] };
     }
 
     // Process data to get cumulative counts over time
     const allEvents = [];
     
-    // Add user registration events (first login for each user)
-    const userFirstLogins = new Map();
-    loginEvents
-      .filter(event => event.status === 'success')
-      .forEach(event => {
-        const email = event.email;
-        const timestamp = event.timestamp;
-        if (!userFirstLogins.has(email) || timestamp < userFirstLogins.get(email)) {
-          userFirstLogins.set(email, timestamp);
-        }
-      });
-
-    userFirstLogins.forEach((timestamp, email) => {
-      allEvents.push({
-        type: 'user_signup',
-        timestamp,
-        email,
-        amount: 0
-      });
+    // Add user registration events based on Firebase Auth creationTime
+    allUsers.forEach(user => {
+      if (user.email && user.creationTime) {
+        // Parse creationTime to timestamp
+        const timestamp = new Date(user.creationTime).getTime();
+        allEvents.push({
+          type: 'user_signup',
+          timestamp,
+          email: user.email,
+          amount: 0
+        });
+      }
     });
 
     // Add payment events
@@ -145,7 +138,7 @@ const UserGrowthLineChart = ({ loginEvents = [], payments = [], allUsers = [], i
     ];
 
     return { datasets };
-  }, [loginEvents, payments, isDarkMode]);
+  }, [allUsers, payments, isDarkMode]);
 
   const chartOptions = {
     responsive: true,
