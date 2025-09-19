@@ -7,3 +7,4 @@ export { default as LoginEventsTab } from './LoginEventsTab';
 export { default as MetricsCard } from './MetricsCard';
 export { default as Pagination } from './Pagination';
 export { default as TruncatedPaymentId } from './TruncatedPaymentId';
+export { default as UserGrowthLineChart } from './UserGrowthAnalyticsChart';

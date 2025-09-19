@@ -1,6 +1,6 @@
 import React from "react";
 import MetricsCard from "./MetricsCard";
-import UserGrowthLineChart from "../dashboard/UserGrowthAnalyticsChart";
+import UserGrowthLineChart from "./UserGrowthAnalyticsChart";
 
 const AnalyticsTab = ({ analytics, payments, currentAdmins, loginEvents, isDarkMode }) => {
   return (
