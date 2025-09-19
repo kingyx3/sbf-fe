@@ -5,10 +5,10 @@ import { envVars } from "../config/envConfig";
 /**
  * Custom hook for managing admin authentication state
  * Checks if the current user has admin privileges using custom claims
- * @returns {Object} { user, loading, isAdmin, adminLoading }
+ * @returns {Object} { user, loading, isAdmin, adminLoading, isWhitelisted }
  */
 export const useAdminAuth = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, isWhitelisted } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminLoading, setAdminLoading] = useState(true);
 
@@ -45,5 +45,5 @@ export const useAdminAuth = () => {
     }
   }, [user, loading]);
 
-  return { user, loading, isAdmin, adminLoading };
+  return { user, loading, isAdmin, adminLoading, isWhitelisted };
 };

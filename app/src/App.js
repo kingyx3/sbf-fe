@@ -6,6 +6,7 @@ import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 import LoadingSpinner from "./components/LoadingSpinner";
+import AccessDenied from "./components/AccessDenied";
 import { envVars } from "./config/envConfig";
 import queryClient from "./config/queryClient";
 import { useAuth } from "./hooks/useAuth";
@@ -22,8 +23,13 @@ const PaymentSuccessScreen = React.lazy(() => import("./screens/PaymentSuccessSc
 const PaymentFailureScreen = React.lazy(() => import("./screens/PaymentFailureScreen"));
 
 function App() {
-  const { user, loading } = useAuth();
+  const { user, loading, isWhitelisted } = useAuth();
   const { isDarkMode, toggleDarkMode } = useDarkMode();
+
+  // In dev environment, show access denied if user is not whitelisted
+  if (envVars.REACT_APP_TYPE === "DEV" && user && !isWhitelisted) {
+    return <AccessDenied userEmail={user.email} />;
+  }
 
   // useEffect(() => {
   //   if (navigator.webdriver || /HeadlessChrome/.test(navigator.userAgent)) {

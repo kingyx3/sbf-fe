@@ -14,6 +14,7 @@ import {
 import { auth } from "../config/firebaseConfig";
 import { envVars } from "../config/envConfig";
 import { logLoginAttempt, logLoginSuccess, logLoginFailure } from "../utils/loginEventLogger";
+import { isEmailWhitelisted } from "../utils/whitelistUtils";
 
 const actionCodeSettings = {
   url: envVars.WEB_URL,
@@ -35,8 +36,18 @@ const LoginScreen = () => {
   useEffect(() => {
     setPersistence(auth, browserLocalPersistence).catch(console.error);
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) navigate("/home");
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // Check whitelist for dev environment
+        if (envVars.REACT_APP_TYPE === "DEV") {
+          const whitelisted = await isEmailWhitelisted(user.email);
+          if (!whitelisted) {
+            setError(`Access denied: ${user.email} is not whitelisted for development environment access.`);
+            return; // Don't navigate, let useAuth handle sign out
+          }
+        }
+        navigate("/home");
+      }
     });
 
     if (isSignInWithEmailLink(auth, window.location.href)) {
