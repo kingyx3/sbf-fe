@@ -50,15 +50,15 @@ const LoginScreen = () => {
       }
 
       signInWithEmailLink(auth, storedEmail, window.location.href)
-        .then(async (result) => {
-          // Log successful email link sign-in
-          await logLoginSuccess(result.user.uid, result.user.email, 'email_link');
+        .then((result) => {
+          // Log successful email link sign-in (non-blocking)
+          logLoginSuccess(result.user.uid, result.user.email, 'email_link');
           window.localStorage.removeItem("emailForSignIn");
           navigate("/home");
         })
-        .catch(async (error) => {
-          // Log failed email link sign-in
-          await logLoginFailure(storedEmail, 'email_link', error);
+        .catch((error) => {
+          // Log failed email link sign-in (non-blocking)
+          logLoginFailure(storedEmail, 'email_link', error);
           setError("Error signing in: " + error.message);
           console.error("Sign-in error:", error);
         });
@@ -99,8 +99,8 @@ const LoginScreen = () => {
     setMessage("");
 
     try {
-      // Log login attempt
-      await logLoginAttempt(email, 'email_link');
+      // Log login attempt (non-blocking)
+      logLoginAttempt(email, 'email_link');
       
       await sendSignInLinkToEmail(auth, email, actionCodeSettings);
       window.localStorage.setItem("emailForSignIn", email);
@@ -108,8 +108,8 @@ const LoginScreen = () => {
       setCooldown(true);
       setCountdown(30);
     } catch (error) {
-      // Log login failure
-      await logLoginFailure(email, 'email_link', error);
+      // Log login failure (non-blocking)
+      logLoginFailure(email, 'email_link', error);
       setError("Error sending email: " + error.message);
     } finally {
       setLoading(false);
@@ -123,25 +123,25 @@ const LoginScreen = () => {
     setLoading(true);
 
     try {
-      // Log login attempt
-      await logLoginAttempt('google_oauth_user', 'google_oauth');
+      // Log login attempt (non-blocking)
+      logLoginAttempt('google_oauth_user', 'google_oauth');
       
       const result = await signInWithPopup(auth, provider);
-      // Log successful login
-      await logLoginSuccess(result.user.uid, result.user.email, 'google_oauth');
+      // Log successful login (non-blocking)
+      logLoginSuccess(result.user.uid, result.user.email, 'google_oauth');
       navigate("/home");
     } catch (popupError) {
       console.warn("Popup failed, trying redirect", popupError);
       try {
         const result = await signInWithRedirect(auth, provider);
         if (result) {
-          // Log successful login
-          await logLoginSuccess(result.user.uid, result.user.email, 'google_oauth');
+          // Log successful login (non-blocking)
+          logLoginSuccess(result.user.uid, result.user.email, 'google_oauth');
           navigate("/home");
         }
       } catch (redirectError) {
-        // Log login failure
-        await logLoginFailure('google_oauth_user', 'google_oauth', redirectError);
+        // Log login failure (non-blocking)
+        logLoginFailure('google_oauth_user', 'google_oauth', redirectError);
         setError("Google sign-in failed: " + redirectError.message);
         console.error("Google redirect error:", redirectError);
       }
