@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import DataTable from "./DataTable";
 import FlatMap from "./FlatMap";
 import CountChart from "./CountChart";
@@ -22,6 +22,7 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode }) => {
   const [selectedSbfCode, setSelectedSbfCode] = useState(latestSbfCode);
   const [filteredData, setFilteredData] = useState([]);
   const [includeLrt, setIncludeLrt] = useState(false); // MRT/LRT toggle state
+  const [loadingTimeout, setLoadingTimeout] = useState(false);
   const filtersRef = useRef();
 
   let {
@@ -53,14 +54,77 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode }) => {
     setFilteredData(filteredResults);
   };
 
+  // Add timeout mechanism to prevent infinite loading
+  useEffect(() => {
+    let timeoutId;
+    
+    if (isLoadingCSV || isLoadingDemand) {
+      // Set a 60-second timeout for loading
+      timeoutId = setTimeout(() => {
+        console.warn('[Dashboard] Loading timeout reached - forcing error state');
+        setLoadingTimeout(true);
+      }, 60000); // 60 seconds timeout
+    } else {
+      // Reset timeout when loading completes
+      setLoadingTimeout(false);
+    }
+    
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [isLoadingCSV, isLoadingDemand]);
+
   const handleRetry = () => {
+    console.log('[Dashboard] Retry requested - CSV Error:', csvError, 'Demand Error:', demandError);
+    setLoadingTimeout(false); // Reset timeout on retry
     if (csvError) refetchCSV();
     if (demandError) refetchDemand();
   };
 
-  // Show error boundary if there are critical errors
-  if (csvError || demandError) {
-    const primaryError = csvError || demandError;
+  // Only show error boundary for critical CSV errors or major timeouts
+  // Allow dashboard to show with demand errors (less critical)
+  const shouldShowErrorBoundary = () => {
+    // Critical CSV error - can't show dashboard without main data
+    if (csvError && (!csvData || csvData.length === 0)) {
+      return true;
+    }
+    
+    // Loading timeout with no data at all
+    if (loadingTimeout && (!csvData || csvData.length === 0) && !demandData?.length) {
+      return true;
+    }
+    
+    // Authentication errors are critical
+    if (csvError?.code === 'unauthenticated' || demandError?.code === 'unauthenticated') {
+      return true;
+    }
+    
+    if (csvError?.code === 'permission-denied' || demandError?.code === 'permission-denied') {
+      return true;
+    }
+    
+    return false;
+  };
+
+  if (shouldShowErrorBoundary()) {
+    let primaryError = csvError || demandError;
+    
+    // If we hit a timeout, create a timeout error
+    if (loadingTimeout && !primaryError) {
+      primaryError = {
+        message: "Loading is taking longer than expected. This might be due to network issues or high server load.",
+        code: "timeout",
+        isTimeout: true
+      };
+    }
+    
+    console.log('[Dashboard] Showing error boundary for critical error:', primaryError);
+    console.log('[Dashboard] Error details - CSV Error:', csvError, 'Demand Error:', demandError, 'Timeout:', loadingTimeout);
+    console.log('[Dashboard] Loading states - CSV Loading:', isLoadingCSV, 'Demand Loading:', isLoadingDemand);
+    console.log('[Dashboard] Data states - CSV Data length:', csvData?.length, 'Demand Data length:', demandData?.length);
+    
     return (
       <NetworkErrorBoundary 
         error={primaryError} 
@@ -73,13 +137,25 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode }) => {
   const isDashboardLoading =
     isLoadingCSV
     || (!csvData?.length && !isRefetchingCSV); // Only show loading if no data AND not refetching cached data
-  // || !demandData?.length;
+
+  // Enhanced logging for loading state diagnosis
+  console.log('[Dashboard] Loading diagnosis:', {
+    isLoadingCSV,
+    csvDataLength: csvData?.length,
+    isRefetchingCSV,
+    isDashboardLoading,
+    userId,
+    paymentDocCount,
+    selectedSbfCode
+  });
 
   // Show enhanced loading spinner with network awareness
   if (isDashboardLoading) {
     const loadingMessage = isLoadingDemand 
       ? "Loading market demand data..." 
       : "Loading dashboard data...";
+    
+    console.log('[Dashboard] Showing loading spinner:', loadingMessage);
     
     return <DashboardLoadingSpinner 
       isUsingCachedData={isRefetchingCSV && !!csvData} 
@@ -100,6 +176,20 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode }) => {
         isUsingCachedData={!!csvData && isRefetchingCSV}
         isDarkMode={isDarkMode}
       />
+      
+      {/* Show warning for non-critical errors */}
+      {(demandError || (csvError && csvData?.length > 0)) && (
+        <WarningBanner
+          message={
+            demandError 
+              ? "Market demand data is currently unavailable. Dashboard functionality is limited."
+              : "Some data may be outdated. Please refresh if needed."
+          }
+          isDarkMode={isDarkMode}
+          onRetry={demandError ? () => refetchDemand() : () => refetchCSV()}
+        />
+      )}
+      
       <Filters
         data={csvData}
         onFilter={handleFilter}
