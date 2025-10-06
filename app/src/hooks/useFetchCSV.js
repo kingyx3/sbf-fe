@@ -80,21 +80,53 @@ const fetchFromFirebase = async (userId, paymentDocCount) => {
   const startTime = performance.now();
   logDebug("🚀 Fetching CSV from Firebase Functions...");
 
-  const getCSVFile = httpsCallable(functions, CONFIG.FUNCTION_NAME);
-  const response = await getCSVFile();
-  const rawData = response?.data?.data;
+  try {
+    const getCSVFile = httpsCallable(functions, CONFIG.FUNCTION_NAME);
+    const response = await getCSVFile();
+    
+    if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
+      console.log('[useFetchCSV] Firebase response:', {
+        hasData: !!response?.data,
+        dataStructure: response?.data ? Object.keys(response.data) : 'no data',
+        dataLength: Array.isArray(response?.data?.data) ? response.data.data.length : 'not array'
+      });
+    }
+    
+    const rawData = response?.data?.data;
 
-  if (!rawData || !Array.isArray(rawData)) {
-    throw new Error("Invalid data returned from server");
+    if (!rawData || !Array.isArray(rawData)) {
+      const errorDetails = {
+        hasResponse: !!response,
+        hasData: !!response?.data,
+        rawDataType: typeof rawData,
+        rawDataValue: rawData,
+        isArray: Array.isArray(rawData)
+      };
+      console.error('[useFetchCSV] Invalid data structure received:', errorDetails);
+      throw new Error(`Invalid data returned from server: ${JSON.stringify(errorDetails)}`);
+    }
+
+    if (rawData.length === 0 && (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development')) {
+      console.warn('[useFetchCSV] Empty data array received from server');
+    }
+
+    // Save to cache
+    await saveCSVToIndexedDB(userId, rawData, paymentDocCount);
+
+    const fetchTime = Math.round(performance.now() - startTime);
+    logDebug(`✅ Fetched from Firebase in ${fetchTime} ms`);
+
+    return rawData;
+  } catch (error) {
+    console.error('[useFetchCSV] Firebase fetch error:', {
+      message: error.message,
+      code: error.code,
+      details: error.details || 'no details',
+      userId,
+      paymentDocCount
+    });
+    throw error;
   }
-
-  // Save to cache
-  await saveCSVToIndexedDB(userId, rawData, paymentDocCount);
-
-  const fetchTime = Math.round(performance.now() - startTime);
-  logDebug(`✅ Fetched from Firebase in ${fetchTime} ms`);
-
-  return rawData;
 };
 
 /**
