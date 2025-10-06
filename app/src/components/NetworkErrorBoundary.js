@@ -9,7 +9,9 @@ const NetworkErrorBoundary = ({ error, retry, isRetrying = false, children }) =>
   }
 
   const getErrorMessage = () => {
-    console.log('[NetworkErrorBoundary] Processing error:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[NetworkErrorBoundary] Processing error:', error);
+    }
     
     if (!isOnline) {
       return "You're currently offline. Please check your internet connection.";

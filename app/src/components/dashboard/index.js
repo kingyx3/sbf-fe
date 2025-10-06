@@ -58,14 +58,17 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode }) => {
   useEffect(() => {
     let timeoutId;
     
-    if (isLoadingCSV || isLoadingDemand) {
+    // Don't set timeout in test mode or if we already have data
+    if ((isLoadingCSV || isLoadingDemand) && !envVars.testMode && !csvData?.length) {
       // Set a 60-second timeout for loading
       timeoutId = setTimeout(() => {
-        console.warn('[Dashboard] Loading timeout reached - forcing error state');
+        if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
+          console.warn('[Dashboard] Loading timeout reached - forcing error state');
+        }
         setLoadingTimeout(true);
       }, 60000); // 60 seconds timeout
     } else {
-      // Reset timeout when loading completes
+      // Reset timeout when loading completes or we have data
       setLoadingTimeout(false);
     }
     
@@ -74,10 +77,12 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode }) => {
         clearTimeout(timeoutId);
       }
     };
-  }, [isLoadingCSV, isLoadingDemand]);
+  }, [isLoadingCSV, isLoadingDemand, csvData?.length]);
 
   const handleRetry = () => {
-    console.log('[Dashboard] Retry requested - CSV Error:', csvError, 'Demand Error:', demandError);
+    if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
+      console.log('[Dashboard] Retry requested - CSV Error:', csvError, 'Demand Error:', demandError);
+    }
     setLoadingTimeout(false); // Reset timeout on retry
     if (csvError) refetchCSV();
     if (demandError) refetchDemand();
@@ -120,10 +125,12 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode }) => {
       };
     }
     
-    console.log('[Dashboard] Showing error boundary for critical error:', primaryError);
-    console.log('[Dashboard] Error details - CSV Error:', csvError, 'Demand Error:', demandError, 'Timeout:', loadingTimeout);
-    console.log('[Dashboard] Loading states - CSV Loading:', isLoadingCSV, 'Demand Loading:', isLoadingDemand);
-    console.log('[Dashboard] Data states - CSV Data length:', csvData?.length, 'Demand Data length:', demandData?.length);
+    if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
+      console.log('[Dashboard] Showing error boundary for critical error:', primaryError);
+      console.log('[Dashboard] Error details - CSV Error:', csvError, 'Demand Error:', demandError, 'Timeout:', loadingTimeout);
+      console.log('[Dashboard] Loading states - CSV Loading:', isLoadingCSV, 'Demand Loading:', isLoadingDemand);
+      console.log('[Dashboard] Data states - CSV Data length:', csvData?.length, 'Demand Data length:', demandData?.length);
+    }
     
     return (
       <NetworkErrorBoundary 
@@ -139,15 +146,17 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode }) => {
     || (!csvData?.length && !isRefetchingCSV); // Only show loading if no data AND not refetching cached data
 
   // Enhanced logging for loading state diagnosis
-  console.log('[Dashboard] Loading diagnosis:', {
-    isLoadingCSV,
-    csvDataLength: csvData?.length,
-    isRefetchingCSV,
-    isDashboardLoading,
-    userId,
-    paymentDocCount,
-    selectedSbfCode
-  });
+  if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
+    console.log('[Dashboard] Loading diagnosis:', {
+      isLoadingCSV,
+      csvDataLength: csvData?.length,
+      isRefetchingCSV,
+      isDashboardLoading,
+      userId,
+      paymentDocCount,
+      selectedSbfCode
+    });
+  }
 
   // Show enhanced loading spinner with network awareness
   if (isDashboardLoading) {
@@ -155,7 +164,9 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode }) => {
       ? "Loading market demand data..." 
       : "Loading dashboard data...";
     
-    console.log('[Dashboard] Showing loading spinner:', loadingMessage);
+    if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
+      console.log('[Dashboard] Showing loading spinner:', loadingMessage);
+    }
     
     return <DashboardLoadingSpinner 
       isUsingCachedData={isRefetchingCSV && !!csvData} 

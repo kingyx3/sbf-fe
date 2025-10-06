@@ -84,11 +84,13 @@ const fetchFromFirebase = async (userId, paymentDocCount) => {
     const getCSVFile = httpsCallable(functions, CONFIG.FUNCTION_NAME);
     const response = await getCSVFile();
     
-    console.log('[useFetchCSV] Firebase response:', {
-      hasData: !!response?.data,
-      dataStructure: response?.data ? Object.keys(response.data) : 'no data',
-      dataLength: Array.isArray(response?.data?.data) ? response.data.data.length : 'not array'
-    });
+    if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
+      console.log('[useFetchCSV] Firebase response:', {
+        hasData: !!response?.data,
+        dataStructure: response?.data ? Object.keys(response.data) : 'no data',
+        dataLength: Array.isArray(response?.data?.data) ? response.data.data.length : 'not array'
+      });
+    }
     
     const rawData = response?.data?.data;
 
@@ -104,7 +106,7 @@ const fetchFromFirebase = async (userId, paymentDocCount) => {
       throw new Error(`Invalid data returned from server: ${JSON.stringify(errorDetails)}`);
     }
 
-    if (rawData.length === 0) {
+    if (rawData.length === 0 && (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development')) {
       console.warn('[useFetchCSV] Empty data array received from server');
     }
 
