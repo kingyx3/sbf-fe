@@ -164,6 +164,14 @@ const useFetchCSV = ({ enabled = true, userId, paymentDocCount }) => {
         return false;
       }
       
+      // Retry more aggressively on server errors that are likely temporary
+      if (error?.code === 'functions/internal' || 
+          error?.code === 'functions/unavailable' || 
+          error?.code === 'functions/timeout' ||
+          error?.code === 'functions/deadline-exceeded') {
+        return failureCount < 5; // Allow more retries for server errors
+      }
+      
       return true;
     },
     retryDelay: (attemptIndex) => {

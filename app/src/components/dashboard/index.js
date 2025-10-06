@@ -54,19 +54,19 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode }) => {
     setFilteredData(filteredResults);
   };
 
-  // Add timeout mechanism to prevent infinite loading
+  // Add timeout mechanism to prevent infinite loading - but be more lenient
   useEffect(() => {
     let timeoutId;
     
-    // Don't set timeout in test mode or if we already have data
-    if ((isLoadingCSV || isLoadingDemand) && !envVars.testMode && !csvData?.length) {
-      // Set a 60-second timeout for loading
+    // Don't set timeout in test mode, if we already have data, or if we're just refetching
+    if ((isLoadingCSV || isLoadingDemand) && !envVars.testMode && !csvData?.length && !isRefetchingCSV) {
+      // Set a longer timeout for initial loading - allow more time for slow networks
       timeoutId = setTimeout(() => {
         if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
-          console.warn('[Dashboard] Loading timeout reached - forcing error state');
+          console.warn('[Dashboard] Loading timeout reached - but continuing to allow retries');
         }
         setLoadingTimeout(true);
-      }, 60000); // 60 seconds timeout
+      }, 120000); // 120 seconds timeout (doubled from 60s)
     } else {
       // Reset timeout when loading completes or we have data
       setLoadingTimeout(false);
@@ -77,37 +77,67 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode }) => {
         clearTimeout(timeoutId);
       }
     };
-  }, [isLoadingCSV, isLoadingDemand, csvData?.length]);
+  }, [isLoadingCSV, isLoadingDemand, csvData?.length, isRefetchingCSV]);
 
   const handleRetry = () => {
     if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
       console.log('[Dashboard] Retry requested - CSV Error:', csvError, 'Demand Error:', demandError);
     }
-    setLoadingTimeout(false); // Reset timeout on retry
-    if (csvError) refetchCSV();
-    if (demandError) refetchDemand();
+    
+    // Reset all error states
+    setLoadingTimeout(false); 
+    
+    // Always try to refetch both data sources on retry
+    if (csvError || !csvData?.length) {
+      if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
+        console.log('[Dashboard] Retrying CSV fetch');
+      }
+      refetchCSV();
+    }
+    
+    if (demandError || selectedSbfCode) {
+      if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
+        console.log('[Dashboard] Retrying demand fetch for SBF code:', selectedSbfCode);
+      }
+      refetchDemand();
+    }
   };
 
   // Only show error boundary for critical CSV errors or major timeouts
   // Allow dashboard to show with demand errors (less critical)
   const shouldShowErrorBoundary = () => {
-    // Critical CSV error - can't show dashboard without main data
+    // Always allow access with cached data, even if there are errors fetching fresh data
+    if (csvData && csvData.length > 0) {
+      // Only show error boundary for authentication errors, even with cached data
+      if (csvError?.code === 'unauthenticated' || demandError?.code === 'unauthenticated') {
+        return true;
+      }
+      if (csvError?.code === 'permission-denied' || demandError?.code === 'permission-denied') {
+        return true;
+      }
+      // With cached data available, don't show error boundary for other errors
+      return false;
+    }
+    
+    // No cached data available - be more selective about showing errors
     if (csvError && (!csvData || csvData.length === 0)) {
-      return true;
+      // Don't show error boundary for temporary server errors - keep trying
+      if (csvError.code === 'functions/internal' || csvError.code === 'functions/unavailable') {
+        // Only show error after multiple consecutive failures
+        return false;
+      }
+      // Show error boundary for authentication and permission errors
+      if (csvError.code === 'unauthenticated' || csvError.code === 'permission-denied') {
+        return true;
+      }
+      // Show error boundary for other critical errors only after timeout
+      return loadingTimeout;
     }
     
-    // Loading timeout with no data at all
+    // Loading timeout with no data at all - but be more lenient
     if (loadingTimeout && (!csvData || csvData.length === 0) && !demandData?.length) {
-      return true;
-    }
-    
-    // Authentication errors are critical
-    if (csvError?.code === 'unauthenticated' || demandError?.code === 'unauthenticated') {
-      return true;
-    }
-    
-    if (csvError?.code === 'permission-denied' || demandError?.code === 'permission-denied') {
-      return true;
+      // Only show error boundary if we've been loading for a long time AND have actual errors
+      return !!(csvError || demandError);
     }
     
     return false;
@@ -141,9 +171,12 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode }) => {
     );
   }
 
-  const isDashboardLoading =
-    isLoadingCSV
-    || (!csvData?.length && !isRefetchingCSV); // Only show loading if no data AND not refetching cached data
+  // More intelligent loading state - prioritize showing cached data
+  const isDashboardLoading = 
+    // Show loading only if we're loading initial data AND have no cached data
+    (isLoadingCSV && (!csvData || csvData.length === 0))
+    // Don't show loading spinner if we have cached data, even if refetching
+    && !isRefetchingCSV;
 
   // Enhanced logging for loading state diagnosis
   if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
@@ -188,16 +221,20 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode }) => {
         isDarkMode={isDarkMode}
       />
       
-      {/* Show warning for non-critical errors */}
+      {/* Show warning for non-critical errors when we have cached data */}
       {(demandError || (csvError && csvData?.length > 0)) && (
         <WarningBanner
           message={
-            demandError 
-              ? "Market demand data is currently unavailable. Dashboard functionality is limited."
-              : "Some data may be outdated. Please refresh if needed."
+            demandError && csvError && csvData?.length > 0
+              ? "Showing cached data. Unable to fetch fresh data due to server issues." 
+              : demandError 
+                ? "Market demand data is currently unavailable. Dashboard functionality is limited."
+                : csvError?.code === 'functions/internal' || csvError?.code === 'functions/unavailable'
+                  ? "Server temporarily unavailable. Showing cached data. Click retry for fresh data."
+                  : "Some data may be outdated. Please refresh if needed."
           }
           isDarkMode={isDarkMode}
-          onRetry={demandError ? () => refetchDemand() : () => refetchCSV()}
+          onRetry={handleRetry}
         />
       )}
       
