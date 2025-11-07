@@ -358,21 +358,33 @@ const LoginScreen = () => {
           </div>
         </div>
 
-        {/* Testimonial */}
-        <div className="mt-16 max-w-4xl mx-auto">
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-600">
-            <div className="text-center">
-              <div className="text-2xl mb-4">⭐⭐⭐⭐⭐</div>
-              <blockquote className="text-xl text-gray-700 dark:text-gray-300 font-medium italic mb-6">
-                "SBFHERO helped me find the perfect 4-room flat in Tampines. The data insights saved me months of research and $30K compared to other options!"
-              </blockquote>
-              <div className="flex items-center justify-center">
-                <div>
-                  <p className="font-semibold text-gray-900 dark:text-gray-100">Sarah Lim</p>
-                  <p className="text-gray-600 dark:text-gray-400">First-time SBF Buyer</p>
-                </div>
-              </div>
-            </div>
+        {/* Testimonials Section */}
+        <div className="mt-16 max-w-6xl mx-auto">
+          <h4 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-8 text-center">
+            What Our Users Say
+          </h4>
+          
+          <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            <TestimonialCard
+              rating={5}
+              quote="SBFHERO helped me find the perfect 4-room flat in Tampines. The data insights saved me months of research and $30K compared to other options!"
+              name="Sarah Lim"
+              role="First-time SBF Buyer"
+            />
+            
+            <TestimonialCard
+              rating={5}
+              quote="As an upgrader, I needed accurate pricing data. SBFHERO's analytics helped me identify undervalued 5-room units in Jurong West. Couldn't be happier!"
+              name="Michael Tan"
+              role="Property Upgrader"
+            />
+            
+            <TestimonialCard
+              rating={5}
+              quote="The ROI analysis and completion timeline predictions were game-changers. Secured my dream 3-room flat in Queenstown at the perfect price point."
+              name="Priya Rajendran"
+              role="Young Professional"
+            />
           </div>
         </div>
 
@@ -408,6 +420,21 @@ const LoginScreen = () => {
 export default LoginScreen;
 
 // Reusable Components
+const TestimonialCard = ({ rating, quote, name, role }) => (
+  <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-all duration-300 h-full flex flex-col">
+    <div className="text-xl mb-3">
+      {"⭐".repeat(rating)}
+    </div>
+    <blockquote className="text-base text-gray-700 dark:text-gray-300 italic mb-4 flex-grow">
+      "{quote}"
+    </blockquote>
+    <div>
+      <p className="font-semibold text-gray-900 dark:text-gray-100">{name}</p>
+      <p className="text-sm text-gray-600 dark:text-gray-400">{role}</p>
+    </div>
+  </div>
+);
+
 const FeatureCard = ({ icon, title, description, color = "blue" }) => {
   const colorClasses = {
     blue: "from-blue-500 to-blue-600 dark:from-blue-400 dark:to-blue-500",
