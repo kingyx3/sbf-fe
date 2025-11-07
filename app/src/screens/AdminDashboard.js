@@ -121,7 +121,7 @@ const AdminDashboard = ({ isDarkMode }) => {
     setCurrentAdmins([
       {
         uid: 'test-admin-1',
-        email: 'kingyx33@gmail.com',
+        email: 'testadmin@example.com',
         displayName: 'Admin User',
         emailVerified: true,
         disabled: false,
