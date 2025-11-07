@@ -17,13 +17,13 @@ export const envVars = process.env.REACT_APP_NODE_ENV === "production"
         WEB_DOMAIN: "sbfhero.com",
         REACT_APP_SUPPORT_EMAIL: "support@sbfhero.com",
         REACT_APP_ADMIN_EMAIL: process.env.REACT_APP_ADMIN_EMAIL,
-        originalPrice: "25.00",
+        originalPrice: "30.00",
         singleDashboardOption: ["Jul2025"],
         bundleDashboardOption: ["Jul2025", "Feb2026"],
         unlimitedDashboardOption: ["Unlimited"],
         singleDashboardPrice: "20.00",
         bundleDashboardPrice: "24.90",
-        unlimitedDashboardPrice: "39.90"
+        unlimitedDashboardPrice: "49.90"
     } : {
         REACT_APP_NAME: "SBFHERO (DEV)",
         REACT_APP_TYPE: "DEV",
@@ -42,11 +42,11 @@ export const envVars = process.env.REACT_APP_NODE_ENV === "production"
         WEB_DOMAIN: "sbfhero-dev.web.app",
         REACT_APP_SUPPORT_EMAIL: "support@sbfhero.com",
         REACT_APP_ADMIN_EMAIL: process.env.REACT_APP_ADMIN_EMAIL,
-        originalPrice: "25.00",
+        originalPrice: "30.00",
         singleDashboardOption: ["Jul2025"],
         bundleDashboardOption: ["Jul2025", "Feb2026"],
         unlimitedDashboardOption: ["Unlimited"],
         singleDashboardPrice: "20.00",
         bundleDashboardPrice: "24.90",
-        unlimitedDashboardPrice: "39.90"
+        unlimitedDashboardPrice: "49.90"
     }
