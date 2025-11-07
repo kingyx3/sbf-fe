@@ -420,10 +420,10 @@ const LoginScreen = () => {
 export default LoginScreen;
 
 // Reusable Components
-const TestimonialCard = ({ rating, quote, name, role }) => (
+const TestimonialCard = ({ rating = 5, quote, name, role }) => (
   <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-all duration-300 h-full flex flex-col">
     <div className="text-xl mb-3">
-      {"⭐".repeat(rating)}
+      {"⭐".repeat(Math.max(1, Math.min(5, rating)))}
     </div>
     <blockquote className="text-base text-gray-700 dark:text-gray-300 italic mb-4 flex-grow">
       "{quote}"
