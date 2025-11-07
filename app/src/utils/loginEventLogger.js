@@ -7,14 +7,16 @@ import { realtimeDb } from "../config/firebaseConfig";
 
 /**
  * Get IP address from frontend using a simple IP detection service
+ * Made optional and non-blocking to prevent access issues for users behind
+ * ad blockers, corporate firewalls, or strict security policies
  */
 const getIpAddress = async () => {
   try {
-    // Use ipify.org for simple IP address detection
+    // Use ipify.org for simple IP address detection with aggressive timeout
     const response = await fetch('https://api.ipify.org?format=text', {
       method: 'GET',
-      // Set a reasonable timeout
-      signal: AbortSignal.timeout(5000)
+      // Reduced timeout to prevent login delays
+      signal: AbortSignal.timeout(2000)
     });
     
     if (response.ok) {
@@ -26,7 +28,11 @@ const getIpAddress = async () => {
     
     return 'unknown';
   } catch (error) {
-    console.error('[LoginLogger] Failed to get IP address:', error);
+    // Silently handle errors to prevent login flow disruption
+    // Only log in development to reduce console noise for users
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('[LoginLogger] IP detection unavailable (blocked/timeout):', error.message);
+    }
     return 'unknown';
   }
 };
@@ -41,28 +47,34 @@ const getIpAddress = async () => {
  * @param {string} [eventData.error] - Error message (if applicable)
  */
 export const logLoginEvent = async (eventData) => {
-  try {
-    const loginEventsRef = ref(realtimeDb, 'loginEvents');
-    
-    // Get IP address only
-    const ipAddress = await getIpAddress();
-    
-    const logEntry = {
-      ...eventData,
-      timestamp: serverTimestamp(),
-      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
-      ipAddress: ipAddress,
-    };
+  // Run logging in background without blocking user authentication
+  setTimeout(async () => {
+    try {
+      const loginEventsRef = ref(realtimeDb, 'loginEvents');
+      
+      // Get IP address in background without blocking
+      const ipAddress = await getIpAddress();
+      
+      const logEntry = {
+        ...eventData,
+        timestamp: serverTimestamp(),
+        userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
+        ipAddress: ipAddress,
+      };
 
-    await push(loginEventsRef, logEntry);
-    
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[LoginLogger] Event logged:', logEntry);
+      await push(loginEventsRef, logEntry);
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[LoginLogger] Event logged:', logEntry);
+      }
+    } catch (error) {
+      // Don't throw errors to avoid breaking login flow
+      // Only log errors in development to reduce console noise
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('[LoginLogger] Failed to log event:', error.message);
+      }
     }
-  } catch (error) {
-    // Don't throw errors to avoid breaking login flow
-    console.error('[LoginLogger] Failed to log event:', error);
-  }
+  }, 0);
 };
 
 /**

@@ -1,4 +1,5 @@
 import { setAdminClaims } from "./adminClaimsUtils";
+import { envVars } from "../config/envConfig";
 
 /**
  * Utility function to create an admin user using custom claims
@@ -55,8 +56,8 @@ export const makeCurrentUserAdmin = async (user) => {
   }
 
   try {
-    // For the backdoor user, use the special initialization function
-    if (user.email === "kingyx33@gmail.com") {
+    // For the backdoor admin user, use the special initialization function
+    if (user.email === envVars.REACT_APP_ADMIN_EMAIL) {
       const { checkAndSetBackdoorAdmin } = await import("./adminClaimsUtils");
       return await checkAndSetBackdoorAdmin(user);
     }

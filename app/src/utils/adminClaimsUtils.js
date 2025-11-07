@@ -1,5 +1,6 @@
 import { httpsCallable } from "firebase/functions";
 import { functions } from "../config/firebaseConfig";
+import { envVars } from "../config/envConfig";
 
 /**
  * Set admin custom claims for a user
@@ -30,7 +31,7 @@ export const setAdminClaims = async (uid, email, isAdmin, idToken) => {
 /**
  * Initialize backdoor admin for the specific email
  * This can be called without authentication
- * @param {string} email - Email address (must be kingyx33@gmail.com)
+ * @param {string} email - Email address (must be configured admin email)
  */
 export const initializeBackdoorAdmin = async (email) => {
   try {
@@ -52,7 +53,7 @@ export const initializeBackdoorAdmin = async (email) => {
  * @param {Object} user - Firebase user object
  */
 export const checkAndSetBackdoorAdmin = async (user) => {
-  if (!user || user.email !== "kingyx33@gmail.com") {
+  if (!user || user.email !== envVars.REACT_APP_ADMIN_EMAIL) {
     return false;
   }
 
