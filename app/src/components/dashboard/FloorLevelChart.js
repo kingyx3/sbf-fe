@@ -347,207 +347,349 @@ const FloorLevelChart = ({ data, isDarkMode }) => {
     },
   };
 
+  // Find best value floor categories based on ROI and price premium
+  const rankedCategories = useMemo(() => {
+    return [...levelCategoryStats]
+      .map(cat => ({
+        ...cat,
+        valueScore: (cat.avgROI || 0) - (cat.pricePremium * 0.5) // Higher ROI minus price premium = better value
+      }))
+      .sort((a, b) => b.valueScore - a.valueScore);
+  }, [levelCategoryStats]);
+
+  const bestValueCategory = rankedCategories[0];
+  const worstValueCategory = rankedCategories[rankedCategories.length - 1];
+
   return (
     <div className="mb-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className={`text-lg font-semibold ${isDarkMode ? "text-white" : "text-black"}`}>
-          Floor Level Analysis - Price & Resale Impact
+          🏢 Floor Level Guide - Which Floor Should You Buy?
         </h3>
         <div className={`text-xs ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
           {stats.totalUnits} units analyzed
         </div>
       </div>
 
-      {/* Enhanced Summary Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-5 gap-4 mb-6">
-        <div className={`p-3 rounded-lg ${isDarkMode ? "bg-slate-800" : "bg-gray-100"}`}>
-          <p className={`text-sm font-medium ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
-            Avg Price
+      {/* Best Value Recommendation - Make this prominent */}
+      <div className={`mb-6 p-5 rounded-lg border-2 ${
+        isDarkMode 
+          ? "bg-gradient-to-r from-green-900/30 to-blue-900/30 border-green-500" 
+          : "bg-gradient-to-r from-green-50 to-blue-50 border-green-400"
+      }`}>
+        <div className="flex items-start gap-3">
+          <div className="text-3xl">🎯</div>
+          <div className="flex-1">
+            <h4 className={`text-base font-bold mb-2 ${isDarkMode ? "text-green-200" : "text-green-800"}`}>
+              Best Value: {bestValueCategory.category} Floors
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+              <div>
+                <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Average Price</p>
+                <p className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                  {formatCurrencyShort(bestValueCategory.avgPrice)}
+                </p>
+              </div>
+              <div>
+                <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Expected ROI</p>
+                <p className="text-lg font-bold text-green-600">
+                  {bestValueCategory.avgROI ? `${bestValueCategory.avgROI.toFixed(1)}%` : 'N/A'}
+                </p>
+              </div>
+              <div>
+                <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Available Units</p>
+                <p className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                  {bestValueCategory.count}
+                </p>
+              </div>
+            </div>
+            <p className={`text-sm ${isDarkMode ? "text-green-300" : "text-green-700"}`}>
+              💡 <strong>Why this is good:</strong> {
+                bestValueCategory.pricePremium < 0 
+                  ? `${Math.abs(bestValueCategory.pricePremium).toFixed(1)}% below average price` 
+                  : bestValueCategory.pricePremium < 5
+                    ? "Fairly priced"
+                    : "High ROI potential"
+              } with {bestValueCategory.avgROI && bestValueCategory.avgROI >= 40 ? "excellent" : "good"} resale value growth.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Summary - Simplified */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div className={`p-4 rounded-lg text-center ${isDarkMode ? "bg-slate-800" : "bg-gray-100"}`}>
+          <p className={`text-xs font-medium mb-1 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+            Lowest Price
           </p>
-          <p className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-            {formatCurrencyShort(stats.avgPrice)}
+          <p className={`text-xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+            {formatCurrencyShort(Math.min(...levelCategoryStats.map(c => c.avgPrice)))}
+          </p>
+          <p className={`text-xs mt-1 ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>
+            {levelCategoryStats.find(c => c.avgPrice === Math.min(...levelCategoryStats.map(s => s.avgPrice)))?.category}
           </p>
         </div>
-        <div className={`p-3 rounded-lg ${isDarkMode ? "bg-slate-800" : "bg-gray-100"}`}>
-          <p className={`text-sm font-medium ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
-            Avg Floor Level
+        <div className={`p-4 rounded-lg text-center ${isDarkMode ? "bg-slate-800" : "bg-gray-100"}`}>
+          <p className={`text-xs font-medium mb-1 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+            Highest ROI
           </p>
-          <p className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-            {stats.avgLevel.toFixed(1)}
+          <p className="text-xl font-bold text-green-600">
+            {Math.max(...levelCategoryStats.filter(c => c.avgROI).map(c => c.avgROI)).toFixed(1)}%
           </p>
-        </div>
-        <div className={`p-3 rounded-lg ${isDarkMode ? "bg-slate-800" : "bg-gray-100"}`}>
-          <p className={`text-sm font-medium ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
-            Level Range
-          </p>
-          <p className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-            {stats.minLevel} - {stats.maxLevel}
+          <p className={`text-xs mt-1 ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>
+            {levelCategoryStats.find(c => c.avgROI === Math.max(...levelCategoryStats.filter(s => s.avgROI).map(s => s.avgROI)))?.category}
           </p>
         </div>
-        <div className={`p-3 rounded-lg ${isDarkMode ? "bg-slate-800" : "bg-gray-100"}`}>
-          <p className={`text-sm font-medium ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
-            Price Correlation
+        <div className={`p-4 rounded-lg text-center ${isDarkMode ? "bg-slate-800" : "bg-gray-100"}`}>
+          <p className={`text-xs font-medium mb-1 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+            Price Range
           </p>
-          <p className={`text-lg font-bold ${
-            stats.priceCorrelation > 0.3 
-              ? "text-green-600" 
-              : stats.priceCorrelation < -0.3 
-                ? "text-red-600" 
-                : isDarkMode ? "text-yellow-400" : "text-yellow-600"
+          <p className={`text-xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+            {formatCurrencyShort(stats.minLevel)}-{stats.maxLevel}
+          </p>
+          <p className={`text-xs mt-1 ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>
+            Floor levels
+          </p>
+        </div>
+        <div className={`p-4 rounded-lg text-center ${isDarkMode ? "bg-slate-800" : "bg-gray-100"}`}>
+          <p className={`text-xs font-medium mb-1 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+            Floor Impact
+          </p>
+          <p className={`text-xl font-bold ${
+            Math.abs(stats.priceCorrelation) > 0.3 ? "text-red-600" : "text-green-600"
           }`}>
-            {stats.priceCorrelation > 0 ? '+' : ''}{(stats.priceCorrelation * 100).toFixed(0)}%
+            {Math.abs(stats.priceCorrelation) > 0.3 ? "High" : "Low"}
           </p>
-        </div>
-        <div className={`p-3 rounded-lg ${isDarkMode ? "bg-slate-800" : "bg-gray-100"}`}>
-          <p className={`text-sm font-medium ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
-            Total Units
-          </p>
-          <p className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-            {stats.totalUnits}
+          <p className={`text-xs mt-1 ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>
+            {Math.abs(stats.priceCorrelation) > 0.3 ? "Floor matters" : "All floors similar"}
           </p>
         </div>
       </div>
 
-      {/* Analytical Insights */}
-      <div className={`mb-6 p-4 rounded-lg border-l-4 ${
-        stats.priceCorrelation > 0.3 
-          ? "bg-green-50 border-green-400 dark:bg-green-900/20 dark:border-green-500"
-          : stats.priceCorrelation < -0.3 
-            ? "bg-red-50 border-red-400 dark:bg-red-900/20 dark:border-red-500"
-            : "bg-yellow-50 border-yellow-400 dark:bg-yellow-900/20 dark:border-yellow-500"
-      }`}>
-        <h4 className={`text-sm font-semibold mb-2 ${
-          stats.priceCorrelation > 0.3 
-            ? "text-green-800 dark:text-green-200"
-            : stats.priceCorrelation < -0.3 
-              ? "text-red-800 dark:text-red-200"
-              : "text-yellow-800 dark:text-yellow-200"
-        }`}>
-          📊 Market Insight
-        </h4>
-        <p className={`text-xs ${
-          stats.priceCorrelation > 0.3 
-            ? "text-green-700 dark:text-green-300"
-            : stats.priceCorrelation < -0.3 
-              ? "text-red-700 dark:text-red-300"
-              : "text-yellow-700 dark:text-yellow-300"
-        }`}>
+      {/* Simple buying advice */}
+      <div className={`mb-6 p-4 rounded-lg ${isDarkMode ? "bg-blue-900/20 border border-blue-700" : "bg-blue-50 border border-blue-200"}`}>
+        <p className={`text-sm font-medium mb-2 ${isDarkMode ? "text-blue-200" : "text-blue-800"}`}>
+          💡 Quick Buying Tip:
+        </p>
+        <p className={`text-sm ${isDarkMode ? "text-blue-300" : "text-blue-700"}`}>
           {stats.priceCorrelation > 0.3 
-            ? `Strong positive correlation (${(stats.priceCorrelation * 100).toFixed(0)}%) - Higher floors typically command premium prices in this development.`
+            ? `Floor level strongly affects price here. ${bestValueCategory.category} floors offer the best value-for-money. Higher floors cost significantly more but may not deliver proportional resale value.`
             : stats.priceCorrelation < -0.3 
-              ? `Negative correlation (${(stats.priceCorrelation * 100).toFixed(0)}%) - Lower floors may offer better value in this development.`
-              : `Weak correlation (${(stats.priceCorrelation * 100).toFixed(0)}%) - Floor level has minimal impact on pricing in this development.`
+              ? `Surprisingly, lower floors may cost more here. Consider ${bestValueCategory.category} floors for better value and similar quality.`
+              : `Floor level doesn't significantly impact price here - all floors are fairly priced. Choose ${bestValueCategory.category} floors for the highest ROI potential.`
           }
-          {floorLevelData.some(p => p.pricePsf) && (
-            <span className="block mt-1">
-              💡 Points are color-coded: <span className="text-green-600 font-medium">Green = Good Value</span>, 
-              <span className="text-blue-600 font-medium"> Blue = Average</span>, 
-              <span className="text-red-600 font-medium"> Red = Premium</span>
-            </span>
-          )}
         </p>
       </div>
 
-      {/* Chart */}
-      <div className="h-96 mb-6">
-        <Scatter data={chartData} options={chartOptions} />
-      </div>
-
-      {/* Enhanced Level Category Analysis */}
-      <div className="mt-8">
-        <h4 className={`text-sm font-medium mb-4 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-          Comprehensive Analysis by Floor Level Category
+      {/* Simplified Floor Comparison - Ranked by Value */}
+      <div className="mt-6">
+        <h4 className={`text-base font-semibold mb-4 ${isDarkMode ? "text-white" : "text-black"}`}>
+          📊 Compare All Floor Levels - Ranked by Best Value
         </h4>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-          {levelCategoryStats.map((stat) => (
-            <div
-              key={stat.category}
-              className={`p-4 rounded-lg border ${
-                isDarkMode
-                  ? "bg-slate-800 border-slate-600"
-                  : "bg-white border-gray-200"
-              }`}
-            >
-              <div className={`text-sm font-medium mb-3 flex items-center justify-between ${isDarkMode ? "text-white" : "text-black"}`}>
-                <span>{stat.category}</span>
-                {stat.pricePremium !== 0 && (
-                  <span className={`text-xs px-2 py-1 rounded-full ${
-                    stat.pricePremium > 5 
-                      ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"
-                      : stat.pricePremium > 0 
-                        ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300"
-                        : "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
-                  }`}>
-                    {stat.pricePremium > 0 ? '+' : ''}{stat.pricePremium.toFixed(1)}%
-                  </span>
-                )}
-              </div>
-              <div className="space-y-2">
-                <div className={`flex justify-between items-center text-xs ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
-                  <span>Avg Price:</span>
-                  <span className="font-semibold">{formatCurrencyShort(stat.avgPrice)}</span>
-                </div>
-                {stat.avgPricePsf && (
-                  <div className={`flex justify-between items-center text-xs ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
-                    <span>Avg PSF:</span>
-                    <span className="font-semibold">${stat.avgPricePsf.toFixed(0)}</span>
-                  </div>
-                )}
-                {stat.avgResale && (
-                  <div className={`flex justify-between items-center text-xs ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
-                    <span>Avg Resale:</span>
-                    <span className="font-semibold text-green-600">{formatCurrencyShort(stat.avgResale)}</span>
-                  </div>
-                )}
-                {stat.avgROI !== null && (
-                  <div className={`flex justify-between items-center text-xs ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
-                    <span>Avg ROI:</span>
-                    <span className={`font-semibold ${
-                      stat.avgROI >= 30 
-                        ? "text-green-600" 
-                        : stat.avgROI >= 15 
-                          ? "text-blue-600" 
-                          : "text-yellow-600"
-                    }`}>
-                      {stat.avgROI.toFixed(1)}%
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {rankedCategories.map((stat, index) => {
+            const isTopChoice = index === 0;
+            const isGoodChoice = index <= Math.ceil(rankedCategories.length / 3);
+            const isPoorChoice = index >= rankedCategories.length - Math.ceil(rankedCategories.length / 3);
+            
+            return (
+              <div
+                key={stat.category}
+                className={`p-4 rounded-lg border-2 relative ${
+                  isTopChoice
+                    ? isDarkMode 
+                      ? "bg-green-900/20 border-green-500" 
+                      : "bg-green-50 border-green-500"
+                    : isGoodChoice
+                      ? isDarkMode
+                        ? "bg-blue-900/10 border-blue-600"
+                        : "bg-blue-50 border-blue-400"
+                      : isDarkMode
+                        ? "bg-slate-800 border-slate-600"
+                        : "bg-gray-50 border-gray-300"
+                }`}
+              >
+                {/* Ranking Badge */}
+                <div className="absolute top-3 right-3">
+                  {isTopChoice && (
+                    <span className="px-2 py-1 text-xs font-bold rounded-full bg-green-600 text-white">
+                      #1 BEST
                     </span>
+                  )}
+                  {!isTopChoice && isGoodChoice && (
+                    <span className="px-2 py-1 text-xs font-bold rounded-full bg-blue-600 text-white">
+                      #{index + 1} GOOD
+                    </span>
+                  )}
+                  {isPoorChoice && !isTopChoice && !isGoodChoice && (
+                    <span className={`px-2 py-1 text-xs font-bold rounded-full ${
+                      isDarkMode ? "bg-gray-700 text-gray-300" : "bg-gray-400 text-white"
+                    }`}>
+                      #{index + 1}
+                    </span>
+                  )}
+                </div>
+
+                <div className="pr-16">
+                  <h5 className={`text-lg font-bold mb-3 ${
+                    isTopChoice 
+                      ? "text-green-600" 
+                      : isDarkMode ? "text-white" : "text-black"
+                  }`}>
+                    {stat.category}
+                  </h5>
+                  
+                  <div className="space-y-2">
+                    {/* Price */}
+                    <div className="flex justify-between items-center">
+                      <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                        💰 Price:
+                      </span>
+                      <span className={`text-base font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                        {formatCurrencyShort(stat.avgPrice)}
+                        {stat.pricePremium !== 0 && (
+                          <span className={`text-xs ml-2 ${
+                            stat.pricePremium > 5 ? "text-red-600" : 
+                            stat.pricePremium > 0 ? "text-yellow-600" : 
+                            "text-green-600"
+                          }`}>
+                            ({stat.pricePremium > 0 ? '+' : ''}{stat.pricePremium.toFixed(0)}%)
+                          </span>
+                        )}
+                      </span>
+                    </div>
+
+                    {/* ROI */}
+                    {stat.avgROI !== null && (
+                      <div className="flex justify-between items-center">
+                        <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                          📈 ROI:
+                        </span>
+                        <span className={`text-base font-bold ${
+                          stat.avgROI >= 40 ? "text-green-600" : 
+                          stat.avgROI >= 25 ? "text-blue-600" : 
+                          "text-yellow-600"
+                        }`}>
+                          {stat.avgROI.toFixed(1)}%
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Resale Value */}
+                    {stat.avgResale && (
+                      <div className="flex justify-between items-center">
+                        <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                          💵 Resale:
+                        </span>
+                        <span className={`text-base font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                          {formatCurrencyShort(stat.avgResale)}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Available Units */}
+                    <div className="flex justify-between items-center">
+                      <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                        🏘️ Available:
+                      </span>
+                      <span className={`text-base font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                        {stat.count} unit{stat.count !== 1 ? "s" : ""}
+                      </span>
+                    </div>
                   </div>
-                )}
-                <div className={`flex justify-between items-center text-xs ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
-                  <span>Range:</span>
-                  <span className="font-medium">
-                    {formatCurrencyShort(stat.priceRange.min)} - {formatCurrencyShort(stat.priceRange.max)}
-                  </span>
+
+                  {/* Value Indicator */}
+                  <div className={`mt-3 pt-3 border-t ${isDarkMode ? "border-gray-700" : "border-gray-200"}`}>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-xs font-medium ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                        Value:
+                      </span>
+                      <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                        <div 
+                          className={`h-2 rounded-full ${
+                            isTopChoice ? "bg-green-600" : 
+                            isGoodChoice ? "bg-blue-600" : 
+                            "bg-gray-400"
+                          }`}
+                          style={{ 
+                            width: `${Math.max(20, Math.min(100, (stat.valueScore / Math.max(...rankedCategories.map(c => c.valueScore))) * 100))}%` 
+                          }}
+                        />
+                      </div>
+                      <span className={`text-xs font-bold ${
+                        isTopChoice ? "text-green-600" : 
+                        isGoodChoice ? "text-blue-600" : 
+                        isDarkMode ? "text-gray-400" : "text-gray-600"
+                      }`}>
+                        {isTopChoice ? "Best" : isGoodChoice ? "Good" : "Fair"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Simple Recommendation */}
+                  {isTopChoice && (
+                    <p className={`mt-3 text-xs ${isDarkMode ? "text-green-300" : "text-green-700"}`}>
+                      ✅ <strong>Recommended:</strong> Best balance of price and ROI
+                    </p>
+                  )}
+                  {!isTopChoice && isGoodChoice && (
+                    <p className={`mt-3 text-xs ${isDarkMode ? "text-blue-300" : "text-blue-700"}`}>
+                      👍 <strong>Good option:</strong> Solid investment choice
+                    </p>
+                  )}
+                  {isPoorChoice && !isGoodChoice && (
+                    <p className={`mt-3 text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                      ⚠️ Consider other floors for better value
+                    </p>
+                  )}
                 </div>
-                <div className={`flex justify-between items-center text-xs ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
-                  <span>Units:</span>
-                  <span className="font-medium">
-                    {stat.count} unit{stat.count !== 1 ? "s" : ""}
-                  </span>
-                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Simple Legend */}
+        <div className={`mt-6 p-4 rounded-lg ${isDarkMode ? "bg-slate-800/50" : "bg-gray-100"}`}>
+          <p className={`text-sm font-medium mb-3 ${isDarkMode ? "text-white" : "text-black"}`}>
+            📖 How to Read This:
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="flex items-start gap-2">
+              <span className="text-lg">💰</span>
+              <div className="flex-1">
+                <p className={`text-sm font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Price</p>
+                <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                  Average SBF price for this floor category. Green % = discount, Red % = premium vs average.
+                </p>
               </div>
             </div>
-          ))}
-        </div>
-        
-        {/* Value Legend */}
-        <div className={`mt-4 p-3 rounded-lg ${isDarkMode ? "bg-slate-800/50" : "bg-gray-50"}`}>
-          <p className={`text-xs font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-            💡 Reading the Analysis:
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-            <p className={`${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-              <span className="font-medium">Price Premium:</span> How much more/less this floor category costs vs. average
-            </p>
-            <p className={`${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-              <span className="font-medium">Chart Colors:</span> Red=Premium pricing, Blue=Average, Green=Good value
-            </p>
-            <p className={`${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-              <span className="font-medium">ROI Color:</span> Green≥30%, Blue≥15%, Yellow&lt;15%
-            </p>
-            <p className={`${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-              <span className="font-medium">Correlation:</span> Measures how strongly floor level affects pricing
-            </p>
+            <div className="flex items-start gap-2">
+              <span className="text-lg">📈</span>
+              <div className="flex-1">
+                <p className={`text-sm font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>ROI (Return on Investment)</p>
+                <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                  Expected profit % when selling. Green ≥40% = Excellent, Blue 25-40% = Good, Yellow &lt;25% = Fair.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="text-lg">💵</span>
+              <div className="flex-1">
+                <p className={`text-sm font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Resale Value</p>
+                <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                  Estimated future market value based on historical data.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="text-lg">🎯</span>
+              <div className="flex-1">
+                <p className={`text-sm font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Value Score</p>
+                <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                  Overall ranking considering ROI and price. Higher bar = better value for money.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
