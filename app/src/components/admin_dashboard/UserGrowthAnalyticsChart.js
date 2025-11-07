@@ -10,10 +10,12 @@ import {
   TimeScale,
   Tooltip,
   Legend,
+  LineController,
+  BarController,
 } from "chart.js";
 import 'chartjs-adapter-date-fns';
 
-ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, BarElement, TimeScale, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, BarElement, TimeScale, Tooltip, Legend, LineController, BarController);
 
 const UserGrowthLineChart = ({ loginEvents = [], payments = [], allUsers = [], isDarkMode }) => {
   const chartData = useMemo(() => {
