@@ -30,7 +30,7 @@ const AdminManagementTab = ({
       return annotatedSortedUsers;
     }
     return annotatedSortedUsers.filter(user => 
-      payingUserEmails.has(user.email?.toLowerCase())
+      user.email && payingUserEmails.has(user.email.toLowerCase())
     );
   }, [annotatedSortedUsers, showPayingUsersOnly, payingUserEmails]);
 

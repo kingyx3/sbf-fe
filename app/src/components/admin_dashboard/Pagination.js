@@ -42,8 +42,8 @@ const Pagination = ({
       pages.push('...');
     }
 
-    // Always show last page
-    if (totalPages > 1) {
+    // Always show last page (avoid duplicates)
+    if (totalPages > 1 && !pages.includes(totalPages)) {
       pages.push(totalPages);
     }
 
