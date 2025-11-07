@@ -92,10 +92,13 @@ const AdminManagementTab = ({
                       )}
                     </td>
                     <td className="px-4 py-2 text-sm">
-                      {u.lastSignInTime 
-                        ? new Date(u.lastSignInTime).toLocaleDateString()
-                        : <span className="text-gray-500 italic">Never</span>
-                      }
+                      {(() => {
+                        // Handle both test data format (u.lastSignInTime) and real Firebase Auth format (u.metadata.lastSignInTime)
+                        const lastSignInTime = u.lastSignInTime || u.metadata?.lastSignInTime;
+                        return lastSignInTime 
+                          ? new Date(lastSignInTime).toLocaleDateString()
+                          : <span className="text-gray-500 italic">Never</span>;
+                      })()}
                     </td>
                     <td className="px-4 py-2">
                       {u.isAdmin ? (
@@ -172,9 +175,13 @@ const AdminManagementTab = ({
                   <div>
                     <span className={`font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Last Sign In: </span>
                     <span>
-                      {u.lastSignInTime 
-                        ? new Date(u.lastSignInTime).toLocaleDateString()
-                        : 'Never'}
+                      {(() => {
+                        // Handle both test data format (u.lastSignInTime) and real Firebase Auth format (u.metadata.lastSignInTime)
+                        const lastSignInTime = u.lastSignInTime || u.metadata?.lastSignInTime;
+                        return lastSignInTime 
+                          ? new Date(lastSignInTime).toLocaleDateString()
+                          : 'Never';
+                      })()}
                     </span>
                   </div>
                   <div className="pt-2">

@@ -341,7 +341,9 @@ const AdminDashboard = ({ isDarkMode }) => {
 
   const annotatedSortedUsers = useMemo(() => {
     const mapped = (currentAdmins || []).map(u => {
-      const lastMs = u.lastSignInTime ? new Date(u.lastSignInTime).getTime() : null;
+      // Handle both test data format (u.lastSignInTime) and real Firebase Auth format (u.metadata.lastSignInTime)
+      const lastSignInTime = u.lastSignInTime || u.metadata?.lastSignInTime;
+      const lastMs = lastSignInTime ? new Date(lastSignInTime).getTime() : null;
       const isInactive = !lastMs || lastMs < sixMonthsAgoMs; // never signed in or older than 6 months
       return {
         ...u,

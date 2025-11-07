@@ -25,15 +25,21 @@ const UserGrowthLineChart = ({ loginEvents = [], payments = [], allUsers = [], i
     
     // Add user registration events based on Firebase Auth creationTime
     allUsers.forEach(user => {
-      if (user.email && user.creationTime) {
-        // Parse creationTime to timestamp
-        const timestamp = new Date(user.creationTime).getTime();
-        allEvents.push({
-          type: 'user_signup',
-          timestamp,
-          email: user.email,
-          amount: 0
-        });
+      if (user.email) {
+        // Check for creationTime in both possible locations:
+        // - user.creationTime (test data format)
+        // - user.metadata.creationTime (real Firebase Auth format)
+        const creationTime = user.creationTime || user.metadata?.creationTime;
+        if (creationTime) {
+          // Parse creationTime to timestamp
+          const timestamp = new Date(creationTime).getTime();
+          allEvents.push({
+            type: 'user_signup',
+            timestamp,
+            email: user.email,
+            amount: 0
+          });
+        }
       }
     });
 
