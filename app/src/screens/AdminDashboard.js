@@ -53,12 +53,12 @@ const AdminDashboard = ({ isDarkMode }) => {
     };
   }, []);
 
-  // Load current admins when admin tab is active
+  // Load current admins on mount and when admin tab is active
   useEffect(() => {
-    if (activeTab === 'admin' && user) {
+    if (user) {
       loadCurrentAdmins();
     }
-  }, [activeTab, user]);
+  }, [user]);
 
   // Reset to first page when list changes
   useEffect(() => {
@@ -362,12 +362,6 @@ const AdminDashboard = ({ isDarkMode }) => {
     return mapped;
   }, [currentAdmins, sixMonthsAgoMs]);
 
-  const totalPages = Math.max(1, Math.ceil(annotatedSortedUsers.length / PAGE_SIZE));
-  const pageSafe = Math.min(Math.max(1, currentPage), totalPages);
-  const startIdx = (pageSafe - 1) * PAGE_SIZE;
-  const endIdx = startIdx + PAGE_SIZE;
-  const pagedUsers = annotatedSortedUsers.slice(startIdx, endIdx);
-
   const tabs = [
     { id: 'analytics', label: 'Analytics', icon: '📊' },
     { id: 'admin', label: 'Admin Management', icon: '👑' },
@@ -413,7 +407,6 @@ const AdminDashboard = ({ isDarkMode }) => {
 
         {activeTab === 'admin' && (
           <AdminManagementTab
-            pagedUsers={pagedUsers}
             annotatedSortedUsers={annotatedSortedUsers}
             currentPage={currentPage}
             PAGE_SIZE={PAGE_SIZE}
@@ -422,6 +415,7 @@ const AdminDashboard = ({ isDarkMode }) => {
             toggleUserAdmin={toggleUserAdmin}
             setCurrentPage={setCurrentPage}
             isDarkMode={isDarkMode}
+            payments={payments}
           />
         )}
 

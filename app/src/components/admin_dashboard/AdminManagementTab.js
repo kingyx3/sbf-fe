@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import Pagination from "./Pagination";
 
 const AdminManagementTab = ({ 
-  pagedUsers,
   annotatedSortedUsers,
   currentPage,
   PAGE_SIZE,
@@ -10,12 +9,36 @@ const AdminManagementTab = ({
   loadingAdmins,
   toggleUserAdmin,
   setCurrentPage,
-  isDarkMode 
+  isDarkMode,
+  payments 
 }) => {
-  const totalPages = Math.max(1, Math.ceil(annotatedSortedUsers.length / PAGE_SIZE));
+  const [showPayingUsersOnly, setShowPayingUsersOnly] = useState(false);
+
+  // Create a set of paying user emails for fast lookup
+  const payingUserEmails = useMemo(() => {
+    return new Set(
+      (payments || [])
+        .map(payment => payment.customerEmail)
+        .filter(email => email && typeof email === 'string' && email.trim())
+        .map(email => email.toLowerCase())
+    );
+  }, [payments]);
+
+  // Filter users based on payment status if toggle is enabled
+  const filteredUsers = useMemo(() => {
+    if (!showPayingUsersOnly) {
+      return annotatedSortedUsers;
+    }
+    return annotatedSortedUsers.filter(user => 
+      user.email && payingUserEmails.has(user.email.toLowerCase())
+    );
+  }, [annotatedSortedUsers, showPayingUsersOnly, payingUserEmails]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / PAGE_SIZE));
   const pageSafe = Math.min(Math.max(1, currentPage), totalPages);
   const startIdx = (pageSafe - 1) * PAGE_SIZE;
   const endIdx = startIdx + PAGE_SIZE;
+  const displayedUsers = filteredUsers.slice(startIdx, endIdx);
 
   return (
     <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow p-4 sm:p-6`}>
@@ -26,7 +49,20 @@ const AdminManagementTab = ({
         <div>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
             <h3 className="text-base sm:text-lg font-medium">All Users</h3>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              {/* Toggle for showing only paying users */}
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={showPayingUsersOnly}
+                  onChange={(e) => {
+                    setShowPayingUsersOnly(e.target.checked);
+                    setCurrentPage(1); // Reset to first page when filter changes
+                  }}
+                  className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                />
+                <span className="text-sm">Show paying users only</span>
+              </label>
               <button
                 onClick={loadCurrentAdmins}
                 disabled={loadingAdmins}
@@ -55,7 +91,7 @@ const AdminManagementTab = ({
                 </tr>
               </thead>
               <tbody>
-                {pagedUsers.map((u) => (
+                {displayedUsers.map((u) => (
                   <tr key={u.uid} className={`border-t ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
                     <td className="px-4 py-2">
                       <div className="flex items-center">
@@ -133,7 +169,7 @@ const AdminManagementTab = ({
 
           {/* Mobile Card View */}
           <div className="md:hidden space-y-3">
-            {pagedUsers.map((u) => (
+            {displayedUsers.map((u) => (
               <div key={u.uid} className={`border rounded-lg p-4 ${isDarkMode ? 'border-gray-600 bg-gray-700' : 'border-gray-200 bg-gray-50'}`}>
                 <div className="flex justify-between items-start mb-3">
                   <div className="flex-1 min-w-0">
@@ -214,20 +250,20 @@ const AdminManagementTab = ({
             ))}
           </div>
 
-          {annotatedSortedUsers.length === 0 && !loadingAdmins && (
+          {filteredUsers.length === 0 && !loadingAdmins && (
             <div className="text-center py-8 text-gray-500">
-              No users found
+              {showPayingUsersOnly ? 'No paying users found' : 'No users found'}
             </div>
           )}
 
           {/* Pagination Controls */}
-          {annotatedSortedUsers.length > 0 && (
+          {filteredUsers.length > 0 && (
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
               startIdx={startIdx}
               endIdx={endIdx}
-              totalItems={annotatedSortedUsers.length}
+              totalItems={filteredUsers.length}
               onPageChange={setCurrentPage}
               isDarkMode={isDarkMode}
             />
