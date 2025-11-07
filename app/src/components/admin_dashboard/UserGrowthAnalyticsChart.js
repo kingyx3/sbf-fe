@@ -309,7 +309,7 @@ const UserGrowthLineChart = ({ loginEvents = [], payments = [], allUsers = [], i
 
       <div style={{ height: "400px" }} className="mb-4">
         {chartData.datasets.length > 0 && chartData.datasets[0].data.length > 0 ? (
-          <Chart type="bar" data={chartData} options={chartOptions} />
+          <Chart data={chartData} options={chartOptions} />
         ) : (
           <div
             className={`h-full flex items-center justify-center ${
