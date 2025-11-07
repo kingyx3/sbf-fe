@@ -19,13 +19,9 @@ const Pagination = ({
     }
 
     const pages = [];
-    const showFirst = true;
-    const showLast = true;
     
     // Always show first page
-    if (showFirst) {
-      pages.push(1);
-    }
+    pages.push(1);
 
     // Calculate range around current page (3 before and 3 after)
     const rangeStart = Math.max(2, pageSafe - 3);
@@ -47,7 +43,7 @@ const Pagination = ({
     }
 
     // Always show last page
-    if (showLast && totalPages > 1) {
+    if (totalPages > 1) {
       pages.push(totalPages);
     }
 

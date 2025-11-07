@@ -16,7 +16,12 @@ const AdminManagementTab = ({
 
   // Create a set of paying user emails for fast lookup
   const payingUserEmails = useMemo(() => {
-    return new Set((payments || []).map(payment => payment.customerEmail?.toLowerCase()).filter(Boolean));
+    return new Set(
+      (payments || [])
+        .map(payment => payment.customerEmail)
+        .filter(email => email && typeof email === 'string' && email.trim())
+        .map(email => email.toLowerCase())
+    );
   }, [payments]);
 
   // Filter users based on payment status if toggle is enabled
