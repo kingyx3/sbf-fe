@@ -445,7 +445,7 @@ const FloorLevelChart = ({ data, isDarkMode }) => {
             Price Range
           </p>
           <p className={`text-xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-            {formatCurrencyShort(stats.minLevel)}-{stats.maxLevel}
+            {stats.minLevel}-{stats.maxLevel}
           </p>
           <p className={`text-xs mt-1 ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>
             Floor levels
