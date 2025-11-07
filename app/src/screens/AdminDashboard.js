@@ -53,12 +53,12 @@ const AdminDashboard = ({ isDarkMode }) => {
     };
   }, []);
 
-  // Load current admins when admin tab is active
+  // Load current admins on mount and when admin tab is active
   useEffect(() => {
-    if (activeTab === 'admin' && user) {
+    if (user) {
       loadCurrentAdmins();
     }
-  }, [activeTab, user]);
+  }, [user]);
 
   // Reset to first page when list changes
   useEffect(() => {
