@@ -1,18 +1,19 @@
 import React, { useMemo } from "react";
-import { Line } from "react-chartjs-2";
+import { Chart } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   LineElement,
   PointElement,
+  BarElement,
   TimeScale,
   Tooltip,
   Legend,
 } from "chart.js";
 import 'chartjs-adapter-date-fns';
 
-ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, TimeScale, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, BarElement, TimeScale, Tooltip, Legend);
 
 const UserGrowthLineChart = ({ loginEvents = [], payments = [], allUsers = [], isDarkMode }) => {
   const chartData = useMemo(() => {
@@ -95,16 +96,19 @@ const UserGrowthLineChart = ({ loginEvents = [], payments = [], allUsers = [], i
 
     let cumulativeUsers = 0;
     let cumulativePurchases = 0;
+    let cumulativeRevenue = 0;
 
     const dataPoints = timeSeriesData.map(dayData => {
       cumulativeUsers += dayData.newUsers;
       cumulativePurchases += dayData.newPurchases;
+      cumulativeRevenue += dayData.dailyRevenue;
       
       return {
         x: dayData.date,
         cumulativeUsers,
         cumulativePurchases,
-        dailyRevenue: dayData.dailyRevenue
+        dailyRevenue: dayData.dailyRevenue,
+        cumulativeRevenue
       };
     });
 
@@ -119,6 +123,7 @@ const UserGrowthLineChart = ({ loginEvents = [], payments = [], allUsers = [], i
         fill: false,
         tension: 0.1,
         yAxisID: 'y',
+        type: 'line',
       },
       {
         label: 'Cumulative Paying Users',
@@ -129,17 +134,27 @@ const UserGrowthLineChart = ({ loginEvents = [], payments = [], allUsers = [], i
         fill: false,
         tension: 0.1,
         yAxisID: 'y',
+        type: 'line',
       },
       {
-        label: 'Daily Revenue (SGD)',
-        data: dataPoints.map(point => ({ x: point.x, y: point.dailyRevenue })),
-        borderColor: isDarkMode ? 'rgba(251, 191, 36, 1)' : 'rgba(245, 158, 11, 1)',
-        backgroundColor: isDarkMode ? 'rgba(251, 191, 36, 0.1)' : 'rgba(245, 158, 11, 0.1)',
+        label: 'Cumulative Revenue (SGD)',
+        data: dataPoints.map(point => ({ x: point.x, y: point.cumulativeRevenue })),
+        borderColor: isDarkMode ? 'rgba(168, 85, 247, 1)' : 'rgba(147, 51, 234, 1)',
+        backgroundColor: isDarkMode ? 'rgba(168, 85, 247, 0.1)' : 'rgba(147, 51, 234, 0.1)',
         borderWidth: 2,
         fill: false,
         tension: 0.1,
         yAxisID: 'y1',
         type: 'line',
+      },
+      {
+        label: 'Daily Revenue (SGD)',
+        data: dataPoints.map(point => ({ x: point.x, y: point.dailyRevenue })),
+        backgroundColor: isDarkMode ? 'rgba(251, 191, 36, 0.7)' : 'rgba(245, 158, 11, 0.7)',
+        borderColor: isDarkMode ? 'rgba(251, 191, 36, 1)' : 'rgba(245, 158, 11, 1)',
+        borderWidth: 1,
+        yAxisID: 'y1',
+        type: 'bar',
       }
     ];
 
@@ -259,7 +274,7 @@ const UserGrowthLineChart = ({ loginEvents = [], payments = [], allUsers = [], i
             User Growth & Purchase Analytics
           </h3>
           <div className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
-            Cumulative user growth and daily revenue over time
+            Cumulative user growth, cumulative & daily revenue over time
           </div>
         </div>
       </div>
@@ -294,7 +309,7 @@ const UserGrowthLineChart = ({ loginEvents = [], payments = [], allUsers = [], i
 
       <div style={{ height: "400px" }} className="mb-4">
         {chartData.datasets.length > 0 && chartData.datasets[0].data.length > 0 ? (
-          <Line data={chartData} options={chartOptions} />
+          <Chart data={chartData} options={chartOptions} />
         ) : (
           <div
             className={`h-full flex items-center justify-center ${
@@ -307,7 +322,7 @@ const UserGrowthLineChart = ({ loginEvents = [], payments = [], allUsers = [], i
       </div>
 
       <div className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
-        Time series showing cumulative user growth (left Y-axis) and daily revenue (right Y-axis) over time with monthly intervals.
+        Time series showing cumulative user growth (left Y-axis), cumulative revenue and daily revenue bars (right Y-axis) over time.
       </div>
     </div>
   );
