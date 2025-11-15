@@ -1,5 +1,4 @@
-import React, { useMemo } from "react";
-import { Scatter } from "react-chartjs-2";
+import { useMemo, useCallback } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,12 +9,12 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { formatCurrency, formatCurrencyShort } from "../helpers";
+import { formatCurrencyShort } from "../helpers";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const FloorLevelChart = ({ data, isDarkMode }) => {
-  // Helper function for level categorization
+  // Helper function for absolute level categorization
   const getLevelCategory = (level) => {
     if (level <= 5) return "Low (1-5)";
     if (level <= 10) return "Mid-Low (6-10)";
@@ -24,12 +23,81 @@ const FloorLevelChart = ({ data, isDarkMode }) => {
     return "High (21+)";
   };
 
+  // Helper function for relative height categorization
+  const getRelativeHeightCategory = (level, maxFloorLvl) => {
+    if (!maxFloorLvl || maxFloorLvl <= 0) return null;
+    const relativePosition = level / maxFloorLvl;
+    if (relativePosition <= 0.33) return "Low";
+    if (relativePosition <= 0.67) return "Mid";
+    return "High";
+  };
+
+  // Helper function to get comprehensive height description
+  const getHeightDescription = useCallback((level, maxFloorLvl) => {
+    const absolute = getLevelCategory(level);
+    if (!maxFloorLvl) {
+      return { absolute, relative: null, description: `${absolute} floor` };
+    }
+    
+    const relative = getRelativeHeightCategory(level, maxFloorLvl);
+    const percentage = Math.round((level / maxFloorLvl) * 100);
+    
+    // Generate smart description
+    if (maxFloorLvl <= 5) {
+      // Low-rise building
+      if (relative === "High") {
+        return { 
+          absolute, 
+          relative, 
+          description: `Top floor (${percentage}% up) - low-rise building`,
+          insight: "Great views for a low-rise, minimal elevator wait"
+        };
+      }
+    } else if (maxFloorLvl <= 15) {
+      // Mid-rise building
+      if (relative === "High" && absolute === "Low") {
+        return { 
+          absolute, 
+          relative, 
+          description: `High in building (${percentage}% up) but low floor overall`,
+          insight: "Best of both worlds: easy access, good views within building"
+        };
+      }
+    } else {
+      // High-rise building
+      if (relative === "Low" && level > 10) {
+        return { 
+          absolute, 
+          relative, 
+          description: `Mid-high floor (${percentage}% up) in tall building`,
+          insight: "Good elevation with reasonable elevator wait"
+        };
+      }
+      if (relative === "High" && level > 20) {
+        return { 
+          absolute, 
+          relative, 
+          description: `High floor (${percentage}% up) - premium height`,
+          insight: "Excellent views, longer elevator wait"
+        };
+      }
+    }
+    
+    return { 
+      absolute, 
+      relative, 
+      description: `${relative} in building (${percentage}% up), ${absolute} overall`,
+      insight: null
+    };
+  }, []);
+
   const floorLevelData = useMemo(() => {
     if (!data || data.length === 0) return [];
 
     return data
       .filter((flat) => flat.level && flat.price && flat.level > 0)
       .map((flat) => {
+        const heightInfo = getHeightDescription(flat.level, flat.max_floor_lvl);
         return {
           x: flat.level,
           y: flat.price,
@@ -41,28 +109,11 @@ const FloorLevelChart = ({ data, isDarkMode }) => {
           flatType: flat.flat_type,
           pricePsf: flat.price_psf,
           sizeSqm: flat.size_sqm,
+          maxFloorLvl: flat.max_floor_lvl,
+          heightInfo: heightInfo,
         };
       });
-  }, [data]);
-
-  const resaleData = useMemo(() => {
-    if (!data || data.length === 0) return [];
-
-    return data
-      .filter((flat) => flat.level && flat.approximate_resale_value && flat.level > 0)
-      .map((flat) => {
-        return {
-          x: flat.level,
-          y: flat.approximate_resale_value,
-          price: flat.price,
-          block: flat.block,
-          unit: flat.unit,
-          project: flat.project_name,
-          town: flat.project_town,
-          flatType: flat.flat_type,
-        };
-      });
-  }, [data]);
+  }, [data, getHeightDescription]);
 
   // Calculate statistics
   const stats = useMemo(() => {
@@ -74,6 +125,9 @@ const FloorLevelChart = ({ data, isDarkMode }) => {
         maxLevel: 0,
         avgLevel: 0,
         priceCorrelation: 0,
+        hasMaxFloorData: false,
+        avgBuildingHeight: 0,
+        relativeHeightDistribution: { low: 0, mid: 0, high: 0 },
       };
     }
 
@@ -98,6 +152,22 @@ const FloorLevelChart = ({ data, isDarkMode }) => {
     
     const correlation = denomLevel * denomPrice > 0 ? numerator / Math.sqrt(denomLevel * denomPrice) : 0;
     
+    // Calculate building height statistics
+    const unitsWithMaxFloor = floorLevelData.filter(p => p.maxFloorLvl && p.maxFloorLvl > 0);
+    const hasMaxFloorData = unitsWithMaxFloor.length > 0;
+    const avgBuildingHeight = hasMaxFloorData 
+      ? unitsWithMaxFloor.reduce((sum, p) => sum + p.maxFloorLvl, 0) / unitsWithMaxFloor.length 
+      : 0;
+    
+    // Calculate relative height distribution
+    const relativeHeightDistribution = { low: 0, mid: 0, high: 0 };
+    unitsWithMaxFloor.forEach(p => {
+      const relativeCategory = getRelativeHeightCategory(p.x, p.maxFloorLvl);
+      if (relativeCategory === "Low") relativeHeightDistribution.low++;
+      else if (relativeCategory === "Mid") relativeHeightDistribution.mid++;
+      else if (relativeCategory === "High") relativeHeightDistribution.high++;
+    });
+    
     return {
       totalUnits: floorLevelData.length,
       avgPrice,
@@ -105,6 +175,9 @@ const FloorLevelChart = ({ data, isDarkMode }) => {
       maxLevel: Math.max(...levels),
       avgLevel,
       priceCorrelation: correlation,
+      hasMaxFloorData,
+      avgBuildingHeight: Math.round(avgBuildingHeight),
+      relativeHeightDistribution,
     };
   }, [floorLevelData]);
 
@@ -173,7 +246,19 @@ const FloorLevelChart = ({ data, isDarkMode }) => {
       });
   }, [floorLevelData]);
 
+  // Find best value floor categories based on ROI and price premium
+  const rankedCategories = useMemo(() => {
+    if (levelCategoryStats.length === 0) return [];
+    return [...levelCategoryStats]
+      .map(cat => ({
+        ...cat,
+        valueScore: (cat.avgROI || 0) - (cat.pricePremium * 0.5) // Higher ROI minus price premium = better value
+      }))
+      .sort((a, b) => b.valueScore - a.valueScore);
+  }, [levelCategoryStats]);
+
   const hasData = floorLevelData.length > 0;
+  const bestValueCategory = rankedCategories[0];
 
   if (!hasData) {
     return (
@@ -187,178 +272,6 @@ const FloorLevelChart = ({ data, isDarkMode }) => {
       </div>
     );
   }
-
-  // Enhanced color coding based on value analysis
-  const getPointColor = (point, dataType = 'price') => {
-    if (dataType === 'resale') {
-      // Green tones for resale values
-      return isDarkMode ? "rgba(34, 197, 94, 0.7)" : "rgba(22, 163, 74, 0.7)";
-    }
-    
-    // Color code based on price per sqm if available
-    if (point.pricePsf && point.sizeSqm) {
-      const pricePerSqm = point.pricePsf * 10.764; // Convert PSF to PSM
-      const avgPricePerSqm = floorLevelData
-        .filter(p => p.pricePsf && p.sizeSqm)
-        .reduce((sum, p) => sum + (p.pricePsf * 10.764), 0) / 
-        floorLevelData.filter(p => p.pricePsf && p.sizeSqm).length;
-      
-      const priceRatio = pricePerSqm / avgPricePerSqm;
-      
-      if (priceRatio >= 1.1) return isDarkMode ? "rgba(239, 68, 68, 0.8)" : "rgba(220, 38, 38, 0.8)"; // Expensive - Red
-      if (priceRatio >= 1.05) return isDarkMode ? "rgba(245, 158, 11, 0.8)" : "rgba(217, 119, 6, 0.8)"; // Above average - Orange
-      if (priceRatio >= 0.95) return isDarkMode ? "rgba(59, 130, 246, 0.8)" : "rgba(37, 99, 235, 0.8)"; // Average - Blue
-      return isDarkMode ? "rgba(34, 197, 94, 0.8)" : "rgba(22, 163, 74, 0.8)"; // Good value - Green
-    }
-    
-    // Default color if no price per sqm data
-    return isDarkMode ? "rgba(59, 130, 246, 0.6)" : "rgba(37, 99, 235, 0.6)";
-  };
-
-  const chartData = {
-    datasets: [
-      {
-        label: "SBF Price",
-        data: floorLevelData,
-        backgroundColor: floorLevelData.map(point => getPointColor(point, 'price')),
-        borderColor: floorLevelData.map(point => getPointColor(point, 'price')),
-        pointRadius: 4,
-        pointHoverRadius: 6,
-      },
-      ...(resaleData.length > 0 ? [{
-        label: "Est. Resale Value",
-        data: resaleData,
-        backgroundColor: resaleData.map(point => getPointColor(point, 'resale')),
-        borderColor: resaleData.map(point => getPointColor(point, 'resale')),
-        pointRadius: 4,
-        pointHoverRadius: 6,
-      }] : []),
-    ],
-  };
-
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: true,
-        position: "top",
-        labels: {
-          color: isDarkMode ? "#e2e8f0" : "#4a5568",
-          font: { size: 12 },
-        },
-      },
-      tooltip: {
-        backgroundColor: isDarkMode ? "rgba(30, 30, 30, 0.9)" : "rgba(255, 255, 255, 0.9)",
-        titleColor: isDarkMode ? "#fff" : "#000",
-        bodyColor: isDarkMode ? "#fff" : "#000",
-        borderColor: isDarkMode ? "#555" : "#ccc",
-        borderWidth: 1,
-        callbacks: {
-          title: (tooltipItems) => {
-            const point = tooltipItems[0].raw;
-            return `${point.project} (${point.flatType})`;
-          },
-          label: (tooltipItem) => {
-            const point = tooltipItem.raw;
-            const lines = [];
-            lines.push(
-              point.unit ? `Block ${point.block} • ${point.unit}` : `Block ${point.block}`
-            );
-            lines.push(`Floor Level: ${point.x}`);
-            
-            if (tooltipItem.datasetIndex === 0) {
-              lines.push(`SBF Price: ${formatCurrency(point.y)}`);
-              if (point.pricePsf) {
-                lines.push(`Price PSF: $${point.pricePsf}`);
-                if (point.sizeSqm) {
-                  const pricePerSqm = point.pricePsf * 10.764;
-                  lines.push(`Price PSM: $${pricePerSqm.toFixed(0)}`);
-                }
-              }
-              if (point.resaleValue) {
-                lines.push(`Est. Resale: ${formatCurrency(point.resaleValue)}`);
-                const roi = ((point.resaleValue - point.y) / point.y * 100);
-                lines.push(`Potential ROI: ${roi.toFixed(1)}%`);
-              }
-              
-              // Add floor premium analysis
-              const avgPriceForLevel = floorLevelData
-                .filter(p => Math.abs(p.x - point.x) <= 2)
-                .reduce((sum, p) => sum + p.y, 0) / 
-                floorLevelData.filter(p => Math.abs(p.x - point.x) <= 2).length;
-              
-              if (avgPriceForLevel && Math.abs(point.y - avgPriceForLevel) > avgPriceForLevel * 0.02) {
-                const premium = ((point.y - avgPriceForLevel) / avgPriceForLevel * 100);
-                lines.push(`Floor Premium: ${premium > 0 ? '+' : ''}${premium.toFixed(1)}%`);
-              }
-              
-            } else {
-              lines.push(`Est. Resale: ${formatCurrency(point.y)}`);
-              if (point.price) {
-                lines.push(`SBF Price: ${formatCurrency(point.price)}`);
-                const roi = ((point.y - point.price) / point.price * 100);
-                lines.push(`Potential ROI: ${roi.toFixed(1)}%`);
-              }
-            }
-            
-            return lines;
-          },
-        },
-      },
-    },
-    scales: {
-      x: {
-        type: "linear",
-        title: {
-          display: true,
-          text: "Floor Level",
-          color: isDarkMode ? "#e2e8f0" : "#4a5568",
-          font: { size: 12, weight: "bold" },
-        },
-        ticks: {
-          color: isDarkMode ? "#cbd5e1" : "#64748b",
-          stepSize: 1,
-          callback: function(value) {
-            return Math.floor(value) === value ? value : '';
-          },
-        },
-        grid: {
-          color: isDarkMode ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)",
-        },
-      },
-      y: {
-        title: {
-          display: true,
-          text: "Price (SGD)",
-          color: isDarkMode ? "#e2e8f0" : "#4a5568",
-          font: { size: 12, weight: "bold" },
-        },
-        ticks: {
-          color: isDarkMode ? "#cbd5e1" : "#64748b",
-          callback: function(value) {
-            return formatCurrencyShort(value);
-          },
-        },
-        grid: {
-          color: isDarkMode ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)",
-        },
-      },
-    },
-  };
-
-  // Find best value floor categories based on ROI and price premium
-  const rankedCategories = useMemo(() => {
-    return [...levelCategoryStats]
-      .map(cat => ({
-        ...cat,
-        valueScore: (cat.avgROI || 0) - (cat.pricePremium * 0.5) // Higher ROI minus price premium = better value
-      }))
-      .sort((a, b) => b.valueScore - a.valueScore);
-  }, [levelCategoryStats]);
-
-  const bestValueCategory = rankedCategories[0];
-  const worstValueCategory = rankedCategories[rankedCategories.length - 1];
 
   return (
     <div className="mb-6">
@@ -480,6 +393,50 @@ const FloorLevelChart = ({ data, isDarkMode }) => {
           }
         </p>
       </div>
+
+      {/* Relative Height Insights - New Section */}
+      {stats.hasMaxFloorData && (
+        <div className={`mb-6 p-4 rounded-lg ${isDarkMode ? "bg-purple-900/20 border border-purple-700" : "bg-purple-50 border border-purple-200"}`}>
+          <p className={`text-sm font-medium mb-3 ${isDarkMode ? "text-purple-200" : "text-purple-800"}`}>
+            🏢 Building Height Context:
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+            <div>
+              <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Avg Building Height</p>
+              <p className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                {stats.avgBuildingHeight} floors
+              </p>
+            </div>
+            <div>
+              <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Low in Building</p>
+              <p className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                {stats.relativeHeightDistribution.low} units
+              </p>
+            </div>
+            <div>
+              <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Mid in Building</p>
+              <p className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                {stats.relativeHeightDistribution.mid} units
+              </p>
+            </div>
+            <div>
+              <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>High in Building</p>
+              <p className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                {stats.relativeHeightDistribution.high} units
+              </p>
+            </div>
+          </div>
+          <p className={`text-xs ${isDarkMode ? "text-purple-300" : "text-purple-700"}`}>
+            💡 <strong>Understanding Height:</strong> {' '}
+            {stats.avgBuildingHeight <= 10 
+              ? "Mostly low-rise buildings (≤10 floors). Units at top floors get good views without long elevator waits."
+              : stats.avgBuildingHeight <= 20
+                ? "Mix of mid-rise buildings (11-20 floors). Mid-high units balance views with accessibility."
+                : "Primarily high-rise buildings (20+ floors). Consider elevator wait times and whether premium top-floor views justify the price difference."
+            }
+          </p>
+        </div>
+      )}
 
       {/* Simplified Floor Comparison - Ranked by Value */}
       <div className="mt-6">

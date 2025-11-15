@@ -127,7 +127,8 @@ export default [
         "STRAIGHT_DIST": 1.7489562313,
         "STRAIGHT_TIME": 20.987474775
       }
-    ]
+    ],
+    "max_floor_lvl": 11
   },
   {
     "sbfCode": "Jul2025",
@@ -253,7 +254,8 @@ export default [
         "STRAIGHT_DIST": 1.2362148991,
         "STRAIGHT_TIME": 14.8345787895
       }
-    ]
+    ],
+    "max_floor_lvl": 13
   },
   {
     "sbfCode": "Jul2025",
@@ -346,7 +348,8 @@ export default [
         "STRAIGHT_DIST": 1.7354912881,
         "STRAIGHT_TIME": 20.8258954572
       }
-    ]
+    ],
+    "max_floor_lvl": 18
   },
   {
     "sbfCode": "Jul2025",
@@ -382,7 +385,8 @@ export default [
     "top_date": "2027-09-01",
     "top_delay_date": "2027-09-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 13
   },
   {
     "sbfCode": "Jul2025",
@@ -418,7 +422,8 @@ export default [
     "top_date": "2027-09-01",
     "top_delay_date": "2027-09-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 12
   },
   {
     "sbfCode": "Jul2025",
@@ -454,7 +459,8 @@ export default [
     "top_date": "2028-03-01",
     "top_delay_date": "2028-03-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 14
   },
   {
     "sbfCode": "Jul2025",
@@ -490,7 +496,8 @@ export default [
     "top_date": "2028-03-01",
     "top_delay_date": "2028-03-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 5
   },
   {
     "sbfCode": "Jul2025",
@@ -616,7 +623,8 @@ export default [
         "STRAIGHT_DIST": 1.4814387307,
         "STRAIGHT_TIME": 17.7772647685
       }
-    ]
+    ],
+    "max_floor_lvl": 11
   },
   {
     "sbfCode": "Jul2025",
@@ -742,7 +750,8 @@ export default [
         "STRAIGHT_DIST": 1.4814387307,
         "STRAIGHT_TIME": 17.7772647685
       }
-    ]
+    ],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Jul2025",
@@ -778,7 +787,8 @@ export default [
     "top_date": "2028-03-01",
     "top_delay_date": "2028-03-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 6
   },
   {
     "sbfCode": "Jul2025",
@@ -904,7 +914,8 @@ export default [
         "STRAIGHT_DIST": 1.4814387307,
         "STRAIGHT_TIME": 17.7772647685
       }
-    ]
+    ],
+    "max_floor_lvl": 18
   },
   {
     "sbfCode": "Jul2025",
@@ -1063,7 +1074,8 @@ export default [
         "STRAIGHT_DIST": 2.0138286772,
         "STRAIGHT_TIME": 24.1659441266
       }
-    ]
+    ],
+    "max_floor_lvl": 13
   },
   {
     "sbfCode": "Jul2025",
@@ -1178,7 +1190,8 @@ export default [
         "STRAIGHT_DIST": 1.7032501799,
         "STRAIGHT_TIME": 20.439002159
       }
-    ]
+    ],
+    "max_floor_lvl": 10
   },
   {
     "sbfCode": "Jul2025",
@@ -1214,7 +1227,8 @@ export default [
     "top_date": "2028-03-01",
     "top_delay_date": "2028-03-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 20
   },
   {
     "sbfCode": "Jul2025",
@@ -1340,7 +1354,8 @@ export default [
         "STRAIGHT_DIST": 2.5813545015,
         "STRAIGHT_TIME": 30.9762540181
       }
-    ]
+    ],
+    "max_floor_lvl": 7
   },
   {
     "sbfCode": "Jul2025",
@@ -1466,7 +1481,8 @@ export default [
         "STRAIGHT_DIST": 1.3119443758,
         "STRAIGHT_TIME": 15.7433325099
       }
-    ]
+    ],
+    "max_floor_lvl": 9
   },
   {
     "sbfCode": "Jul2025",
@@ -1502,7 +1518,8 @@ export default [
     "top_date": "2026-12-01",
     "top_delay_date": "2026-12-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 16
   },
   {
     "sbfCode": "Jul2025",
@@ -1650,7 +1667,8 @@ export default [
         "STRAIGHT_DIST": 1.7711581251,
         "STRAIGHT_TIME": 21.2538975008
       }
-    ]
+    ],
+    "max_floor_lvl": 5
   },
   {
     "sbfCode": "Jul2025",
@@ -1809,7 +1827,8 @@ export default [
         "STRAIGHT_DIST": 1.4020071142,
         "STRAIGHT_TIME": 16.8240853705
       }
-    ]
+    ],
+    "max_floor_lvl": 4
   },
   {
     "sbfCode": "Jul2025",
@@ -1957,7 +1976,8 @@ export default [
         "STRAIGHT_DIST": 1.4020071142,
         "STRAIGHT_TIME": 16.8240853705
       }
-    ]
+    ],
+    "max_floor_lvl": 13
   },
   {
     "sbfCode": "Jul2025",
@@ -2116,7 +2136,8 @@ export default [
         "STRAIGHT_DIST": 1.4020071142,
         "STRAIGHT_TIME": 16.8240853705
       }
-    ]
+    ],
+    "max_floor_lvl": 17
   },
   {
     "sbfCode": "Jul2025",
@@ -2220,7 +2241,8 @@ export default [
         "STRAIGHT_DIST": 1.7281195885,
         "STRAIGHT_TIME": 20.737435062
       }
-    ]
+    ],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Jul2025",
@@ -2302,7 +2324,8 @@ export default [
         "STRAIGHT_DIST": 1.6079845753,
         "STRAIGHT_TIME": 19.2958149032
       }
-    ]
+    ],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Jul2025",
@@ -2384,7 +2407,8 @@ export default [
         "STRAIGHT_DIST": 1.6079845753,
         "STRAIGHT_TIME": 19.2958149032
       }
-    ]
+    ],
+    "max_floor_lvl": 23
   },
   {
     "sbfCode": "Jul2025",
@@ -2488,7 +2512,8 @@ export default [
         "STRAIGHT_DIST": 1.3259467096,
         "STRAIGHT_TIME": 15.9113605151
       }
-    ]
+    ],
+    "max_floor_lvl": 26
   },
   {
     "sbfCode": "Jul2025",
@@ -2592,7 +2617,8 @@ export default [
         "STRAIGHT_DIST": 1.3259467096,
         "STRAIGHT_TIME": 15.9113605151
       }
-    ]
+    ],
+    "max_floor_lvl": 21
   },
   {
     "sbfCode": "Jul2025",
@@ -2696,7 +2722,8 @@ export default [
         "STRAIGHT_DIST": 1.3259467096,
         "STRAIGHT_TIME": 15.9113605151
       }
-    ]
+    ],
+    "max_floor_lvl": 17
   },
   {
     "sbfCode": "Jul2025",
@@ -2800,7 +2827,8 @@ export default [
         "STRAIGHT_DIST": 1.3259467096,
         "STRAIGHT_TIME": 15.9113605151
       }
-    ]
+    ],
+    "max_floor_lvl": 16
   },
   {
     "sbfCode": "Jul2025",
@@ -2904,7 +2932,8 @@ export default [
         "STRAIGHT_DIST": 1.3259467096,
         "STRAIGHT_TIME": 15.9113605151
       }
-    ]
+    ],
+    "max_floor_lvl": 27
   },
   {
     "sbfCode": "Jul2025",
@@ -3008,7 +3037,8 @@ export default [
         "STRAIGHT_DIST": 1.3259467096,
         "STRAIGHT_TIME": 15.9113605151
       }
-    ]
+    ],
+    "max_floor_lvl": 19
   },
   {
     "sbfCode": "Jul2025",
@@ -3112,7 +3142,8 @@ export default [
         "STRAIGHT_DIST": 1.3259467096,
         "STRAIGHT_TIME": 15.9113605151
       }
-    ]
+    ],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Jul2025",
@@ -3216,7 +3247,8 @@ export default [
         "STRAIGHT_DIST": 1.3259467096,
         "STRAIGHT_TIME": 15.9113605151
       }
-    ]
+    ],
+    "max_floor_lvl": 6
   },
   {
     "sbfCode": "Jul2025",
@@ -3320,7 +3352,8 @@ export default [
         "STRAIGHT_DIST": 1.3259467096,
         "STRAIGHT_TIME": 15.9113605151
       }
-    ]
+    ],
+    "max_floor_lvl": 10
   },
   {
     "sbfCode": "Jul2025",
@@ -3424,7 +3457,8 @@ export default [
         "STRAIGHT_DIST": 1.9861613281,
         "STRAIGHT_TIME": 23.8339359374
       }
-    ]
+    ],
+    "max_floor_lvl": 24
   },
   {
     "sbfCode": "Jul2025",
@@ -3660,7 +3694,8 @@ export default [
         "STRAIGHT_DIST": 1.7581683325,
         "STRAIGHT_TIME": 21.0980199895
       }
-    ]
+    ],
+    "max_floor_lvl": 14
   },
   {
     "sbfCode": "Jul2025",
@@ -3742,7 +3777,8 @@ export default [
         "STRAIGHT_DIST": 1.3555591174,
         "STRAIGHT_TIME": 16.2667094093
       }
-    ]
+    ],
+    "max_floor_lvl": 8
   },
   {
     "sbfCode": "Jul2025",
@@ -3778,7 +3814,8 @@ export default [
     "top_date": "2028-06-01",
     "top_delay_date": "2028-06-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 6
   },
   {
     "sbfCode": "Jul2025",
@@ -3926,7 +3963,8 @@ export default [
         "STRAIGHT_DIST": 1.5521997913,
         "STRAIGHT_TIME": 18.626397496
       }
-    ]
+    ],
+    "max_floor_lvl": 17
   },
   {
     "sbfCode": "Jul2025",
@@ -3962,7 +4000,8 @@ export default [
     "top_date": "2027-09-01",
     "top_delay_date": "2027-09-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 22
   },
   {
     "sbfCode": "Jul2025",
@@ -3998,7 +4037,8 @@ export default [
     "top_date": "2027-09-01",
     "top_delay_date": "2027-09-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 8
   },
   {
     "sbfCode": "Jul2025",
@@ -4034,7 +4074,8 @@ export default [
     "top_date": "2027-09-01",
     "top_delay_date": "2027-09-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 13
   },
   {
     "sbfCode": "Jul2025",
@@ -4070,7 +4111,8 @@ export default [
     "top_date": "2027-09-01",
     "top_delay_date": "2027-09-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 12
   },
   {
     "sbfCode": "Jul2025",
@@ -4196,7 +4238,8 @@ export default [
         "STRAIGHT_DIST": 2.4356218003,
         "STRAIGHT_TIME": 29.2274616031
       }
-    ]
+    ],
+    "max_floor_lvl": 5
   },
   {
     "sbfCode": "Jul2025",
@@ -4311,7 +4354,8 @@ export default [
         "STRAIGHT_DIST": 1.2814380788,
         "STRAIGHT_TIME": 15.3772569452
       }
-    ]
+    ],
+    "max_floor_lvl": 5
   },
   {
     "sbfCode": "Jul2025",
@@ -4426,7 +4470,8 @@ export default [
         "STRAIGHT_DIST": 2.0052370494,
         "STRAIGHT_TIME": 24.0628445927
       }
-    ]
+    ],
+    "max_floor_lvl": 21
   },
   {
     "sbfCode": "Jul2025",
@@ -4563,7 +4608,8 @@ export default [
         "STRAIGHT_DIST": 1.4304689278,
         "STRAIGHT_TIME": 17.1656271341
       }
-    ]
+    ],
+    "max_floor_lvl": 11
   },
   {
     "sbfCode": "Jul2025",
@@ -4700,7 +4746,8 @@ export default [
         "STRAIGHT_DIST": 1.4304689278,
         "STRAIGHT_TIME": 17.1656271341
       }
-    ]
+    ],
+    "max_floor_lvl": 12
   },
   {
     "sbfCode": "Jul2025",
@@ -4736,7 +4783,8 @@ export default [
     "top_date": "2028-06-01",
     "top_delay_date": "2028-06-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Jul2025",
@@ -4772,7 +4820,8 @@ export default [
     "top_date": "2028-06-01",
     "top_delay_date": "2028-06-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 38
   },
   {
     "sbfCode": "Jul2025",
@@ -4898,7 +4947,8 @@ export default [
         "STRAIGHT_DIST": 1.7018658809,
         "STRAIGHT_TIME": 20.422390571
       }
-    ]
+    ],
+    "max_floor_lvl": 18
   },
   {
     "sbfCode": "Jul2025",
@@ -5046,7 +5096,8 @@ export default [
         "STRAIGHT_DIST": 2.0524321553,
         "STRAIGHT_TIME": 24.6291858637
       }
-    ]
+    ],
+    "max_floor_lvl": 34
   },
   {
     "sbfCode": "Jul2025",
@@ -5194,7 +5245,8 @@ export default [
         "STRAIGHT_DIST": 2.0524321553,
         "STRAIGHT_TIME": 24.6291858637
       }
-    ]
+    ],
+    "max_floor_lvl": 17
   },
   {
     "sbfCode": "Jul2025",
@@ -5342,7 +5394,8 @@ export default [
         "STRAIGHT_DIST": 2.0524321553,
         "STRAIGHT_TIME": 24.6291858637
       }
-    ]
+    ],
+    "max_floor_lvl": 10
   },
   {
     "sbfCode": "Jul2025",
@@ -5490,7 +5543,8 @@ export default [
         "STRAIGHT_DIST": 2.0524321553,
         "STRAIGHT_TIME": 24.6291858637
       }
-    ]
+    ],
+    "max_floor_lvl": 10
   },
   {
     "sbfCode": "Jul2025",
@@ -5638,7 +5692,8 @@ export default [
         "STRAIGHT_DIST": 2.0524321553,
         "STRAIGHT_TIME": 24.6291858637
       }
-    ]
+    ],
+    "max_floor_lvl": 18
   },
   {
     "sbfCode": "Jul2025",
@@ -5764,7 +5819,8 @@ export default [
         "STRAIGHT_DIST": 1.7018658809,
         "STRAIGHT_TIME": 20.422390571
       }
-    ]
+    ],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Jul2025",
@@ -5890,7 +5946,8 @@ export default [
         "STRAIGHT_DIST": 1.7018658809,
         "STRAIGHT_TIME": 20.422390571
       }
-    ]
+    ],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Jul2025",
@@ -6016,7 +6073,8 @@ export default [
         "STRAIGHT_DIST": 1.7018658809,
         "STRAIGHT_TIME": 20.422390571
       }
-    ]
+    ],
+    "max_floor_lvl": 10
   },
   {
     "sbfCode": "Jul2025",
@@ -6142,7 +6200,8 @@ export default [
         "STRAIGHT_DIST": 1.7018658809,
         "STRAIGHT_TIME": 20.422390571
       }
-    ]
+    ],
+    "max_floor_lvl": 18
   },
   {
     "sbfCode": "Jul2025",
@@ -6268,7 +6327,8 @@ export default [
         "STRAIGHT_DIST": 1.7018658809,
         "STRAIGHT_TIME": 20.422390571
       }
-    ]
+    ],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Jul2025",
@@ -6460,7 +6520,8 @@ export default [
         "STRAIGHT_DIST": 1.2677948192,
         "STRAIGHT_TIME": 15.2135378308
       }
-    ]
+    ],
+    "max_floor_lvl": 24
   },
   {
     "sbfCode": "Jul2025",
@@ -6553,7 +6614,8 @@ export default [
         "STRAIGHT_DIST": 2.0224148503,
         "STRAIGHT_TIME": 24.2689782038
       }
-    ]
+    ],
+    "max_floor_lvl": 6
   },
   {
     "sbfCode": "Jul2025",
@@ -6668,7 +6730,8 @@ export default [
         "STRAIGHT_DIST": 1.991375608,
         "STRAIGHT_TIME": 23.896507296
       }
-    ]
+    ],
+    "max_floor_lvl": 12
   },
   {
     "sbfCode": "Jul2025",
@@ -6739,7 +6802,8 @@ export default [
         "STRAIGHT_DIST": 1.4315640236,
         "STRAIGHT_TIME": 17.1787682838
       }
-    ]
+    ],
+    "max_floor_lvl": 12
   },
   {
     "sbfCode": "Jul2025",
@@ -6775,7 +6839,8 @@ export default [
     "top_date": "2028-12-01",
     "top_delay_date": "2028-12-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 29
   },
   {
     "sbfCode": "Jul2025",
@@ -6811,7 +6876,8 @@ export default [
     "top_date": "2028-12-01",
     "top_delay_date": "2028-12-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 9
   },
   {
     "sbfCode": "Jul2025",
@@ -6948,7 +7014,8 @@ export default [
         "STRAIGHT_DIST": 1.0028005131,
         "STRAIGHT_TIME": 12.0336061575
       }
-    ]
+    ],
+    "max_floor_lvl": 11
   },
   {
     "sbfCode": "Jul2025",
@@ -7052,7 +7119,8 @@ export default [
         "STRAIGHT_DIST": 1.9864440777,
         "STRAIGHT_TIME": 23.8373289329
       }
-    ]
+    ],
+    "max_floor_lvl": 18
   },
   {
     "sbfCode": "Jul2025",
@@ -7255,7 +7323,8 @@ export default [
         "STRAIGHT_DIST": 1.5084819927,
         "STRAIGHT_TIME": 18.1017839124
       }
-    ]
+    ],
+    "max_floor_lvl": 21
   },
   {
     "sbfCode": "Jul2025",
@@ -7425,7 +7494,8 @@ export default [
         "STRAIGHT_DIST": 2.0092980715,
         "STRAIGHT_TIME": 24.111576858
       }
-    ]
+    ],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Jul2025",
@@ -7584,7 +7654,8 @@ export default [
         "STRAIGHT_DIST": 2.0327689095,
         "STRAIGHT_TIME": 24.3932269141
       }
-    ]
+    ],
+    "max_floor_lvl": 16
   },
   {
     "sbfCode": "Jul2025",
@@ -7732,7 +7803,8 @@ export default [
         "STRAIGHT_DIST": 1.2397497029,
         "STRAIGHT_TIME": 14.8769964345
       }
-    ]
+    ],
+    "max_floor_lvl": 8
   },
   {
     "sbfCode": "Jul2025",
@@ -7847,7 +7919,8 @@ export default [
         "STRAIGHT_DIST": 1.9327339495,
         "STRAIGHT_TIME": 23.1928073945
       }
-    ]
+    ],
+    "max_floor_lvl": 21
   },
   {
     "sbfCode": "Jul2025",
@@ -7962,7 +8035,8 @@ export default [
         "STRAIGHT_DIST": 1.9327339495,
         "STRAIGHT_TIME": 23.1928073945
       }
-    ]
+    ],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Jul2025",
@@ -8077,7 +8151,8 @@ export default [
         "STRAIGHT_DIST": 1.9327339495,
         "STRAIGHT_TIME": 23.1928073945
       }
-    ]
+    ],
+    "max_floor_lvl": 11
   },
   {
     "sbfCode": "Jul2025",
@@ -8192,7 +8267,8 @@ export default [
         "STRAIGHT_DIST": 1.9327339495,
         "STRAIGHT_TIME": 23.1928073945
       }
-    ]
+    ],
+    "max_floor_lvl": 5
   },
   {
     "sbfCode": "Jul2025",
@@ -8307,7 +8383,8 @@ export default [
         "STRAIGHT_DIST": 1.9327339495,
         "STRAIGHT_TIME": 23.1928073945
       }
-    ]
+    ],
+    "max_floor_lvl": 6
   },
   {
     "sbfCode": "Jul2025",
@@ -8411,7 +8488,8 @@ export default [
         "STRAIGHT_DIST": 1.9327339495,
         "STRAIGHT_TIME": 23.1928073945
       }
-    ]
+    ],
+    "max_floor_lvl": 6
   },
   {
     "sbfCode": "Jul2025",
@@ -8537,7 +8615,8 @@ export default [
         "STRAIGHT_DIST": 1.9904041951,
         "STRAIGHT_TIME": 23.8848503411
       }
-    ]
+    ],
+    "max_floor_lvl": 12
   },
   {
     "sbfCode": "Jul2025",
@@ -8652,7 +8731,8 @@ export default [
         "STRAIGHT_DIST": 1.9656675517,
         "STRAIGHT_TIME": 23.5880106208
       }
-    ]
+    ],
+    "max_floor_lvl": 7
   },
   {
     "sbfCode": "Jul2025",
@@ -8767,7 +8847,8 @@ export default [
         "STRAIGHT_DIST": 2.3006530927,
         "STRAIGHT_TIME": 27.6078371121
       }
-    ]
+    ],
+    "max_floor_lvl": 7
   },
   {
     "sbfCode": "Jul2025",
@@ -8893,7 +8974,8 @@ export default [
         "STRAIGHT_DIST": 2.1005960353,
         "STRAIGHT_TIME": 25.207152424
       }
-    ]
+    ],
+    "max_floor_lvl": 4
   },
   {
     "sbfCode": "Jul2025",
@@ -9019,7 +9101,8 @@ export default [
         "STRAIGHT_DIST": 1.1961688334,
         "STRAIGHT_TIME": 14.3540260009
       }
-    ]
+    ],
+    "max_floor_lvl": 18
   },
   {
     "sbfCode": "Jul2025",
@@ -9055,7 +9138,8 @@ export default [
     "top_date": "2027-06-01",
     "top_delay_date": "2027-06-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 14
   },
   {
     "sbfCode": "Jul2025",
@@ -9170,7 +9254,8 @@ export default [
         "STRAIGHT_DIST": 1.6602323837,
         "STRAIGHT_TIME": 19.9227886038
       }
-    ]
+    ],
+    "max_floor_lvl": 13
   },
   {
     "sbfCode": "Jul2025",
@@ -9206,7 +9291,8 @@ export default [
     "top_date": "2027-12-01",
     "top_delay_date": "2027-12-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 14
   },
   {
     "sbfCode": "Jul2025",
@@ -9242,7 +9328,8 @@ export default [
     "top_date": "2027-09-01",
     "top_delay_date": "2027-09-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 10
   },
   {
     "sbfCode": "Jul2025",
@@ -9346,7 +9433,8 @@ export default [
         "STRAIGHT_DIST": 1.555055447,
         "STRAIGHT_TIME": 18.6606653642
       }
-    ]
+    ],
+    "max_floor_lvl": 9
   },
   {
     "sbfCode": "Jul2025",
@@ -9505,7 +9593,8 @@ export default [
         "STRAIGHT_DIST": 1.9292642053,
         "STRAIGHT_TIME": 23.1511704632
       }
-    ]
+    ],
+    "max_floor_lvl": 27
   },
   {
     "sbfCode": "Jul2025",
@@ -9620,7 +9709,8 @@ export default [
         "STRAIGHT_DIST": 1.4272751084,
         "STRAIGHT_TIME": 17.1273013006
       }
-    ]
+    ],
+    "max_floor_lvl": 15
   },
   {
     "sbfCode": "Jul2025",
@@ -9768,7 +9858,8 @@ export default [
         "STRAIGHT_DIST": 1.5537796185,
         "STRAIGHT_TIME": 18.6453554218
       }
-    ]
+    ],
+    "max_floor_lvl": 12
   },
   {
     "sbfCode": "Jul2025",
@@ -9804,7 +9895,8 @@ export default [
     "top_date": "2029-09-01",
     "top_delay_date": "2029-09-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 9
   },
   {
     "sbfCode": "Jul2025",
@@ -9840,7 +9932,8 @@ export default [
     "top_date": "2029-09-01",
     "top_delay_date": "2029-09-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 34
   },
   {
     "sbfCode": "Jul2025",
@@ -9988,7 +10081,8 @@ export default [
         "STRAIGHT_DIST": 1.5907595065,
         "STRAIGHT_TIME": 19.0891140784
       }
-    ]
+    ],
+    "max_floor_lvl": 31
   },
   {
     "sbfCode": "Jul2025",
@@ -10158,7 +10252,8 @@ export default [
         "STRAIGHT_DIST": 1.5286796838,
         "STRAIGHT_TIME": 18.3441562052
       }
-    ]
+    ],
+    "max_floor_lvl": 35
   },
   {
     "sbfCode": "Jul2025",
@@ -10295,7 +10390,8 @@ export default [
         "STRAIGHT_DIST": 1.7076898665,
         "STRAIGHT_TIME": 20.4922783979
       }
-    ]
+    ],
+    "max_floor_lvl": 12
   },
   {
     "sbfCode": "Jul2025",
@@ -10432,7 +10528,8 @@ export default [
         "STRAIGHT_DIST": 1.7194203745,
         "STRAIGHT_TIME": 20.6330444945
       }
-    ]
+    ],
+    "max_floor_lvl": 34
   },
   {
     "sbfCode": "Jul2025",
@@ -10569,7 +10666,8 @@ export default [
         "STRAIGHT_DIST": 1.7194203745,
         "STRAIGHT_TIME": 20.6330444945
       }
-    ]
+    ],
+    "max_floor_lvl": 33
   },
   {
     "sbfCode": "Jul2025",
@@ -10605,7 +10703,8 @@ export default [
     "top_date": "2028-06-01",
     "top_delay_date": "2028-06-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Jul2025",
@@ -10709,7 +10808,8 @@ export default [
         "STRAIGHT_DIST": 2.0525295831,
         "STRAIGHT_TIME": 24.6303549977
       }
-    ]
+    ],
+    "max_floor_lvl": 13
   },
   {
     "sbfCode": "Feb2025",
@@ -10822,7 +10922,8 @@ export default [
         "STRAIGHT_DIST": 1.837729705,
         "STRAIGHT_TIME": 22.0527564603
       }
-    ]
+    ],
+    "max_floor_lvl": 3
   },
   {
     "sbfCode": "Feb2025",
@@ -10856,7 +10957,8 @@ export default [
     "top_date": "2027-10-01",
     "top_delay_date": "2027-10-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 6
   },
   {
     "sbfCode": "Feb2025",
@@ -10890,7 +10992,8 @@ export default [
     "top_date": "2027-10-01",
     "top_delay_date": "2027-10-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 8
   },
   {
     "sbfCode": "Feb2025",
@@ -10924,7 +11027,8 @@ export default [
     "top_date": "2027-10-01",
     "top_delay_date": "2027-10-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 28
   },
   {
     "sbfCode": "Feb2025",
@@ -10958,7 +11062,8 @@ export default [
     "top_date": "2027-10-01",
     "top_delay_date": "2027-10-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 16
   },
   {
     "sbfCode": "Feb2025",
@@ -10992,7 +11097,8 @@ export default [
     "top_date": "2027-10-01",
     "top_delay_date": "2027-10-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 24
   },
   {
     "sbfCode": "Feb2025",
@@ -11026,7 +11132,8 @@ export default [
     "top_date": "2027-10-01",
     "top_delay_date": "2027-10-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 4
   },
   {
     "sbfCode": "Feb2025",
@@ -11060,7 +11167,8 @@ export default [
     "top_date": "2027-10-01",
     "top_delay_date": "2027-10-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 16
   },
   {
     "sbfCode": "Feb2025",
@@ -11094,7 +11202,8 @@ export default [
     "top_date": "2027-10-01",
     "top_delay_date": "2027-10-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 19
   },
   {
     "sbfCode": "Feb2025",
@@ -11128,7 +11237,8 @@ export default [
     "top_date": "2027-10-01",
     "top_delay_date": "2027-10-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 3
   },
   {
     "sbfCode": "Feb2025",
@@ -11162,7 +11272,8 @@ export default [
     "top_date": "2027-10-01",
     "top_delay_date": "2027-10-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 11
   },
   {
     "sbfCode": "Feb2025",
@@ -11196,7 +11307,8 @@ export default [
     "top_date": "2027-10-01",
     "top_delay_date": "2027-10-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 12
   },
   {
     "sbfCode": "Feb2025",
@@ -11331,7 +11443,8 @@ export default [
         "STRAIGHT_DIST": 1.1810757911,
         "STRAIGHT_TIME": 14.1729094931
       }
-    ]
+    ],
+    "max_floor_lvl": 13
   },
   {
     "sbfCode": "Feb2025",
@@ -11422,7 +11535,8 @@ export default [
         "STRAIGHT_DIST": 2.0444764917,
         "STRAIGHT_TIME": 24.5337179
       }
-    ]
+    ],
+    "max_floor_lvl": 18
   },
   {
     "sbfCode": "Feb2025",
@@ -11546,7 +11660,8 @@ export default [
         "STRAIGHT_DIST": 1.5238192862,
         "STRAIGHT_TIME": 18.2858314349
       }
-    ]
+    ],
+    "max_floor_lvl": 16
   },
   {
     "sbfCode": "Feb2025",
@@ -11670,7 +11785,8 @@ export default [
         "STRAIGHT_DIST": 1.5238192862,
         "STRAIGHT_TIME": 18.2858314349
       }
-    ]
+    ],
+    "max_floor_lvl": 9
   },
   {
     "sbfCode": "Feb2025",
@@ -11794,7 +11910,8 @@ export default [
         "STRAIGHT_DIST": 1.9003553631,
         "STRAIGHT_TIME": 22.8042643572
       }
-    ]
+    ],
+    "max_floor_lvl": 16
   },
   {
     "sbfCode": "Feb2025",
@@ -11951,7 +12068,8 @@ export default [
         "STRAIGHT_DIST": 2.0438912921,
         "STRAIGHT_TIME": 24.5266955053
       }
-    ]
+    ],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Feb2025",
@@ -12075,7 +12193,8 @@ export default [
         "STRAIGHT_DIST": 1.4974320578,
         "STRAIGHT_TIME": 17.969184694
       }
-    ]
+    ],
+    "max_floor_lvl": 4
   },
   {
     "sbfCode": "Feb2025",
@@ -12210,7 +12329,8 @@ export default [
         "STRAIGHT_DIST": 1.4201638128,
         "STRAIGHT_TIME": 17.0419657537
       }
-    ]
+    ],
+    "max_floor_lvl": 12
   },
   {
     "sbfCode": "Feb2025",
@@ -12345,7 +12465,8 @@ export default [
         "STRAIGHT_DIST": 2.1379188683,
         "STRAIGHT_TIME": 25.6550264199
       }
-    ]
+    ],
+    "max_floor_lvl": 21
   },
   {
     "sbfCode": "Feb2025",
@@ -12469,7 +12590,8 @@ export default [
         "STRAIGHT_DIST": 2.0079731534,
         "STRAIGHT_TIME": 24.0956778406
       }
-    ]
+    ],
+    "max_floor_lvl": 10
   },
   {
     "sbfCode": "Feb2025",
@@ -12593,7 +12715,8 @@ export default [
         "STRAIGHT_DIST": 1.9743583019,
         "STRAIGHT_TIME": 23.6922996229
       }
-    ]
+    ],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Feb2025",
@@ -12695,7 +12818,8 @@ export default [
         "STRAIGHT_DIST": 1.6152924272,
         "STRAIGHT_TIME": 19.3835091268
       }
-    ]
+    ],
+    "max_floor_lvl": 19
   },
   {
     "sbfCode": "Feb2025",
@@ -12786,7 +12910,8 @@ export default [
         "STRAIGHT_DIST": 1.5532013777,
         "STRAIGHT_TIME": 18.6384165326
       }
-    ]
+    ],
+    "max_floor_lvl": 7
   },
   {
     "sbfCode": "Feb2025",
@@ -12865,7 +12990,8 @@ export default [
         "STRAIGHT_DIST": 1.6550271069,
         "STRAIGHT_TIME": 19.8603252831
       }
-    ]
+    ],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Feb2025",
@@ -12978,7 +13104,8 @@ export default [
         "STRAIGHT_DIST": 2.4644719363,
         "STRAIGHT_TIME": 29.5736632359
       }
-    ]
+    ],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Feb2025",
@@ -13069,7 +13196,8 @@ export default [
         "STRAIGHT_DIST": 1.7357798836,
         "STRAIGHT_TIME": 20.8293586028
       }
-    ]
+    ],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Feb2025",
@@ -13204,7 +13332,8 @@ export default [
         "STRAIGHT_DIST": 1.9321358197,
         "STRAIGHT_TIME": 23.1856298359
       }
-    ]
+    ],
+    "max_floor_lvl": 14
   },
   {
     "sbfCode": "Feb2025",
@@ -13350,7 +13479,8 @@ export default [
         "STRAIGHT_DIST": 1.8791689588,
         "STRAIGHT_TIME": 22.5500275052
       }
-    ]
+    ],
+    "max_floor_lvl": 20
   },
   {
     "sbfCode": "Feb2025",
@@ -13485,7 +13615,8 @@ export default [
         "STRAIGHT_DIST": 1.2309027111,
         "STRAIGHT_TIME": 14.7708325334
       }
-    ]
+    ],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Feb2025",
@@ -13620,7 +13751,8 @@ export default [
         "STRAIGHT_DIST": 1.2713367734,
         "STRAIGHT_TIME": 15.2560412813
       }
-    ]
+    ],
+    "max_floor_lvl": 14
   },
   {
     "sbfCode": "Feb2025",
@@ -13654,7 +13786,8 @@ export default [
     "top_date": "2027-09-01",
     "top_delay_date": "2027-09-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 18
   },
   {
     "sbfCode": "Feb2025",
@@ -13789,7 +13922,8 @@ export default [
         "STRAIGHT_DIST": 2.0724422618,
         "STRAIGHT_TIME": 24.869307141
       }
-    ]
+    ],
+    "max_floor_lvl": 11
   },
   {
     "sbfCode": "Feb2025",
@@ -13891,7 +14025,8 @@ export default [
         "STRAIGHT_DIST": 1.187198431,
         "STRAIGHT_TIME": 14.2463811719
       }
-    ]
+    ],
+    "max_floor_lvl": 19
   },
   {
     "sbfCode": "Feb2025",
@@ -14004,7 +14139,8 @@ export default [
         "STRAIGHT_DIST": 1.9732590299,
         "STRAIGHT_TIME": 23.6791083593
       }
-    ]
+    ],
+    "max_floor_lvl": 40
   },
   {
     "sbfCode": "Feb2025",
@@ -14128,7 +14264,8 @@ export default [
         "STRAIGHT_DIST": 2.0673366932,
         "STRAIGHT_TIME": 24.8080403187
       }
-    ]
+    ],
+    "max_floor_lvl": 19
   },
   {
     "sbfCode": "Feb2025",
@@ -14340,7 +14477,8 @@ export default [
         "STRAIGHT_DIST": 1.5072781082,
         "STRAIGHT_TIME": 18.0873372987
       }
-    ]
+    ],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Feb2025",
@@ -14464,7 +14602,8 @@ export default [
         "STRAIGHT_DIST": 2.0777344755,
         "STRAIGHT_TIME": 24.9328137063
       }
-    ]
+    ],
+    "max_floor_lvl": 10
   },
   {
     "sbfCode": "Feb2025",
@@ -14566,7 +14705,8 @@ export default [
         "STRAIGHT_DIST": 1.8950021823,
         "STRAIGHT_TIME": 22.7400261879
       }
-    ]
+    ],
+    "max_floor_lvl": 4
   },
   {
     "sbfCode": "Feb2025",
@@ -14679,7 +14819,8 @@ export default [
         "STRAIGHT_DIST": 1.892546434,
         "STRAIGHT_TIME": 22.710557208
       }
-    ]
+    ],
+    "max_floor_lvl": 18
   },
   {
     "sbfCode": "Feb2025",
@@ -14792,7 +14933,8 @@ export default [
         "STRAIGHT_DIST": 1.4202815364,
         "STRAIGHT_TIME": 17.0433784369
       }
-    ]
+    ],
+    "max_floor_lvl": 17
   },
   {
     "sbfCode": "Feb2025",
@@ -14861,7 +15003,8 @@ export default [
         "STRAIGHT_DIST": 1.5157153132,
         "STRAIGHT_TIME": 18.1885837581
       }
-    ]
+    ],
+    "max_floor_lvl": 14
   },
   {
     "sbfCode": "Feb2025",
@@ -14895,7 +15038,8 @@ export default [
     "top_date": "Completed",
     "top_delay_date": "Completed",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 13
   },
   {
     "sbfCode": "Feb2025",
@@ -14986,7 +15130,8 @@ export default [
         "STRAIGHT_DIST": 2.0083523062,
         "STRAIGHT_TIME": 24.1002276746
       }
-    ]
+    ],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Feb2025",
@@ -15121,7 +15266,8 @@ export default [
         "STRAIGHT_DIST": 1.2992640502,
         "STRAIGHT_TIME": 15.5911686027
       }
-    ]
+    ],
+    "max_floor_lvl": 15
   },
   {
     "sbfCode": "Feb2025",
@@ -15344,7 +15490,8 @@ export default [
         "STRAIGHT_DIST": 1.4227288634,
         "STRAIGHT_TIME": 17.0727463605
       }
-    ]
+    ],
+    "max_floor_lvl": 13
   },
   {
     "sbfCode": "Feb2025",
@@ -15457,7 +15604,8 @@ export default [
         "STRAIGHT_DIST": 1.8357994312,
         "STRAIGHT_TIME": 22.0295931741
       }
-    ]
+    ],
+    "max_floor_lvl": 23
   },
   {
     "sbfCode": "Feb2025",
@@ -15636,7 +15784,8 @@ export default [
         "STRAIGHT_DIST": 1.6084977337,
         "STRAIGHT_TIME": 19.3019728045
       }
-    ]
+    ],
+    "max_floor_lvl": 19
   },
   {
     "sbfCode": "Feb2025",
@@ -15804,7 +15953,8 @@ export default [
         "STRAIGHT_DIST": 1.4614160464,
         "STRAIGHT_TIME": 17.5369925568
       }
-    ]
+    ],
+    "max_floor_lvl": 14
   },
   {
     "sbfCode": "Feb2025",
@@ -15972,7 +16122,8 @@ export default [
         "STRAIGHT_DIST": 1.8818562117,
         "STRAIGHT_TIME": 22.5822745404
       }
-    ]
+    ],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Feb2025",
@@ -16074,7 +16225,8 @@ export default [
         "STRAIGHT_DIST": 1.9644911276,
         "STRAIGHT_TIME": 23.5738935312
       }
-    ]
+    ],
+    "max_floor_lvl": 18
   },
   {
     "sbfCode": "Feb2025",
@@ -16242,7 +16394,8 @@ export default [
         "STRAIGHT_DIST": 1.8044907974,
         "STRAIGHT_TIME": 21.6538895691
       }
-    ]
+    ],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Feb2025",
@@ -16432,7 +16585,8 @@ export default [
         "STRAIGHT_DIST": 1.7074894043,
         "STRAIGHT_TIME": 20.4898728518
       }
-    ]
+    ],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Feb2025",
@@ -16523,7 +16677,8 @@ export default [
         "STRAIGHT_DIST": 1.6769345107,
         "STRAIGHT_TIME": 20.1232141286
       }
-    ]
+    ],
+    "max_floor_lvl": 12
   },
   {
     "sbfCode": "Feb2025",
@@ -16647,7 +16802,8 @@ export default [
         "STRAIGHT_DIST": 2.0469106568,
         "STRAIGHT_TIME": 24.562927881
       }
-    ]
+    ],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Feb2025",
@@ -16749,7 +16905,8 @@ export default [
         "STRAIGHT_DIST": 1.9656675517,
         "STRAIGHT_TIME": 23.5880106208
       }
-    ]
+    ],
+    "max_floor_lvl": 16
   },
   {
     "sbfCode": "Feb2025",
@@ -16851,7 +17008,8 @@ export default [
         "STRAIGHT_DIST": 2.2189721089,
         "STRAIGHT_TIME": 26.6276653071
       }
-    ]
+    ],
+    "max_floor_lvl": 5
   },
   {
     "sbfCode": "Feb2025",
@@ -16953,7 +17111,8 @@ export default [
         "STRAIGHT_DIST": 2.2189721089,
         "STRAIGHT_TIME": 26.6276653071
       }
-    ]
+    ],
+    "max_floor_lvl": 18
   },
   {
     "sbfCode": "Feb2025",
@@ -17066,7 +17225,8 @@ export default [
         "STRAIGHT_DIST": 1.8404023634,
         "STRAIGHT_TIME": 22.0848283605
       }
-    ]
+    ],
+    "max_floor_lvl": 16
   },
   {
     "sbfCode": "Feb2025",
@@ -17190,7 +17350,8 @@ export default [
         "STRAIGHT_DIST": 1.1927621438,
         "STRAIGHT_TIME": 14.3131457257
       }
-    ]
+    ],
+    "max_floor_lvl": 8
   },
   {
     "sbfCode": "Feb2025",
@@ -17224,7 +17385,8 @@ export default [
     "top_date": "2027-06-01",
     "top_delay_date": "2027-06-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 9
   },
   {
     "sbfCode": "Feb2025",
@@ -17258,7 +17420,8 @@ export default [
     "top_date": "2027-06-01",
     "top_delay_date": "2027-06-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 8
   },
   {
     "sbfCode": "Feb2025",
@@ -17292,7 +17455,8 @@ export default [
     "top_date": "2027-06-01",
     "top_delay_date": "2027-06-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 7
   },
   {
     "sbfCode": "Feb2025",
@@ -17405,7 +17569,8 @@ export default [
         "STRAIGHT_DIST": 1.8865702414,
         "STRAIGHT_TIME": 22.6388428973
       }
-    ]
+    ],
+    "max_floor_lvl": 24
   },
   {
     "sbfCode": "Feb2025",
@@ -17540,7 +17705,8 @@ export default [
         "STRAIGHT_DIST": 1.5157327676,
         "STRAIGHT_TIME": 18.1887932113
       }
-    ]
+    ],
+    "max_floor_lvl": 21
   },
   {
     "sbfCode": "Feb2025",
@@ -17653,7 +17819,8 @@ export default [
         "STRAIGHT_DIST": 1.7460306101,
         "STRAIGHT_TIME": 20.9523673217
       }
-    ]
+    ],
+    "max_floor_lvl": 11
   },
   {
     "sbfCode": "Feb2025",
@@ -17687,7 +17854,8 @@ export default [
     "top_date": "2027-12-01",
     "top_delay_date": "2027-12-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 5
   },
   {
     "sbfCode": "Feb2025",
@@ -17811,7 +17979,8 @@ export default [
         "STRAIGHT_DIST": 1.758121139,
         "STRAIGHT_TIME": 21.0974536682
       }
-    ]
+    ],
+    "max_floor_lvl": 19
   },
   {
     "sbfCode": "Feb2025",
@@ -17935,7 +18104,8 @@ export default [
         "STRAIGHT_DIST": 1.6744231442,
         "STRAIGHT_TIME": 20.0930777303
       }
-    ]
+    ],
+    "max_floor_lvl": 6
   },
   {
     "sbfCode": "Feb2025",
@@ -17969,7 +18139,8 @@ export default [
     "top_date": "2027-09-01",
     "top_delay_date": "2027-09-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Feb2025",
@@ -18003,7 +18174,8 @@ export default [
     "top_date": "2027-09-01",
     "top_delay_date": "2027-09-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 19
   },
   {
     "sbfCode": "Feb2025",
@@ -18037,7 +18209,8 @@ export default [
     "top_date": "2027-09-01",
     "top_delay_date": "2027-09-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 22
   },
   {
     "sbfCode": "Feb2025",
@@ -18071,7 +18244,8 @@ export default [
     "top_date": "2027-09-01",
     "top_delay_date": "2027-09-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Feb2025",
@@ -18105,7 +18279,8 @@ export default [
     "top_date": "2027-09-01",
     "top_delay_date": "2027-09-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 12
   },
   {
     "sbfCode": "Feb2025",
@@ -18139,7 +18314,8 @@ export default [
     "top_date": "2027-09-01",
     "top_delay_date": "2027-09-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 6
   },
   {
     "sbfCode": "Feb2025",
@@ -18173,7 +18349,8 @@ export default [
     "top_date": "2027-09-01",
     "top_delay_date": "2027-09-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": 15
   },
   {
     "sbfCode": "Feb2025",
@@ -18207,7 +18384,8 @@ export default [
     "top_date": "2027-09-01",
     "top_delay_date": "2027-09-01",
     "schools_within_1km": [],
-    "schools_within_2km": []
+    "schools_within_2km": [],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Feb2025",
@@ -18320,7 +18498,8 @@ export default [
         "STRAIGHT_DIST": 1.9128920013,
         "STRAIGHT_TIME": 22.954704015
       }
-    ]
+    ],
+    "max_floor_lvl": 6
   },
   {
     "sbfCode": "Feb2025",
@@ -18466,7 +18645,8 @@ export default [
         "STRAIGHT_DIST": 1.4415148516,
         "STRAIGHT_TIME": 17.2981782186
       }
-    ]
+    ],
+    "max_floor_lvl": 12
   },
   {
     "sbfCode": "Feb2025",
@@ -18612,7 +18792,8 @@ export default [
         "STRAIGHT_DIST": 1.9995692604,
         "STRAIGHT_TIME": 23.9948311253
       }
-    ]
+    ],
+    "max_floor_lvl": 27
   },
   {
     "sbfCode": "Feb2025",
@@ -18769,7 +18950,8 @@ export default [
         "STRAIGHT_DIST": 1.8970158505,
         "STRAIGHT_TIME": 22.7641902058
       }
-    ]
+    ],
+    "max_floor_lvl": 29
   },
   {
     "sbfCode": "Feb2025",
@@ -18882,7 +19064,8 @@ export default [
         "STRAIGHT_DIST": 1.3330200722,
         "STRAIGHT_TIME": 15.9962408666
       }
-    ]
+    ],
+    "max_floor_lvl": 4
   },
   {
     "sbfCode": "Feb2025",
@@ -19050,7 +19233,8 @@ export default [
         "STRAIGHT_DIST": 2.0527544933,
         "STRAIGHT_TIME": 24.633053919
       }
-    ]
+    ],
+    "max_floor_lvl": 10
   },
   {
     "sbfCode": "Feb2025",
@@ -19196,7 +19380,8 @@ export default [
         "STRAIGHT_DIST": 1.2528173019,
         "STRAIGHT_TIME": 15.0338076227
       }
-    ]
+    ],
+    "max_floor_lvl": 20
   },
   {
     "sbfCode": "Feb2025",
@@ -19298,7 +19483,8 @@ export default [
         "STRAIGHT_DIST": 2.0947069735,
         "STRAIGHT_TIME": 25.136483682
       }
-    ]
+    ],
+    "max_floor_lvl": 24
   },
   {
     "sbfCode": "Feb2025",
@@ -19400,7 +19586,8 @@ export default [
         "STRAIGHT_DIST": 2.0947069735,
         "STRAIGHT_TIME": 25.136483682
       }
-    ]
+    ],
+    "max_floor_lvl": 37
   },
   {
     "sbfCode": "Feb2025",
@@ -19502,7 +19689,8 @@ export default [
         "STRAIGHT_DIST": 2.0947069735,
         "STRAIGHT_TIME": 25.136483682
       }
-    ]
+    ],
+    "max_floor_lvl": 34
   },
   {
     "sbfCode": "Feb2025",
@@ -19593,7 +19781,8 @@ export default [
         "STRAIGHT_DIST": 1.9899728467,
         "STRAIGHT_TIME": 23.8796741601
       }
-    ]
+    ],
+    "max_floor_lvl": 12
   },
   {
     "sbfCode": "Feb2025",
@@ -19695,7 +19884,8 @@ export default [
         "STRAIGHT_DIST": 2.0947069735,
         "STRAIGHT_TIME": 25.136483682
       }
-    ]
+    ],
+    "max_floor_lvl": 29
   },
   {
     "sbfCode": "Feb2025",
@@ -19797,7 +19987,8 @@ export default [
         "STRAIGHT_DIST": 2.0947069735,
         "STRAIGHT_TIME": 25.136483682
       }
-    ]
+    ],
+    "max_floor_lvl": 24
   },
   {
     "sbfCode": "Feb2025",
@@ -19888,7 +20079,8 @@ export default [
         "STRAIGHT_DIST": 1.9899728467,
         "STRAIGHT_TIME": 23.8796741601
       }
-    ]
+    ],
+    "max_floor_lvl": 13
   },
   {
     "sbfCode": "Feb2025",
@@ -19979,7 +20171,8 @@ export default [
         "STRAIGHT_DIST": 1.9899728467,
         "STRAIGHT_TIME": 23.8796741601
       }
-    ]
+    ],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Feb2025",
@@ -20092,7 +20285,8 @@ export default [
         "STRAIGHT_DIST": 1.8680784415,
         "STRAIGHT_TIME": 22.4169412985
       }
-    ]
+    ],
+    "max_floor_lvl": 21
   },
   {
     "sbfCode": "Feb2025",
@@ -20238,7 +20432,8 @@ export default [
         "STRAIGHT_DIST": 1.5286796838,
         "STRAIGHT_TIME": 18.3441562052
       }
-    ]
+    ],
+    "max_floor_lvl": 18
   },
   {
     "sbfCode": "Feb2025",
@@ -20373,7 +20568,8 @@ export default [
         "STRAIGHT_DIST": 1.7485534269,
         "STRAIGHT_TIME": 20.9826411223
       }
-    ]
+    ],
+    "max_floor_lvl": 25
   },
   {
     "sbfCode": "Feb2025",
@@ -20530,7 +20726,8 @@ export default [
         "STRAIGHT_DIST": 1.3883750273,
         "STRAIGHT_TIME": 16.6605003274
       }
-    ]
+    ],
+    "max_floor_lvl": 8
   },
   {
     "sbfCode": "Feb2025",
@@ -20643,7 +20840,8 @@ export default [
         "STRAIGHT_DIST": 2.0450615595,
         "STRAIGHT_TIME": 24.5407387143
       }
-    ]
+    ],
+    "max_floor_lvl": null
   },
   {
     "sbfCode": "Feb2025",
@@ -20767,7 +20965,8 @@ export default [
         "STRAIGHT_DIST": 1.7152970167,
         "STRAIGHT_TIME": 20.5835642003
       }
-    ]
+    ],
+    "max_floor_lvl": 20
   },
   {
     "sbfCode": "Feb2025",
@@ -20913,6 +21112,7 @@ export default [
         "STRAIGHT_DIST": 1.4771158216,
         "STRAIGHT_TIME": 17.7253898597
       }
-    ]
+    ],
+    "max_floor_lvl": 14
   }
 ];
