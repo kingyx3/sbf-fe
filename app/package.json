@@ -28,7 +28,7 @@
     "ag-grid-community": "^34.3.1",
     "ag-grid-react": "^33.1.1",
     "antd": "^5.24.3",
-    "autoprefixer": "^10.4.20",
+    "autoprefixer": "^10.4.22",
     "chart.js": "^4.4.8",
     "chartjs-adapter-date-fns": "^3.0.0",
     "dexie": "^4.0.11",
