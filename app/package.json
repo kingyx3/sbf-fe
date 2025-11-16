@@ -29,7 +29,7 @@
     "ag-grid-react": "^33.1.1",
     "antd": "^5.24.3",
     "autoprefixer": "^10.4.22",
-    "chart.js": "^4.4.8",
+    "chart.js": "^4.5.1",
     "chartjs-adapter-date-fns": "^3.0.0",
     "dexie": "^4.0.11",
     "firebase": "^12.6.0",
@@ -73,7 +73,7 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.28.5",
-    "@babel/preset-react": "^7.27.1",
+    "@babel/preset-react": "^7.28.5",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-import": "^2.31.0",
