@@ -620,15 +620,31 @@ const FloorLevelChart = ({ data, isDarkMode }) => {
                       </span>
                     </div>
 
-                    {/* Building Context - NEW */}
+                    {/* Building Context - Visual Indicator */}
                     {stat.avgMaxFloor && (
-                      <div className="flex justify-between items-center">
-                        <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                          🏢 Building:
-                        </span>
-                        <span className={`text-sm font-semibold ${isDarkMode ? "text-purple-300" : "text-purple-700"}`}>
-                          ~{stat.avgFloor}/{stat.avgMaxFloor}F ({stat.avgRelativePosition?.toFixed(0)}% up)
-                        </span>
+                      <div className={`mt-2 p-2 rounded ${isDarkMode ? "bg-slate-700/30" : "bg-gray-100"}`}>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className={`text-xs font-medium ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                            Floor Position:
+                          </span>
+                          <span className={`text-xs font-bold ${isDarkMode ? "text-purple-300" : "text-purple-700"}`}>
+                            Floor {stat.avgFloor} of {stat.avgMaxFloor}
+                          </span>
+                        </div>
+                        <div className="relative h-4 bg-gray-300 dark:bg-gray-600 rounded-full overflow-hidden">
+                          <div 
+                            className="absolute h-full bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-end pr-1"
+                            style={{ width: `${stat.avgRelativePosition}%` }}
+                          >
+                            <span className="text-white text-[10px] font-bold mix-blend-difference">
+                              {stat.avgRelativePosition?.toFixed(0)}%
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex justify-between mt-1">
+                          <span className={`text-[10px] ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>Ground</span>
+                          <span className={`text-[10px] ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>Top</span>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -719,9 +735,9 @@ const FloorLevelChart = ({ data, isDarkMode }) => {
             <div className="flex items-start gap-2">
               <span className="text-lg">🏢</span>
               <div className="flex-1">
-                <p className={`text-sm font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Building Context (NEW)</p>
+                <p className={`text-sm font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Floor Position</p>
                 <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                  Shows typical floor position within building height. E.g., "~8/15F (53% up)" means floor 8 out of 15-story buildings - just past halfway up.
+                  Visual bar shows where typical units sit within their buildings. E.g., "Floor 8 of 15" with a bar filled to 53% means the floor is just past halfway up in a 15-story building.
                 </p>
               </div>
             </div>
