@@ -151,7 +151,7 @@ const FloorLevelChart = ({ data, isDarkMode }) => {
         callbacks: {
           title: (tooltipItems) => {
             const index = tooltipItems[0].dataIndex;
-            return floorAnalysis[index].label.replace('\n', ' ');
+            return floorAnalysis[index].label.replace(/\n/g, ' ');
           },
           afterTitle: (tooltipItems) => {
             const index = tooltipItems[0].dataIndex;
@@ -279,7 +279,7 @@ const FloorLevelChart = ({ data, isDarkMode }) => {
               Most Available:
             </span>{' '}
             <span className={isDarkMode ? 'text-slate-300' : 'text-slate-600'}>
-              {floorAnalysis.reduce((max, r) => r.count > max.count ? r : max).label.replace('\n', ' ')} 
+              {floorAnalysis.reduce((max, r) => r.count > max.count ? r : max).label.replace(/\n/g, ' ')} 
               ({floorAnalysis.reduce((max, r) => r.count > max.count ? r : max).count} units)
             </span>
           </div>
@@ -290,7 +290,7 @@ const FloorLevelChart = ({ data, isDarkMode }) => {
                 Best ROI:
               </span>{' '}
               <span className={isDarkMode ? 'text-slate-300' : 'text-slate-600'}>
-                {bestValueFloor.label.replace('\n', ' ')} (+{bestValueFloor.avgROI}%)
+                {bestValueFloor.label.replace(/\n/g, ' ')} (+{bestValueFloor.avgROI}%)
               </span>
             </div>
           )}
