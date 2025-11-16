@@ -12,7 +12,7 @@
     "@heroicons/react": "^2.2.0",
     "@mui/icons-material": "^6.4.8",
     "@mui/material": "^6.4.8",
-    "@mui/utils": "^6.4.8",
+    "@mui/utils": "^7.3.5",
     "@mui/x-data-grid": "^7.28.0",
     "@stripe/stripe-js": "^5.7.0",
     "@tailwindcss/cli": "^4.0.12",
