@@ -195,7 +195,9 @@ const FloorLevelChart = ({ data, isDarkMode }) => {
           resaleValues: [], 
           pricePsfs: [],
           rois: [],
-          count: 0 
+          count: 0,
+          maxFloors: [],
+          avgFloorInCategory: []
         };
       }
       categories[category].prices.push(point.y);
@@ -207,6 +209,10 @@ const FloorLevelChart = ({ data, isDarkMode }) => {
       if (point.pricePsf) {
         categories[category].pricePsfs.push(point.pricePsf);
       }
+      if (point.maxFloorLvl) {
+        categories[category].maxFloors.push(point.maxFloorLvl);
+      }
+      categories[category].avgFloorInCategory.push(point.x);
       categories[category].count++;
     });
 
@@ -225,6 +231,11 @@ const FloorLevelChart = ({ data, isDarkMode }) => {
           ? data.pricePsfs.reduce((sum, p) => sum + p, 0) / data.pricePsfs.length
           : null;
         const pricePremium = ((avgPrice - overallAvgPrice) / overallAvgPrice) * 100;
+        const avgMaxFloor = data.maxFloors.length > 0
+          ? Math.round(data.maxFloors.reduce((sum, f) => sum + f, 0) / data.maxFloors.length)
+          : null;
+        const avgFloor = data.avgFloorInCategory.reduce((sum, f) => sum + f, 0) / data.avgFloorInCategory.length;
+        const avgRelativePosition = avgMaxFloor ? (avgFloor / avgMaxFloor) * 100 : null;
         
         return {
           category,
@@ -234,6 +245,9 @@ const FloorLevelChart = ({ data, isDarkMode }) => {
           avgPricePsf,
           pricePremium,
           count: data.count,
+          avgMaxFloor,
+          avgFloor: Math.round(avgFloor),
+          avgRelativePosition,
           priceRange: {
             min: Math.min(...data.prices),
             max: Math.max(...data.prices),
@@ -394,47 +408,99 @@ const FloorLevelChart = ({ data, isDarkMode }) => {
         </p>
       </div>
 
-      {/* Relative Height Insights - New Section */}
+      {/* Enhanced Building Height Context - Prominent Display */}
       {stats.hasMaxFloorData && (
-        <div className={`mb-6 p-4 rounded-lg ${isDarkMode ? "bg-purple-900/20 border border-purple-700" : "bg-purple-50 border border-purple-200"}`}>
-          <p className={`text-sm font-medium mb-3 ${isDarkMode ? "text-purple-200" : "text-purple-800"}`}>
-            🏢 Building Height Context:
-          </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+        <div className={`mb-6 p-5 rounded-lg border-2 ${isDarkMode ? "bg-gradient-to-br from-purple-900/30 to-indigo-900/30 border-purple-600" : "bg-gradient-to-br from-purple-50 to-indigo-50 border-purple-400"}`}>
+          <div className="flex items-center gap-3 mb-4">
+            <span className="text-3xl">🏢</span>
             <div>
-              <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Avg Building Height</p>
-              <p className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-                {stats.avgBuildingHeight} floors
-              </p>
-            </div>
-            <div>
-              <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Low in Building</p>
-              <p className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-                {stats.relativeHeightDistribution.low} units
-              </p>
-            </div>
-            <div>
-              <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Mid in Building</p>
-              <p className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-                {stats.relativeHeightDistribution.mid} units
-              </p>
-            </div>
-            <div>
-              <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>High in Building</p>
-              <p className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-                {stats.relativeHeightDistribution.high} units
+              <h4 className={`text-base font-bold ${isDarkMode ? "text-purple-200" : "text-purple-900"}`}>
+                Building Height Intelligence
+              </h4>
+              <p className={`text-xs ${isDarkMode ? "text-purple-300" : "text-purple-700"}`}>
+                Understanding where units sit within their buildings
               </p>
             </div>
           </div>
-          <p className={`text-xs ${isDarkMode ? "text-purple-300" : "text-purple-700"}`}>
-            💡 <strong>Understanding Height:</strong> {' '}
-            {stats.avgBuildingHeight <= 10 
-              ? "Mostly low-rise buildings (≤10 floors). Units at top floors get good views without long elevator waits."
-              : stats.avgBuildingHeight <= 20
-                ? "Mix of mid-rise buildings (11-20 floors). Mid-high units balance views with accessibility."
-                : "Primarily high-rise buildings (20+ floors). Consider elevator wait times and whether premium top-floor views justify the price difference."
-            }
-          </p>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+            <div className={`p-3 rounded-lg ${isDarkMode ? "bg-purple-800/30" : "bg-white/70"}`}>
+              <p className={`text-xs mb-1 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Avg Building Height</p>
+              <p className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                {stats.avgBuildingHeight}
+              </p>
+              <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>floors</p>
+            </div>
+            <div className={`p-3 rounded-lg ${isDarkMode ? "bg-blue-800/30" : "bg-blue-100/70"}`}>
+              <p className={`text-xs mb-1 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Low Position</p>
+              <p className={`text-2xl font-bold ${isDarkMode ? "text-blue-300" : "text-blue-900"}`}>
+                {stats.relativeHeightDistribution.low}
+              </p>
+              <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                units ({Math.round((stats.relativeHeightDistribution.low / (stats.relativeHeightDistribution.low + stats.relativeHeightDistribution.mid + stats.relativeHeightDistribution.high)) * 100)}%)
+              </p>
+            </div>
+            <div className={`p-3 rounded-lg ${isDarkMode ? "bg-yellow-800/30" : "bg-yellow-100/70"}`}>
+              <p className={`text-xs mb-1 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Mid Position</p>
+              <p className={`text-2xl font-bold ${isDarkMode ? "text-yellow-300" : "text-yellow-900"}`}>
+                {stats.relativeHeightDistribution.mid}
+              </p>
+              <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                units ({Math.round((stats.relativeHeightDistribution.mid / (stats.relativeHeightDistribution.low + stats.relativeHeightDistribution.mid + stats.relativeHeightDistribution.high)) * 100)}%)
+              </p>
+            </div>
+            <div className={`p-3 rounded-lg ${isDarkMode ? "bg-green-800/30" : "bg-green-100/70"}`}>
+              <p className={`text-xs mb-1 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>High Position</p>
+              <p className={`text-2xl font-bold ${isDarkMode ? "text-green-300" : "text-green-900"}`}>
+                {stats.relativeHeightDistribution.high}
+              </p>
+              <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                units ({Math.round((stats.relativeHeightDistribution.high / (stats.relativeHeightDistribution.low + stats.relativeHeightDistribution.mid + stats.relativeHeightDistribution.high)) * 100)}%)
+              </p>
+            </div>
+          </div>
+
+          {/* Visual Building Height Indicator */}
+          <div className={`mb-4 p-4 rounded-lg ${isDarkMode ? "bg-slate-800/50" : "bg-white/50"}`}>
+            <p className={`text-xs font-medium mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+              📊 Building Type Distribution:
+            </p>
+            <div className="flex items-center gap-2 mb-2">
+              <div className="flex-1">
+                <div className={`h-6 rounded-full overflow-hidden ${isDarkMode ? "bg-gray-700" : "bg-gray-300"}`}>
+                  <div 
+                    className="h-full bg-gradient-to-r from-blue-500 via-yellow-500 to-green-500 flex items-center justify-center text-xs font-bold text-white"
+                    style={{ width: '100%' }}
+                  >
+                    <span className="mix-blend-difference">
+                      {stats.avgBuildingHeight <= 10 ? "Low-Rise Dominant" : 
+                       stats.avgBuildingHeight <= 20 ? "Mid-Rise Dominant" : 
+                       "High-Rise Dominant"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className={isDarkMode ? "text-blue-300" : "text-blue-700"}>Low (≤10)</span>
+              <span className={isDarkMode ? "text-yellow-300" : "text-yellow-700"}>Mid (11-20)</span>
+              <span className={isDarkMode ? "text-green-300" : "text-green-700"}>High (20+)</span>
+            </div>
+          </div>
+          
+          <div className={`p-3 rounded-lg ${isDarkMode ? "bg-indigo-900/30" : "bg-indigo-100/50"}`}>
+            <p className={`text-sm font-medium mb-1 ${isDarkMode ? "text-indigo-200" : "text-indigo-900"}`}>
+              💡 What This Means for Buyers:
+            </p>
+            <p className={`text-xs ${isDarkMode ? "text-indigo-300" : "text-indigo-800"}`}>
+              {stats.avgBuildingHeight <= 10 
+                ? `Low-rise environment (avg ${stats.avgBuildingHeight} floors). Benefits: Shorter elevator waits, easier access, good community feel. Even "high" floors here are easily accessible. Great for families with young children or elderly.`
+                : stats.avgBuildingHeight <= 20
+                  ? `Mid-rise setting (avg ${stats.avgBuildingHeight} floors). Benefits: Balanced views and accessibility. Mid-to-high floors offer good elevation without excessive elevator waits. Best overall compromise for most buyers.`
+                  : `High-rise towers (avg ${stats.avgBuildingHeight} floors). Benefits: Spectacular views from higher floors, but consider longer elevator waits and higher maintenance costs. Units in the lower third may feel less "premium" despite being on absolute high floors.`
+              }
+            </p>
+          </div>
         </div>
       )}
 
@@ -553,6 +619,18 @@ const FloorLevelChart = ({ data, isDarkMode }) => {
                         {stat.count} unit{stat.count !== 1 ? "s" : ""}
                       </span>
                     </div>
+
+                    {/* Building Context - NEW */}
+                    {stat.avgMaxFloor && (
+                      <div className="flex justify-between items-center">
+                        <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                          🏢 Building:
+                        </span>
+                        <span className={`text-sm font-semibold ${isDarkMode ? "text-purple-300" : "text-purple-700"}`}>
+                          ~{stat.avgFloor}/{stat.avgMaxFloor}F ({stat.avgRelativePosition?.toFixed(0)}% up)
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Value Indicator */}
@@ -635,6 +713,15 @@ const FloorLevelChart = ({ data, isDarkMode }) => {
                 <p className={`text-sm font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Resale Value</p>
                 <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
                   Estimated future market value based on historical data.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="text-lg">🏢</span>
+              <div className="flex-1">
+                <p className={`text-sm font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>Building Context (NEW)</p>
+                <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                  Shows typical floor position within building height. E.g., "~8/15F (53% up)" means floor 8 out of 15-story buildings - just past halfway up.
                 </p>
               </div>
             </div>
