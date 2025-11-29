@@ -301,9 +301,9 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode }) => {
           </div>
 
           <div className="grid grid-cols-1 gap-6 mb-6">
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+            {/* <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
               <FloorLevelChart data={filteredData} isDarkMode={isDarkMode} />
-            </div>
+            </div> */}
           </div>
 
           <section className="mb-6 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
