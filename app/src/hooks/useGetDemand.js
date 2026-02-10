@@ -32,7 +32,12 @@ const fetchDemandData = async (sbfCode) => {
   const latestDoc = snapshot.docs[0];
 
   if (!latestDoc) {
-    throw new Error("No demand data found");
+    // Return empty data instead of throwing error when no demand data exists
+    // This allows the dashboard to display supply data even without demand data
+    return {
+      demandData: [],
+      capturedAt: null,
+    };
   }
 
   const docData = latestDoc.data();

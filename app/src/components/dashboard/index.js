@@ -188,16 +188,18 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode }) => {
         isDarkMode={isDarkMode}
       />
       
-      {/* Show warning for non-critical errors */}
-      {(demandError || (csvError && csvData?.length > 0)) && (
+      {/* Show warning for non-critical errors or missing demand data */}
+      {(demandError || (csvError && csvData?.length > 0) || (!isLoadingDemand && !demandData?.length && selectedSbfCode)) && (
         <WarningBanner
           message={
             demandError 
               ? "Market demand data is currently unavailable. Dashboard functionality is limited."
+              : (!isLoadingDemand && !demandData?.length && selectedSbfCode)
+              ? "No market demand data available for this SBF code. Supply vs Demand chart is hidden."
               : "Some data may be outdated. Please refresh if needed."
           }
           isDarkMode={isDarkMode}
-          onRetry={demandError ? () => refetchDemand() : () => refetchCSV()}
+          onRetry={demandError ? () => refetchDemand() : (csvError ? () => refetchCSV() : undefined)}
         />
       )}
       
