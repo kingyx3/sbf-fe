@@ -66,8 +66,10 @@ const FlatMap = ({ data, isDarkMode }) => {
 
   // Filter out records with invalid coordinates
   const validData = data.filter(flat => 
-    flat.project_lat != null && 
-    flat.project_lon != null &&
+    flat.project_lat !== null && 
+    flat.project_lat !== undefined &&
+    flat.project_lon !== null && 
+    flat.project_lon !== undefined &&
     !isNaN(flat.project_lat) && 
     !isNaN(flat.project_lon)
   );
