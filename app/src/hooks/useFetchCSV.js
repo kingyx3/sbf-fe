@@ -9,7 +9,7 @@ import {
 } from "../utils/indexedDB";
 
 const CONFIG = {
-  CACHE_TTL: 2 * 60 * 60 * 1000, // 2 hours in milliseconds
+  CACHE_TTL: 60 * 60 * 1000, // 1 hour in milliseconds
   STALE_TIME: 30 * 60 * 1000, // 30 minutes - increased to reduce mobile tab refresh frequency
   FUNCTION_NAME: "getCsvFile",
   QUERY_KEY_PREFIX: "csvData",
