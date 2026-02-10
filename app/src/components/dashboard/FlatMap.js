@@ -64,6 +64,14 @@ const FlatMap = ({ data, isDarkMode }) => {
     [1.4900000, 104.0535126]  // Northeast (max lat, max lon)
   ];
 
+  // Filter out records with invalid coordinates
+  const validData = data.filter(flat => 
+    flat.project_lat != null && 
+    flat.project_lon != null &&
+    !isNaN(flat.project_lat) && 
+    !isNaN(flat.project_lon)
+  );
+
   return (
     <div style={{ position: "relative" }}>
       <MapContainer
@@ -77,7 +85,7 @@ const FlatMap = ({ data, isDarkMode }) => {
         <TileLayer url={onemapUrl} detectRetina={true} maxZoom={19} minZoom={11} />
 
         <MarkerClusterGroup key={dataVersion}>
-          {data.map((flat) => (
+          {validData.map((flat) => (
             <Marker 
               key={flat.block + ", " + flat.unit} 
               position={[flat.project_lat, flat.project_lon]} 
