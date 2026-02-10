@@ -116,6 +116,16 @@ const fetchFromFirebase = async (userId, paymentDocCount) => {
     const fetchTime = Math.round(performance.now() - startTime);
     logDebug(`✅ Fetched from Firebase in ${fetchTime} ms`);
 
+    // Log loaded supply data with sbfcodes
+    if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
+      const sbfCodes = [...new Set(rawData.map(item => item.sbfCode))].filter(Boolean);
+      const recordCounts = sbfCodes.map(code => {
+        const count = rawData.filter(item => item.sbfCode === code).length;
+        return `${code} (${count} units)`;
+      }).join(', ');
+      console.log(`[CSV] Supply data loaded for ${sbfCodes.length} sbfcode(s): ${recordCounts}`);
+    }
+
     return rawData;
   } catch (error) {
     console.error('[useFetchCSV] Firebase fetch error:', {

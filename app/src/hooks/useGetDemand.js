@@ -63,6 +63,11 @@ const fetchDemandData = async (sbfCode) => {
     console.log(`[Demand] fetch for ${sbfCode} took ${elapsedTime} ms`);
   }
 
+  // Log loaded demand data with details
+  if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
+    console.log(`[Demand] Demand data loaded for sbfcode: ${sbfCode} (${demand.length} records)`);
+  }
+
   return {
     demandData: demand,
     capturedAt,
