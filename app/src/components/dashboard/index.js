@@ -180,6 +180,9 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode }) => {
   // Show empty state if we have CSV data loaded AND no filtered data
   const shouldShowEmptyState = csvData && csvData.length > 0 && filteredData.length === 0;
   
+  // Check if demand data is missing (not loading, not error, just not available)
+  const hasMissingDemandData = !isLoadingDemand && !demandData?.length && selectedSbfCode;
+  
   return (
     <div>
       <ConnectionStatusBar 
@@ -189,12 +192,12 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode }) => {
       />
       
       {/* Show warning for non-critical errors or missing demand data */}
-      {(demandError || (csvError && csvData?.length > 0) || (!isLoadingDemand && !demandData?.length && selectedSbfCode)) && (
+      {(demandError || (csvError && csvData?.length > 0) || hasMissingDemandData) && (
         <WarningBanner
           message={
             demandError 
               ? "Market demand data is currently unavailable. Dashboard functionality is limited."
-              : (!isLoadingDemand && !demandData?.length && selectedSbfCode)
+              : hasMissingDemandData
               ? "No market demand data available for this SBF code. Supply vs Demand chart is hidden."
               : "Some data may be outdated. Please refresh if needed."
           }
