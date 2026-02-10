@@ -118,16 +118,21 @@ const fetchFromFirebase = async (userId, paymentDocCount) => {
 
     // Log loaded supply data with sbfcodes
     if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
+      const MAX_DISPLAY = 20;
       const sbfCodeCounts = new Map();
       rawData.forEach(item => {
         if (item.sbfCode) {
           sbfCodeCounts.set(item.sbfCode, (sbfCodeCounts.get(item.sbfCode) || 0) + 1);
         }
       });
-      const recordCounts = Array.from(sbfCodeCounts.entries())
+      const entries = Array.from(sbfCodeCounts.entries());
+      const recordCounts = entries.slice(0, MAX_DISPLAY)
         .map(([code, count]) => `${code} (${count} units)`)
         .join(', ');
-      console.log(`[CSV] Supply data loaded for ${sbfCodeCounts.size} sbfcode(s): ${recordCounts}`);
+      const displayText = entries.length > MAX_DISPLAY
+        ? `${recordCounts}, ... and ${entries.length - MAX_DISPLAY} more`
+        : recordCounts;
+      console.log(`[CSV] Supply data loaded for ${sbfCodeCounts.size} sbfcode(s): ${displayText}`);
     }
 
     return rawData;
