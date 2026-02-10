@@ -58,9 +58,10 @@ const fetchDemandData = async (sbfCode) => {
         .replace(/ (\d{1,2})(AM|PM)/, "$1$2")
     : null;
 
-  if (envVars.REACT_APP_DEBUG) {
+  // Log loaded demand data with performance metrics
+  if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
     const elapsedTime = Math.round(performance.now() - startTime);
-    console.log(`[Demand] fetch for ${sbfCode} took ${elapsedTime} ms`);
+    console.log(`[Demand] Demand data loaded for sbfcode: ${sbfCode} (${demand.length} records, ${elapsedTime} ms)`);
   }
 
   return {
