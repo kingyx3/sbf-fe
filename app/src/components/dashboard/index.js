@@ -196,9 +196,9 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode }) => {
         <WarningBanner
           message={
             demandError 
-              ? "Market demand data is currently unavailable. Dashboard functionality is limited."
+              ? "We're working to resolve the issue with market demand data. In the meantime, you can still explore all supply data and features below."
               : hasMissingDemandData
-              ? "No market demand data available for this SBF code. Supply vs Demand chart is hidden."
+              ? "Demand data for this SBF code is being updated. All supply data and features remain available for your review."
               : "Some data may be outdated. Please refresh if needed."
           }
           isDarkMode={isDarkMode}
