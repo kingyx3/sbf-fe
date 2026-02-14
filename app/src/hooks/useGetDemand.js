@@ -32,7 +32,12 @@ const fetchDemandData = async (sbfCode) => {
   const latestDoc = snapshot.docs[0];
 
   if (!latestDoc) {
-    throw new Error("No demand data found");
+    // Return empty data instead of throwing error when no demand data exists
+    // This allows the dashboard to display supply data even without demand data
+    return {
+      demandData: [],
+      capturedAt: null,
+    };
   }
 
   const docData = latestDoc.data();
@@ -47,15 +52,17 @@ const fetchDemandData = async (sbfCode) => {
           month: "short", 
           year: "numeric", 
           hour: "numeric", 
-          hour12: true 
+          hour12: true,
+          timeZone: "Asia/Singapore"
         })
         .replace(", ", " ")
         .replace(/ (\d{1,2})(AM|PM)/, "$1$2")
     : null;
 
-  if (envVars.REACT_APP_DEBUG) {
+  // Log loaded demand data with performance metrics
+  if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
     const elapsedTime = Math.round(performance.now() - startTime);
-    console.log(`[Demand] fetch for ${sbfCode} took ${elapsedTime} ms`);
+    console.log(`[Demand] Demand data loaded for sbfcode: ${sbfCode} (${demand.length} records, ${elapsedTime} ms)`);
   }
 
   return {
