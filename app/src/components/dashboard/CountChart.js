@@ -67,7 +67,8 @@ const CountChart = ({
   // ---------- NORMALIZATION HELPERS ----------
   const normalizeGroupValue = (value) => {
     if (!value) return "";
-    if (value === "Jurong East" || value === "Jurong West" || value === "Jurong East/ West") {
+    const jurongVariants = ["Jurong East", "Jurong West", "Jurong East/ West"];
+    if (jurongVariants.includes(value)) {
       return "Jurong East / West";
     } else if (value === "Kallang/Whampoa") {
       return "Kallang Whampoa";
