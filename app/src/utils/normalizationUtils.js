@@ -3,6 +3,14 @@
  * Used across the application to ensure consistent data representation
  */
 
+// Constants for normalization
+const JURONG_VARIANTS = ["Jurong East", "Jurong West", "Jurong East/ West", "Jurong East / West"];
+const NORMALIZED_JURONG = "Jurong East / West";
+const KALLANG_VARIANT = "Kallang/Whampoa";
+const NORMALIZED_KALLANG = "Kallang Whampoa";
+const CENTRAL_AREA_VARIANT = "Central Area";
+const NORMALIZED_CENTRAL = "Central";
+
 /**
  * Normalizes town names to a consistent format
  * Handles various town name variations from supply and demand data
@@ -20,19 +28,18 @@ export const normalizeGroupValue = (value) => {
   if (!value) return "";
   
   // Normalize Jurong variants (with and without space after slash)
-  const jurongVariants = ["Jurong East", "Jurong West", "Jurong East/ West", "Jurong East / West"];
-  if (jurongVariants.includes(value)) {
-    return "Jurong East / West";
+  if (JURONG_VARIANTS.includes(value)) {
+    return NORMALIZED_JURONG;
   }
   
   // Normalize Kallang/Whampoa
-  if (value === "Kallang/Whampoa") {
-    return "Kallang Whampoa";
+  if (value === KALLANG_VARIANT) {
+    return NORMALIZED_KALLANG;
   }
   
   // Normalize Central Area
-  if (value === "Central Area") {
-    return "Central";
+  if (value === CENTRAL_AREA_VARIANT) {
+    return NORMALIZED_CENTRAL;
   }
   
   return value;
