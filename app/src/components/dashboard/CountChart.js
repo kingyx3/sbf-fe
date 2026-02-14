@@ -88,10 +88,12 @@ const CountChart = ({
       .replace("Community Care Apartment", "Com Care Apt")
       .replace("Ang Mo Kio", "AMK")
       .replace("Batok", "B")
+      .replace("Central Area", "Central")
       .replace("Panjang", "P")
       .replace("Merah", "M")
       .replace("Choa Chu Kang", "CCK")
       .replace("Jurong East / West", "JE/JW")
+      .replace("Jurong East/ West", "JE/JW")
       .replace("Kallang Whampoa", "KW")
       .replace("Toa Payoh", "TPY");
   };
