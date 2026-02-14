@@ -67,10 +67,12 @@ const CountChart = ({
   // ---------- NORMALIZATION HELPERS ----------
   const normalizeGroupValue = (value) => {
     if (!value) return "";
-    if (value === "Jurong East" || value === "Jurong West") {
+    if (value === "Jurong East" || value === "Jurong West" || value === "Jurong East/ West") {
       return "Jurong East / West";
     } else if (value === "Kallang/Whampoa") {
       return "Kallang Whampoa";
+    } else if (value === "Central Area") {
+      return "Central";
     }
     return value;
   };
@@ -113,7 +115,8 @@ const CountChart = ({
   const demandMap = useMemo(() => {
     const map = {};
     (demandData || []).forEach((item) => {
-      const key = `${item.Town} - ${item["Flat Type"]}`;
+      const townVal = normalizeGroupValue(item.Town);
+      const key = `${townVal} - ${item["Flat Type"]}`;
       if (!map[key]) {
         map[key] = {
           total: 0,
