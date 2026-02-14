@@ -52,7 +52,8 @@ const fetchDemandData = async (sbfCode) => {
           month: "short", 
           year: "numeric", 
           hour: "numeric", 
-          hour12: true 
+          hour12: true,
+          timeZone: "Asia/Singapore"
         })
         .replace(", ", " ")
         .replace(/ (\d{1,2})(AM|PM)/, "$1$2")
