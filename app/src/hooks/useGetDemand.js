@@ -44,19 +44,15 @@ const fetchDemandData = async (sbfCode) => {
   const demand = docData.data || [];
   let capturedAt = docData.capturedAt;
 
-  // Format the captured timestamp
+  // Format the captured timestamp - show only date in SGT
   capturedAt = capturedAt
     ? new Date(capturedAt.toDate ? capturedAt.toDate() : capturedAt)
         .toLocaleDateString("en-GB", { 
           day: "2-digit", 
           month: "short", 
-          year: "numeric", 
-          hour: "numeric", 
-          hour12: true,
+          year: "numeric",
           timeZone: "Asia/Singapore"
         })
-        .replace(", ", " ")
-        .replace(/ (\d{1,2})(AM|PM)/, "$1$2")
     : null;
 
   // Log loaded demand data with performance metrics
