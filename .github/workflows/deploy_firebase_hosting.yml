@@ -22,7 +22,7 @@ jobs:
 
       - name: Cache Node Modules
         id: cache-npm
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: app/node_modules # Caching dependencies
           key: ${{ runner.os }}-node-${{ hashFiles('app/package-lock.json') }}

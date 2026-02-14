@@ -27,7 +27,7 @@ export const envVars = process.env.REACT_APP_NODE_ENV === "production"
     } : {
         REACT_APP_NAME: "SBFHERO (DEV)",
         REACT_APP_TYPE: "DEV",
-        REACT_APP_DEBUG: false,
+        REACT_APP_DEBUG: true,
         testMode: process.env.REACT_APP_TEST_MODE === 'true',
         REACT_APP_FB_apiKey: "AIzaSyBC6imLUJy7aDu2rK6xGuHkFxuvmpEC_qA",
         REACT_APP_FB_authDomain: "sbfhero-dev.firebaseapp.com",

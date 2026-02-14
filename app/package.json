@@ -16,7 +16,7 @@
     "@mui/x-data-grid": "^7.28.0",
     "@stripe/stripe-js": "^8.4.0",
     "@tailwindcss/cli": "^4.0.12",
-    "@tailwindcss/vite": "^4.0.12",
+    "@tailwindcss/vite": "^4.1.17",
     "@tanstack/query-sync-storage-persister": "^5.69.0",
     "@tanstack/react-query": "^5.90.9",
     "@tanstack/react-query-persist-client": "^5.69.0",
@@ -74,7 +74,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7.28.5",
     "@babel/preset-react": "^7.28.5",
-    "eslint": "^8.57.1",
+    "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-react": "^7.37.4",
