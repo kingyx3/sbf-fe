@@ -53,6 +53,16 @@ const useListSbfCodes = () => {
           isLoading: false,
           error: null,
         });
+
+        // Log loaded sbfcodes
+        if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
+          const MAX_DISPLAY = 20;
+          const sbfCodeNames = data.slice(0, MAX_DISPLAY).map(d => d.name).join(', ');
+          const displayText = data.length > MAX_DISPLAY 
+            ? `${sbfCodeNames}, ... and ${data.length - MAX_DISPLAY} more`
+            : sbfCodeNames;
+          console.log(`[SbfCodes] Loaded ${data.length} sbfcodes: ${displayText}`);
+        }
       } catch (err) {
         console.error("[useListSbfCodes] Firestore fetch error:", err);
         setState({
