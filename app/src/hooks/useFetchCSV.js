@@ -9,7 +9,7 @@ import {
 } from "../utils/indexedDB";
 
 const CONFIG = {
-  CACHE_TTL: 2 * 60 * 60 * 1000, // 2 hours in milliseconds
+  CACHE_TTL: 60 * 60 * 1000, // 1 hour in milliseconds
   STALE_TIME: 30 * 60 * 1000, // 30 minutes - increased to reduce mobile tab refresh frequency
   FUNCTION_NAME: "getCsvFile",
   QUERY_KEY_PREFIX: "csvData",
@@ -115,6 +115,25 @@ const fetchFromFirebase = async (userId, paymentDocCount) => {
 
     const fetchTime = Math.round(performance.now() - startTime);
     logDebug(`✅ Fetched from Firebase in ${fetchTime} ms`);
+
+    // Log loaded supply data with sbfcodes
+    if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
+      const MAX_DISPLAY = 20;
+      const sbfCodeCounts = new Map();
+      rawData.forEach(item => {
+        if (item.sbfCode) {
+          sbfCodeCounts.set(item.sbfCode, (sbfCodeCounts.get(item.sbfCode) || 0) + 1);
+        }
+      });
+      const entries = Array.from(sbfCodeCounts.entries());
+      const recordCounts = entries.slice(0, MAX_DISPLAY)
+        .map(([code, count]) => `${code} (${count} units)`)
+        .join(', ');
+      const displayText = entries.length > MAX_DISPLAY
+        ? `${recordCounts}, ... and ${entries.length - MAX_DISPLAY} more`
+        : recordCounts;
+      console.log(`[CSV] Supply data loaded for ${sbfCodeCounts.size} sbfcode(s): ${displayText}`);
+    }
 
     return rawData;
   } catch (error) {
