@@ -19,8 +19,8 @@
 export const normalizeGroupValue = (value) => {
   if (!value) return "";
   
-  // Normalize Jurong variants
-  const jurongVariants = ["Jurong East", "Jurong West", "Jurong East/ West"];
+  // Normalize Jurong variants (with and without space after slash)
+  const jurongVariants = ["Jurong East", "Jurong West", "Jurong East/ West", "Jurong East / West"];
   if (jurongVariants.includes(value)) {
     return "Jurong East / West";
   }
@@ -51,5 +51,6 @@ export const normalizeGroupValue = (value) => {
  */
 export const normalizeSubGroupValue = (value) => {
   if (!value) return "";
-  return value.replace("3Gen", "5-room").replace("Executive", "5-room");
+  // Use replaceAll to handle multiple occurrences
+  return value.replaceAll("3Gen", "5-room").replaceAll("Executive", "5-room");
 };
