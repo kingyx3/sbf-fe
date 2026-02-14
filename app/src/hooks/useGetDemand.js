@@ -63,6 +63,7 @@ const fetchDemandData = async (sbfCode) => {
   if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
     const elapsedTime = Math.round(performance.now() - startTime);
     console.log(`[Demand] Demand data loaded for sbfcode: ${sbfCode} (${demand.length} records, ${elapsedTime} ms)`);
+    console.log('Demand data:', demand);
   }
 
   return {
