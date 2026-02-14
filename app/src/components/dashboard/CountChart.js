@@ -13,6 +13,7 @@ import {
   LineController,
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
+import { normalizeGroupValue, normalizeSubGroupValue } from "../../utils/normalizationUtils";
 
 // Register Chart.js components
 ChartJS.register(
@@ -63,25 +64,6 @@ const CountChart = ({
       return () => window.removeEventListener("resize", handleResize);
     }
   }, [handleResize]);
-
-  // ---------- NORMALIZATION HELPERS ----------
-  const normalizeGroupValue = (value) => {
-    if (!value) return "";
-    const jurongVariants = ["Jurong East", "Jurong West", "Jurong East/ West"];
-    if (jurongVariants.includes(value)) {
-      return "Jurong East / West";
-    } else if (value === "Kallang/Whampoa") {
-      return "Kallang Whampoa";
-    } else if (value === "Central Area") {
-      return "Central";
-    }
-    return value;
-  };
-
-  const normalizeSubGroupValue = (value) => {
-    if (!value) return "";
-    return value.replace("3Gen", "5-room").replace("Executive", "5-room");
-  };
 
   const formatComboLabel = (combo) => {
     return combo
