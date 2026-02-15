@@ -46,6 +46,39 @@ export const normalizeGroupValue = (value) => {
 };
 
 /**
+ * Formats a combo label (town - flat type) for display in charts
+ * Applies abbreviations and shortening for better readability on charts
+ * Note: Input should already be normalized using normalizeGroupValue
+ * 
+ * @param {string} combo - The combo string (e.g., "Jurong East / West - 3-room")
+ * @returns {string} The formatted label for display
+ * 
+ * @example
+ * formatComboLabel("Jurong East / West - 3-room") // returns "JE/JW-3rm"
+ * formatComboLabel("Kallang Whampoa - 2-room Flexi") // returns "KW-2rm"
+ * formatComboLabel("Central - 4-room") // returns "Central-4rm"
+ */
+export const formatComboLabel = (combo) => {
+  if (!combo) return "";
+  
+  return combo
+    .replace("-room", "rm")
+    .replace(" - ", "-")
+    .replace(" Flexi", "")
+    .replace("Community Care Apartment", "Com Care Apt")
+    .replace("Ang Mo Kio", "AMK")
+    .replace("Batok", "B")
+    .replace("Central", "Central") // Keep Central as-is (already normalized)
+    .replace("Panjang", "P")
+    .replace("Merah", "M")
+    .replace("Choa Chu Kang", "CCK")
+    .replace("Jurong East / West", "JE/JW")
+    .replace("Jurong East/ West", "JE/JW") // Handle edge case without space
+    .replace("Kallang Whampoa", "KW")
+    .replace("Toa Payoh", "TPY");
+};
+
+/**
  * Normalizes flat type/subgroup values to a consistent format
  * Converts certain flat types to their standard equivalents
  * 

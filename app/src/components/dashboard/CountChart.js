@@ -13,7 +13,11 @@ import {
   LineController,
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
-import { normalizeGroupValue, normalizeSubGroupValue } from "../../utils/normalizationUtils";
+import {
+  normalizeGroupValue,
+  normalizeSubGroupValue,
+  formatComboLabel,
+} from "../../utils/normalizationUtils";
 
 // Register Chart.js components
 ChartJS.register(
@@ -64,24 +68,6 @@ const CountChart = ({
       return () => window.removeEventListener("resize", handleResize);
     }
   }, [handleResize]);
-
-  const formatComboLabel = (combo) => {
-    return combo
-      .replace("-room", "rm")
-      .replace(" - ", "-")
-      .replace(" Flexi", "")
-      .replace("Community Care Apartment", "Com Care Apt")
-      .replace("Ang Mo Kio", "AMK")
-      .replace("Batok", "B")
-      .replace("Central Area", "Central")
-      .replace("Panjang", "P")
-      .replace("Merah", "M")
-      .replace("Choa Chu Kang", "CCK")
-      .replace("Jurong East / West", "JE/JW")
-      .replace("Jurong East/ West", "JE/JW")
-      .replace("Kallang Whampoa", "KW")
-      .replace("Toa Payoh", "TPY");
-  };
 
   // ---------- DERIVED MAPS ----------
   const supplyMap = useMemo(() => {
