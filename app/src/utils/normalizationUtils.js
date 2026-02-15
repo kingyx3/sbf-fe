@@ -72,7 +72,7 @@ export const formatComboLabel = (combo) => {
     .replace("Merah", "M")
     .replace("Choa Chu Kang", "CCK")
     .replace("Jurong East / West", "JE/JW")
-    .replace("Jurong East/ West", "JE/JW") // Handle edge case without space
+    .replace("Jurong East/ West", "JE/JW") // Backward compatibility
     .replace("Kallang Whampoa", "KW")
     .replace("Toa Payoh", "TPY");
 };
