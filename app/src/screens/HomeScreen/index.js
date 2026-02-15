@@ -134,7 +134,16 @@ const HomeScreen = ({ isDarkMode, footerHeight, isFooterVisible }) => {
     }
   };
 
-  if (loading || isLoadingSbfCodes) return <LoadingSpinner />;
+  // Wait for all necessary data before rendering Dashboard
+  // This ensures useFetchCSV has userId and paymentDocCount to enable the query
+  // In non-test mode, both userId and paymentDocCount must be set before rendering
+  const isDataReady = envVars.testMode 
+    ? paymentDocCount !== null  // In test mode, only need paymentDocCount
+    : userId && paymentDocCount !== null;  // In normal mode, need both
+  
+  if (loading || isLoadingSbfCodes || (boughtAccess && !isDataReady)) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="relative min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-200">
