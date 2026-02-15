@@ -68,7 +68,6 @@ export const formatComboLabel = (combo) => {
     .replace("Community Care Apartment", "Com Care Apt")
     .replace("Ang Mo Kio", "AMK")
     .replace("Batok", "B")
-    .replace("Central", "Central") // Keep Central as-is (already normalized)
     .replace("Panjang", "P")
     .replace("Merah", "M")
     .replace("Choa Chu Kang", "CCK")
