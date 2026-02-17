@@ -44,6 +44,13 @@ const CountChart = ({
     height: typeof window !== "undefined" ? window.innerHeight : 0,
   });
 
+  // Log view mode changes
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[CountChart] View mode changed to:', viewMode);
+    }
+  }, [viewMode]);
+
   const isMobile = windowSize.width <= 768;
   const maxVisibleItems = isMobile ? 8 : 12;
 
@@ -104,20 +111,75 @@ const CountChart = ({
   // ---------- DERIVED MAPS ----------
   const supplyMap = useMemo(() => {
     const map = {};
-    (data || []).forEach((item) => {
+    const isDev = process.env.NODE_ENV === 'development';
+    
+    if (isDev) {
+      console.log('[CountChart] Building supplyMap from data:', {
+        dataLength: data?.length || 0,
+        groupBy,
+        subGroupBy
+      });
+    }
+    
+    (data || []).forEach((item, index) => {
       const groupVal = normalizeGroupValue(item[groupBy]);
       const subGroupVal = normalizeSubGroupValue(item[subGroupBy]);
       const key = `${groupVal} - ${subGroupVal}`;
+      
+      // Log first few items
+      if (isDev && index < 3) {
+        console.log(`[CountChart] Processing supply item ${index}:`, {
+          originalGroup: item[groupBy],
+          normalizedGroup: groupVal,
+          originalSubGroup: item[subGroupBy],
+          normalizedSubGroup: subGroupVal,
+          key: key
+        });
+      }
+      
       map[key] = (map[key] || 0) + 1;
     });
+    
+    if (isDev) {
+      console.log('[CountChart] Final supplyMap (sample):', 
+        Object.entries(map).slice(0, 5).reduce((obj, [k, v]) => ({ ...obj, [k]: v }), {})
+      );
+    }
+    
     return map;
   }, [data, groupBy, subGroupBy]);
 
   const demandMap = useMemo(() => {
     const map = {};
-    (demandData || []).forEach((item) => {
+    const isDev = process.env.NODE_ENV === 'development';
+    
+    if (isDev) {
+      console.log('[CountChart] Building demandMap from demandData:', {
+        demandDataLength: demandData?.length || 0,
+        sampleItem: demandData?.[0] || null
+      });
+    }
+    
+    (demandData || []).forEach((item, index) => {
       const townVal = normalizeGroupValue(item.Town);
       const key = `${townVal} - ${item["Flat Type"]}`;
+      
+      // Log first few items to understand data structure
+      if (isDev && index < 3) {
+        console.log(`[CountChart] Processing demandData item ${index}:`, {
+          Town: item.Town,
+          normalizedTown: townVal,
+          FlatType: item["Flat Type"],
+          key: key,
+          NumberOfApplicants: item["Number of Applicants"],
+          NumberOfUnits: item["Number of Units"],
+          FTF: item["Estimated Applicants - First-Timer Families"],
+          FTS: item["Estimated Applicants - First-Timer Singles"],
+          STF: item["Estimated Applicants - Second-Timer Families"],
+          Seniors: item["Estimated Applicants - Seniors"]
+        });
+      }
+      
       if (!map[key]) {
         map[key] = {
           total: 0,
@@ -135,16 +197,53 @@ const CountChart = ({
       map[key].stf += item["Estimated Applicants - Second-Timer Families"] || 0;
       map[key].seniors += item["Estimated Applicants - Seniors"] || 0;
     });
+    
+    if (isDev) {
+      console.log('[CountChart] Final demandMap:', map);
+      // Log sample keys and their FTF values
+      const sampleKeys = Object.keys(map).slice(0, 5);
+      console.log('[CountChart] Sample demand entries with FTF values:');
+      sampleKeys.forEach(key => {
+        console.log(`  ${key}:`, {
+          total: map[key].total,
+          ftf: map[key].ftf,
+          totalSupply: map[key].totalSupply
+        });
+      });
+    }
+    
     return map;
   }, [demandData]);
 
   const comboStats = useMemo(() => {
-    return Object.entries(supplyMap)
-      .map(([combo, supply]) => {
+    const isDev = process.env.NODE_ENV === 'development';
+    
+    if (isDev) {
+      console.log('[CountChart] Building comboStats with viewMode:', viewMode);
+      console.log('[CountChart] SupplyMap keys:', Object.keys(supplyMap).slice(0, 5));
+      console.log('[CountChart] DemandMap keys:', Object.keys(demandMap).slice(0, 5));
+    }
+    
+    const stats = Object.entries(supplyMap)
+      .map(([combo, supply], index) => {
         const demand = demandMap[combo] || {};
         const total = demand.total || 0;
         const totalSupply = demand.totalSupply || 0;
         const ftf = demand.ftf || 0;
+
+        // Log first few combos to understand matching
+        if (isDev && index < 3) {
+          console.log(`[CountChart] Processing combo "${combo}":`, {
+            supply,
+            demandFound: !!demandMap[combo],
+            total,
+            ftf,
+            totalSupply,
+            fts: demand.fts || 0,
+            stf: demand.stf || 0,
+            seniors: demand.seniors || 0
+          });
+        }
 
         // Adjust supply for "Great Flat" heuristic
         let adjustedSupply = supply;
@@ -167,6 +266,16 @@ const CountChart = ({
             ftf > 0 ? Math.min(adjustedSupply / ftf, 0.99) : adjustedSupply > 0 ? 0.99 : 0;
           unfilteredProbability =
             ftf > 0 ? Math.min(adjustedTotalSupply / ftf, 0.99) : adjustedTotalSupply > 0 ? 0.99 : 0;
+          
+          if (isDev && index < 3) {
+            console.log(`[CountChart] FTF mode calculation for "${combo}":`, {
+              ftf,
+              adjustedSupply,
+              adjustedTotalSupply,
+              probability,
+              unfilteredProbability
+            });
+          }
         } else {
           probability = total > 0 ? Math.min(supply / total, 0.99) : supply > 0 ? 0.99 : 0;
           unfilteredProbability =
@@ -186,6 +295,20 @@ const CountChart = ({
         };
       })
       .sort((a, b) => b.probability - a.probability);
+      
+    if (isDev) {
+      console.log('[CountChart] Final comboStats (top 5):');
+      stats.slice(0, 5).forEach(stat => {
+        console.log(`  ${stat.combo}:`, {
+          supply: stat.supply,
+          demand: stat.demand,
+          ftf: stat.ftf,
+          probability: (stat.probability * 100).toFixed(1) + '%'
+        });
+      });
+    }
+    
+    return stats;
   }, [supplyMap, demandMap, viewMode]);
 
   const topCombos = useMemo(() => {
@@ -482,6 +605,9 @@ const CountChart = ({
 
   // ---------- RENDER ----------
   if (isLoading) {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[CountChart] Rendering: Loading state');
+    }
     return (
       <div className={`p-8 text-center ${isDarkMode ? "text-slate-300" : "text-slate-600"}`}>
         <p className="text-sm">Loading…</p>
@@ -490,12 +616,26 @@ const CountChart = ({
   }
 
   if (topCombos.length === 0) {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[CountChart] Rendering: No combos found');
+    }
     return (
       <div className={`p-8 text-center ${isDarkMode ? "text-slate-300" : "text-slate-600"}`}>
         <p className="text-lg font-medium">No units matching your current filters</p>
         <p className="mt-2">Try adjusting your selection criteria</p>
       </div>
     );
+  }
+
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[CountChart] Rendering chart with:', {
+      viewMode,
+      topCombosLength: topCombos.length,
+      showAll,
+      demandDataLength: demandData?.length || 0,
+      supplyDataLength: data?.length || 0,
+      capturedAt
+    });
   }
 
   return (

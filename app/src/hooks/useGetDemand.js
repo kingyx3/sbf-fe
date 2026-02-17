@@ -58,8 +58,34 @@ const fetchDemandData = async (sbfCode) => {
   // Log loaded demand data with performance metrics
   if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
     const elapsedTime = Math.round(performance.now() - startTime);
-    console.log(`[Demand] Demand data loaded for sbfcode: ${sbfCode} (${demand.length} records, ${elapsedTime} ms)`);
-    console.log('Demand data:', demand);
+    console.log(`[useGetDemand] Demand data loaded for sbfcode: ${sbfCode} (${demand.length} records, ${elapsedTime} ms)`);
+    
+    // Log detailed structure of first few items
+    if (demand.length > 0) {
+      console.log('[useGetDemand] Sample demand data items (first 3):');
+      demand.slice(0, 3).forEach((item, index) => {
+        console.log(`  Item ${index}:`, {
+          Town: item.Town,
+          'Flat Type': item['Flat Type'],
+          'Number of Applicants': item['Number of Applicants'],
+          'Number of Units': item['Number of Units'],
+          'Estimated Applicants - First-Timer Families': item['Estimated Applicants - First-Timer Families'],
+          'Estimated Applicants - First-Timer Singles': item['Estimated Applicants - First-Timer Singles'],
+          'Estimated Applicants - Second-Timer Families': item['Estimated Applicants - Second-Timer Families'],
+          'Estimated Applicants - Seniors': item['Estimated Applicants - Seniors']
+        });
+      });
+      
+      // Log summary statistics
+      const ftfTotal = demand.reduce((sum, item) => sum + (item['Estimated Applicants - First-Timer Families'] || 0), 0);
+      const applicantsTotal = demand.reduce((sum, item) => sum + (item['Number of Applicants'] || 0), 0);
+      console.log('[useGetDemand] Demand data summary:', {
+        totalRecords: demand.length,
+        totalApplicants: applicantsTotal,
+        totalFTF: ftfTotal,
+        ftfPercentage: applicantsTotal > 0 ? ((ftfTotal / applicantsTotal) * 100).toFixed(1) + '%' : 'N/A'
+      });
+    }
   }
 
   return {
