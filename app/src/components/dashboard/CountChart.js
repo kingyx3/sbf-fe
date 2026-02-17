@@ -142,7 +142,7 @@ const CountChart = ({
     
     if (isDev) {
       console.log('[CountChart] Final supplyMap (sample):', 
-        Object.entries(map).slice(0, 5).reduce((obj, [k, v]) => ({ ...obj, [k]: v }), {})
+        Object.fromEntries(Object.entries(map).slice(0, 5))
       );
     }
     

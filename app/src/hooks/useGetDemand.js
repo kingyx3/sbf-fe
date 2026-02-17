@@ -77,13 +77,17 @@ const fetchDemandData = async (sbfCode) => {
       });
       
       // Log summary statistics
-      const ftfTotal = demand.reduce((sum, item) => sum + (item['Estimated Applicants - First-Timer Families'] || 0), 0);
-      const applicantsTotal = demand.reduce((sum, item) => sum + (item['Number of Applicants'] || 0), 0);
+      const summary = demand.reduce((acc, item) => {
+        acc.totalApplicants += item['Number of Applicants'] || 0;
+        acc.totalFTF += item['Estimated Applicants - First-Timer Families'] || 0;
+        return acc;
+      }, { totalApplicants: 0, totalFTF: 0 });
+      
       console.log('[useGetDemand] Demand data summary:', {
         totalRecords: demand.length,
-        totalApplicants: applicantsTotal,
-        totalFTF: ftfTotal,
-        ftfPercentage: applicantsTotal > 0 ? ((ftfTotal / applicantsTotal) * 100).toFixed(1) + '%' : 'N/A'
+        totalApplicants: summary.totalApplicants,
+        totalFTF: summary.totalFTF,
+        ftfPercentage: summary.totalApplicants > 0 ? ((summary.totalFTF / summary.totalApplicants) * 100).toFixed(1) + '%' : 'N/A'
       });
     }
   }
