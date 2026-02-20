@@ -82,7 +82,7 @@ const fetchFromFirebase = async (userId, paymentDocCount) => {
 
   try {
     const getCSVFile = httpsCallable(functions, CONFIG.FUNCTION_NAME);
-    // Add timestamp to bust any HTTP cache
+    // Add timestamp parameter to bust HTTP caches (backend ignores this param)
     const response = await getCSVFile({ cacheBust: Date.now() });
     
     if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
@@ -172,7 +172,7 @@ const useFetchCSV = ({ enabled = true, userId, paymentDocCount }) => {
     queryKey: [CONFIG.QUERY_KEY_PREFIX, userId, paymentDocCount],
     queryFn: () => fetchCSV({ userId, paymentDocCount }),
     enabled: shouldFetch && !!userId && paymentDocCount !== null,
-    staleTime: CONFIG.STALE_TIME, // Data is fresh for 15 minutes
+    staleTime: CONFIG.STALE_TIME,
     refetchOnWindowFocus: true, // DO refetch when user returns to tab (changed from false)
     refetchOnMount: true, // DO refetch on component mount to check for fresh data
     refetchOnReconnect: true, // DO refetch when network reconnects
