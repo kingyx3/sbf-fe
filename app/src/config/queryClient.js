@@ -17,7 +17,8 @@ const queryClient = new QueryClient({
         return failureCount < 3;
       },
       retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-      refetchOnWindowFocus: false,
+      refetchOnWindowFocus: true, // Enable refetch on window focus (changed from false)
+      refetchOnMount: true, // Enable refetch on mount to check for fresh data
       refetchOnReconnect: true, // Refetch when network comes back
       // Keep background refetches but make them less aggressive
       refetchInterval: false, // Don't auto-refetch by default
@@ -34,7 +35,7 @@ const localStoragePersister = createSyncStoragePersister({
 persistQueryClient({
   queryClient,
   persister: localStoragePersister,
-  maxAge: 1000 * 60 * 60 * 24, // 24 hours
+  maxAge: 1000 * 60 * 60, // 1 hour (reduced from 24 hours to ensure fresh data)
 });
 
 export default queryClient;
