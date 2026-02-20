@@ -6,7 +6,7 @@ import { envVars } from "../config/envConfig";
 const CONFIG = {
   COLLECTION_NAME: "demand",
   QUERY_KEY_PREFIX: "demandData",
-  STALE_TIME: 30 * 60 * 1000, // 30 minutes - increased to match CSV for consistency
+  STALE_TIME: 15 * 60 * 1000, // 15 minutes - reduced to match CSV for consistency
   MAX_RETRIES: 3,
   RETRY_DELAY: 1000,
 };
@@ -85,7 +85,8 @@ const useGetDemand = (sbfCode) => {
     queryFn: () => fetchDemandData(sbfCode),
     enabled: !!sbfCode,
     staleTime: CONFIG.STALE_TIME,
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true, // Enable refetch on window focus (changed from false)
+    refetchOnMount: true, // Enable refetch on mount to check for fresh data
     refetchOnReconnect: true, // Retry when network reconnects
     retry: (failureCount, error) => {
       if (failureCount >= CONFIG.MAX_RETRIES) return false;
