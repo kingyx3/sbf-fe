@@ -9,8 +9,8 @@ import {
 } from "../utils/indexedDB";
 
 const CONFIG = {
-  CACHE_TTL: 60 * 60 * 1000, // 1 hour in milliseconds
-  STALE_TIME: 30 * 60 * 1000, // 30 minutes - increased to reduce mobile tab refresh frequency
+  CACHE_TTL: 30 * 60 * 1000, // 30 minutes (reduced from 1 hour for fresher data)
+  STALE_TIME: 15 * 60 * 1000, // 15 minutes (reduced from 30 minutes)
   FUNCTION_NAME: "getCsvFile",
   QUERY_KEY_PREFIX: "csvData",
   MAX_RETRIES: 3,
@@ -82,7 +82,8 @@ const fetchFromFirebase = async (userId, paymentDocCount) => {
 
   try {
     const getCSVFile = httpsCallable(functions, CONFIG.FUNCTION_NAME);
-    const response = await getCSVFile();
+    // Add timestamp parameter to bust HTTP caches (backend ignores this param)
+    const response = await getCSVFile({ cacheBust: Date.now() });
     
     if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
       console.log('[useFetchCSV] Firebase response:', {
@@ -171,8 +172,9 @@ const useFetchCSV = ({ enabled = true, userId, paymentDocCount }) => {
     queryKey: [CONFIG.QUERY_KEY_PREFIX, userId, paymentDocCount],
     queryFn: () => fetchCSV({ userId, paymentDocCount }),
     enabled: shouldFetch && !!userId && paymentDocCount !== null,
-    staleTime: CONFIG.STALE_TIME, // Data is fresh for 5 minutes
-    refetchOnWindowFocus: false, // Don't refetch on window focus
+    staleTime: CONFIG.STALE_TIME,
+    refetchOnWindowFocus: true, // DO refetch when user returns to tab (changed from false)
+    refetchOnMount: true, // DO refetch on component mount to check for fresh data
     refetchOnReconnect: true, // DO refetch when network reconnects
     retry: (failureCount, error) => {
       // Retry logic with exponential backoff
