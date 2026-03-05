@@ -18,7 +18,7 @@ import useFetchCSV from "../../hooks/useFetchCSV";
 import useGetDemand from "../../hooks/useGetDemand";
 import { envVars } from "../../config/envConfig";
 
-const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode }) => {
+const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode, accessibleSbfCodes }) => {
   const [selectedSbfCode, setSelectedSbfCode] = useState(latestSbfCode);
   const [filteredData, setFilteredData] = useState([]);
   const [includeLrt, setIncludeLrt] = useState(false); // MRT/LRT toggle state
@@ -36,6 +36,7 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode }) => {
     enabled: true,
     userId,
     paymentDocCount,
+    sbfCode: selectedSbfCode,
   });
 
   const {
@@ -215,6 +216,7 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode }) => {
         ref={filtersRef}
         includeLrt={includeLrt}
         onIncludeLrtChange={setIncludeLrt}
+        accessibleSbfCodes={accessibleSbfCodes}
       />
 
       {shouldShowEmptyState ? (

@@ -28,6 +28,7 @@ const Filters = forwardRef(({
   onSbfCodeChange,
   includeLrt,
   onIncludeLrtChange,
+  accessibleSbfCodes,
 }, ref) => {
 
   // Filter data by selected SBF code for range calculations
@@ -56,10 +57,14 @@ const Filters = forwardRef(({
     schoolOptionsWithin2km,
   } = filterOptions;
 
-  const sortedSBFCodes = useMemo(() => 
-    sortSBFCodesChronologically([...sbfCodes]), 
-    [sbfCodes]
-  );
+  // Use accessibleSbfCodes from parent when provided (populated from user's access list),
+  // otherwise fall back to codes extracted from loaded data
+  const sortedSBFCodes = useMemo(() => {
+    if (accessibleSbfCodes?.length) {
+      return sortSBFCodesChronologically([...accessibleSbfCodes]);
+    }
+    return sortSBFCodesChronologically([...sbfCodes]);
+  }, [accessibleSbfCodes, sbfCodes]);
 
   // Calculate ranges based on SBF-filtered data
   const ranges = useCalculatedRanges(sbfFilteredData?.length ? sbfFilteredData : data || [], includeLrt);

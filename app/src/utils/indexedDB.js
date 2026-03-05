@@ -7,19 +7,25 @@ db.version(1).stores({
   csvCache: "&userId", // Only one entry per user
 });
 
-export const saveCSVToIndexedDB = async (userId, data, paymentDocCount) => {
+// Version 2: compound key to cache per (userId, sbfCode)
+db.version(2).stores({
+  csvCache: "&[userId+sbfCode]",
+});
+
+export const saveCSVToIndexedDB = async (userId, data, paymentDocCount, sbfCode) => {
   return db.csvCache.put({
     userId,
+    sbfCode,
     data,
     timestamp: Date.now(),
     paymentDocCount,
   });
 };
 
-export const getCSVFromIndexedDB = async (userId, paymentDocCount, TTL) => {
-  const cached = await db.csvCache.get(userId);
+export const getCSVFromIndexedDB = async (userId, paymentDocCount, TTL, sbfCode) => {
+  const cached = await db.csvCache.get([userId, sbfCode]);
   if (!cached) {
-    console.log(`[IndexedDB] ❌ No cache found for userId: ${userId}`);
+    console.log(`[IndexedDB] ❌ No cache found for userId: ${userId}, sbfCode: ${sbfCode}`);
     return null;
   }
 
@@ -37,13 +43,13 @@ export const getCSVFromIndexedDB = async (userId, paymentDocCount, TTL) => {
   }
 
   if (TTL !== Infinity && now - timestamp >= TTL) {
-    if (envVars.REACT_APP_DEBUG) console.log(`[IndexedDB] ⏰ Cache expired for userId: ${userId}`);
+    if (envVars.REACT_APP_DEBUG) console.log(`[IndexedDB] ⏰ Cache expired for userId: ${userId}, sbfCode: ${sbfCode}`);
     return null;
   }
 
   if (envVars.REACT_APP_DEBUG) {
     const ageInMinutes = Math.round((now - timestamp) / (1000 * 60));
-    console.log(`[IndexedDB] ✅ Valid cache hit for userId: ${userId} (age: ${ageInMinutes} minutes)`);
+    console.log(`[IndexedDB] ✅ Valid cache hit for userId: ${userId}, sbfCode: ${sbfCode} (age: ${ageInMinutes} minutes)`);
   }
   
   return { data, timestamp };
