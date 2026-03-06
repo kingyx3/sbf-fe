@@ -38,7 +38,7 @@
     "papaparse": "^5.5.2",
     "postcss": "^8.5.6",
     "qrcode.react": "^4.2.0",
-    "react": "^19.2.0",
+    "react": "^19.2.4",
     "react-chartjs-2": "^5.3.1",
     "react-dom": "^19.2.0",
     "react-hook-form": "^7.54.2",
