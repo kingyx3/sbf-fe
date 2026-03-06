@@ -27,6 +27,7 @@ const HomeScreen = ({ isDarkMode, footerHeight, isFooterVisible }) => {
   const [userId, setUserId] = useState(null);
   const [paymentDocCount, setPaymentDocCount] = useState(null);
   const [latestSbfCode, setLatestSbfCode] = useState(null);
+  const [accessibleSbfCodes, setAccessibleSbfCodes] = useState([]);
 
   const { dashboards: allDashboards, isLoading: isLoadingSbfCodes } = useListSbfCodes("");
 
@@ -38,6 +39,7 @@ const HomeScreen = ({ isDarkMode, footerHeight, isFooterVisible }) => {
       setBoughtAccess(true);
       setPaymentDocCount(1)
       setHasUnlimitedAccess(true)
+      setAccessibleSbfCodes(["Jul2025"])
       return;
     } else {
       const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
@@ -89,6 +91,7 @@ const HomeScreen = ({ isDarkMode, footerHeight, isFooterVisible }) => {
               const lastSbfCode = sortedPaidSbfCodes.at(0)
               // console.log('lastSbfCode', lastSbfCode)
               setLatestSbfCode(lastSbfCode)
+              setAccessibleSbfCodes(sortedPaidSbfCodes)
             }
 
             if (allDashboards?.length) {
@@ -154,6 +157,7 @@ const HomeScreen = ({ isDarkMode, footerHeight, isFooterVisible }) => {
             userId={userId}
             paymentDocCount={paymentDocCount}
             latestSbfCode={latestSbfCode}
+            accessibleSbfCodes={accessibleSbfCodes}
             footerHeight={footerHeight}
             isFooterVisible={isFooterVisible}
           />

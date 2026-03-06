@@ -11,20 +11,20 @@ import {
 const CONFIG = {
   CACHE_TTL: 30 * 60 * 1000, // 30 minutes (reduced from 1 hour for fresher data)
   STALE_TIME: 15 * 60 * 1000, // 15 minutes (reduced from 30 minutes)
-  FUNCTION_NAME: "getCsvFile",
+  FUNCTION_NAME: "getJsonFile",
   QUERY_KEY_PREFIX: "csvData",
   MAX_RETRIES: 3,
   RETRY_DELAY: 1000, // Base retry delay in ms
 };
 
 /**
- * Fetches CSV data from IndexedDB cache or Firebase Functions
+ * Fetches JSON data from IndexedDB cache or Firebase Functions
  * Implements stale-while-revalidate pattern for better UX
  */
-const fetchCSV = async ({ userId, paymentDocCount, allowStale = true }) => {
+const fetchCSV = async ({ userId, paymentDocCount, sbfCode, allowStale = true }) => {
   // Try to get from cache first
   try {
-    const cachedData = await fetchFromCache(userId, paymentDocCount, allowStale);
+    const cachedData = await fetchFromCache(userId, paymentDocCount, sbfCode, allowStale);
     if (cachedData) {
       // If we're allowing stale data and have it, return it immediately
       // The query will run in background to update the cache
@@ -37,7 +37,7 @@ const fetchCSV = async ({ userId, paymentDocCount, allowStale = true }) => {
   }
 
   // Fetch from Firebase if cache miss or error
-  return fetchFromFirebase(userId, paymentDocCount);
+  return fetchFromFirebase(userId, paymentDocCount, sbfCode);
 };
 
 /**
@@ -50,13 +50,13 @@ const isCacheStale = (timestamp) => {
 };
 
 /**
- * Attempts to fetch CSV data from IndexedDB cache
+ * Attempts to fetch JSON data from IndexedDB cache
  * Now supports returning stale data for better UX
  */
-const fetchFromCache = async (userId, paymentDocCount, allowStale = true) => {
-  const cached = await getCSVFromIndexedDB(userId, paymentDocCount, allowStale ? Infinity : CONFIG.CACHE_TTL);
+const fetchFromCache = async (userId, paymentDocCount, sbfCode, allowStale = true) => {
+  const cached = await getCSVFromIndexedDB(userId, paymentDocCount, allowStale ? Infinity : CONFIG.CACHE_TTL, sbfCode);
   if (cached) {
-    logDebug("✅ Loaded CSV from IndexedDB cache.");
+    logDebug("✅ Loaded JSON from IndexedDB cache.");
     // Handle both old format (just data) and new format (with timestamp)
     if (cached.data && cached.timestamp) {
       return cached;
@@ -74,16 +74,15 @@ const fetchFromCache = async (userId, paymentDocCount, allowStale = true) => {
 };
 
 /**
- * Fetches CSV data from Firebase Functions and updates cache
+ * Fetches JSON data from Firebase Functions and updates cache
  */
-const fetchFromFirebase = async (userId, paymentDocCount) => {
+const fetchFromFirebase = async (userId, paymentDocCount, sbfCode) => {
   const startTime = performance.now();
-  logDebug("🚀 Fetching CSV from Firebase Functions...");
+  logDebug("🚀 Fetching JSON from Firebase Functions...");
 
   try {
-    const getCSVFile = httpsCallable(functions, CONFIG.FUNCTION_NAME);
-    // Add timestamp parameter to bust HTTP caches (backend ignores this param)
-    const response = await getCSVFile({ cacheBust: Date.now() });
+    const getJsonFile = httpsCallable(functions, CONFIG.FUNCTION_NAME);
+    const response = await getJsonFile({ sbfCode });
     
     if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
       console.log('[useFetchCSV] Firebase response:', {
@@ -111,8 +110,8 @@ const fetchFromFirebase = async (userId, paymentDocCount) => {
       console.warn('[useFetchCSV] Empty data array received from server');
     }
 
-    // Save to cache
-    await saveCSVToIndexedDB(userId, rawData, paymentDocCount);
+    // Save to cache keyed by sbfCode
+    await saveCSVToIndexedDB(userId, rawData, paymentDocCount, sbfCode);
 
     const fetchTime = Math.round(performance.now() - startTime);
     logDebug(`✅ Fetched from Firebase in ${fetchTime} ms`);
@@ -143,19 +142,20 @@ const fetchFromFirebase = async (userId, paymentDocCount) => {
       code: error.code,
       details: error.details || 'no details',
       userId,
-      paymentDocCount
+      paymentDocCount,
+      sbfCode
     });
     throw error;
   }
 };
 
 /**
- * Custom hook for fetching CSV data with caching
+ * Custom hook for fetching JSON data with caching
  */
-const useFetchCSV = ({ enabled = true, userId, paymentDocCount }) => {
+const useFetchCSV = ({ enabled = true, userId, paymentDocCount, sbfCode }) => {
   const shouldFetch = !envVars.testMode && enabled;
 
-  logDebug(`Init | enabled: ${enabled}, userId: ${userId}, docCount: ${paymentDocCount}`);
+  logDebug(`Init | enabled: ${enabled}, userId: ${userId}, docCount: ${paymentDocCount}, sbfCode: ${sbfCode}`);
 
   // Handle test mode
   if (envVars.testMode) {
@@ -169,9 +169,9 @@ const useFetchCSV = ({ enabled = true, userId, paymentDocCount }) => {
 
   // Use react-query for data fetching with improved network handling
   const queryResult = useQuery({
-    queryKey: [CONFIG.QUERY_KEY_PREFIX, userId, paymentDocCount],
-    queryFn: () => fetchCSV({ userId, paymentDocCount }),
-    enabled: shouldFetch && !!userId && paymentDocCount !== null,
+    queryKey: [CONFIG.QUERY_KEY_PREFIX, userId, paymentDocCount, sbfCode],
+    queryFn: () => fetchCSV({ userId, paymentDocCount, sbfCode }),
+    enabled: shouldFetch && !!userId && paymentDocCount !== null && !!sbfCode,
     staleTime: CONFIG.STALE_TIME,
     refetchOnWindowFocus: true, // DO refetch when user returns to tab (changed from false)
     refetchOnMount: true, // DO refetch on component mount to check for fresh data
