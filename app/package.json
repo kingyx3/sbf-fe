@@ -10,7 +10,7 @@
     "@emotion/styled": "^11.14.0",
     "@headlessui/react": "^2.2.9",
     "@heroicons/react": "^2.2.0",
-    "@mui/icons-material": "^6.4.8",
+    "@mui/icons-material": "^7.3.8",
     "@mui/material": "^6.4.8",
     "@mui/utils": "^7.3.5",
     "@mui/x-data-grid": "^7.28.0",
