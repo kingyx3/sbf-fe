@@ -7,8 +7,15 @@ db.version(1).stores({
   csvCache: "&userId", // Only one entry per user
 });
 
-// Version 2: compound key to cache per (userId, sbfCode)
+// Version 2: drop the old csvCache table so the primary key can be changed.
+// IndexedDB does not support changing an existing store's primary key in-place,
+// so we must drop the table here and recreate it in version 3.
 db.version(2).stores({
+  csvCache: null,
+});
+
+// Version 3: recreate csvCache with a compound primary key to cache per (userId, sbfCode)
+db.version(3).stores({
   csvCache: "&[userId+sbfCode]",
 });
 
