@@ -13,7 +13,7 @@
     "@mui/icons-material": "^7.3.8",
     "@mui/material": "^7.3.8",
     "@mui/utils": "^7.3.5",
-    "@mui/x-data-grid": "^7.28.0",
+    "@mui/x-data-grid": "^8.28.0",
     "@stripe/stripe-js": "^8.5.3",
     "@tailwindcss/cli": "^4.1.18",
     "@tailwindcss/vite": "^4.1.17",
