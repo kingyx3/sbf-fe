@@ -76,10 +76,10 @@ const ConnectionStatusBar = ({
   };
 
   return (
-    <div className={`fixed top-0 left-0 right-0 z-50 px-4 py-2 border-b transition-all duration-300 ${getStatusColor()}`}>
+    <div className={`fixed top-14 left-0 right-0 z-[9000] px-4 py-1.5 border-b transition-all duration-300 ${getStatusColor()}`}>
       <div className="max-w-7xl mx-auto flex items-center justify-center gap-2">
         {getIcon()}
-        <span className="text-sm font-medium">
+        <span className="text-xs font-medium">
           {getStatusMessage()}
         </span>
       </div>

@@ -1,4 +1,3 @@
-// purchase/PurchaseOptionCard.js
 import React from "react";
 import PriceDisplay from "./PriceDisplay";
 import FeatureList from "./FeatureList";
@@ -12,49 +11,63 @@ const PurchaseOptionCard = ({
   isSelected,
   onClick,
   highlight = false,
-  badge
+  badge,
 }) => {
   return (
     <div
-      className={`p-4 rounded-lg border cursor-pointer transition-all ${
+      role="button"
+      tabIndex={0}
+      onClick={onClick}
+      onKeyDown={(e) => e.key === "Enter" && onClick()}
+      className={`relative rounded-xl border-2 cursor-pointer transition-all duration-200 p-4 outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
         isSelected
           ? highlight
-            ? 'border-2 border-purple-500 bg-purple-50 dark:bg-purple-900/10 shadow-md'
-            : 'border-2 border-blue-500 bg-blue-50 dark:bg-blue-900/10'
+            ? "border-purple-500 bg-purple-50 dark:bg-purple-900/15 shadow-md focus-visible:ring-purple-500"
+            : "border-blue-500 bg-blue-50 dark:bg-blue-900/15 shadow-md focus-visible:ring-blue-500"
           : highlight
-            ? 'border-2 border-purple-300 dark:border-purple-700 hover:border-purple-400'
-            : 'border border-gray-200 dark:border-gray-700 hover:border-gray-300'
-      } ${highlight ? 'relative' : ''}`}
-      onClick={onClick}
+          ? "border-purple-300 dark:border-purple-700 hover:border-purple-400 dark:hover:border-purple-600 bg-white dark:bg-gray-800 hover:shadow-card focus-visible:ring-purple-400"
+          : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-800 hover:shadow-card focus-visible:ring-gray-400"
+      }`}
     >
-      {highlight && (
-        <div className="absolute top-0 right-0 bg-purple-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-bl rounded-tr">
-          POPULAR
+      {/* Badge */}
+      {badge && (
+        <div
+          className={`absolute -top-px right-4 px-2.5 py-0.5 rounded-b-md text-[10px] font-bold tracking-wide ${
+            highlight
+              ? "bg-purple-600 text-white"
+              : "bg-blue-600 text-white"
+          }`}
+        >
+          {badge}
         </div>
       )}
 
-      <div className="flex flex-col">
-        <div className="flex justify-between items-start mb-2">
-          <div>
-            <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
-              {title}
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
-              {description}
-            </p>
-          </div>
+      {/* Selection indicator */}
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-base font-bold text-gray-900 dark:text-white">{title}</h3>
+        <div
+          className={`w-4 h-4 rounded-full border-2 flex-shrink-0 transition-colors ${
+            isSelected
+              ? highlight
+                ? "border-purple-500 bg-purple-500"
+                : "border-blue-500 bg-blue-500"
+              : "border-gray-300 dark:border-gray-600"
+          }`}
+        >
+          {isSelected && (
+            <svg viewBox="0 0 16 16" fill="none" className="w-full h-full p-0.5">
+              <path d="M3 8l3.5 3.5L13 5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          )}
         </div>
+      </div>
 
-        <PriceDisplay
-          price={price}
-          originalPrice={originalPrice}
-          highlight={highlight}
-        />
+      <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">{description}</p>
 
-        <FeatureList
-          items={features}
-          highlight={highlight}
-        />
+      <PriceDisplay price={price} originalPrice={originalPrice} highlight={highlight} />
+
+      <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+        <FeatureList items={features} highlight={highlight} />
       </div>
     </div>
   );

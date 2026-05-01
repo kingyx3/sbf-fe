@@ -32,6 +32,9 @@ export const sortSBFCodesChronologically = (codes) => {
     });
 };
 
+export const truncate = (text, maxLength) =>
+    text.length > maxLength ? `${text.substring(0, maxLength)}…` : text;
+
 const getMonthNumber = (month) => {
     const months = {
         Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6,
