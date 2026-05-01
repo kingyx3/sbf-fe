@@ -1,6 +1,8 @@
 import React from "react";
 import useNetworkStatus from "../hooks/useNetworkStatus";
 
+const INNER_RING_STYLE = { animationDuration: "0.5s", animationDirection: "reverse" };
+
 const DashboardLoadingSpinner = ({
   isUsingCachedData = false,
   loadingMessage = "Loading dashboard data...",
@@ -27,10 +29,10 @@ const DashboardLoadingSpinner = ({
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center gap-5">
-        <div className="relative">
+        <div className="relative w-14 h-14">
           <div className="w-14 h-14 rounded-full border-4 border-gray-200 dark:border-gray-700" />
-          <div className="absolute inset-0 w-14 h-14 rounded-full border-4 border-transparent border-t-blue-500 animate-spin" />
-          <div className="absolute inset-2 w-10 h-10 rounded-full border-3 border-transparent border-t-blue-300/50 animate-spin" style={{ animationDuration: '0.6s', animationDirection: 'reverse' }} />
+          <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-blue-500 animate-spin" />
+          <div className="absolute inset-2 rounded-full border-2 border-transparent border-t-blue-300 animate-spin" style={INNER_RING_STYLE} />
         </div>
 
         <div className="text-center space-y-1">

@@ -628,7 +628,7 @@ const Filters = forwardRef(({
     <>
       <div
         ref={filterRef}
-        className="hidden lg:block fixed left-0 top-16 w-80 p-6 overflow-y-auto shadow-lg bg-white dark:bg-gray-800"
+        className="hidden lg:block fixed left-0 top-14 w-80 p-6 overflow-y-auto border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
         style={{ zIndex: 10, height: filterHeight }}
       >
         {filtersUI}

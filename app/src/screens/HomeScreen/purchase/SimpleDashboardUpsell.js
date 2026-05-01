@@ -1,6 +1,7 @@
 // purchase/SimpleDashboardUpsell.js
 import React, { useEffect } from "react";
 import { envVars } from "../../../config/envConfig";
+import { truncate } from "../../../components/helpers";
 
 const SimpleDashboardUpsell = ({
   availableDashboards = [],
@@ -26,49 +27,48 @@ const SimpleDashboardUpsell = ({
     }
   };
 
-  // ACTUALLY USE the truncate function for displayed text
-  const displayName = (name) => {
-    const maxLength = 20;
-    return name.length > maxLength ? `${name.substring(0, maxLength)}...` : name;
-  };
-
   return (
-    <div className="mt-6 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="min-w-0">
-          <h3 className="text-sm font-medium text-gray-900 dark:text-white truncate">Need another dashboard?</h3>
-          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-            Unlock additional SBF data
-          </p>
-        </div>
+    <div className="mt-5 px-2">
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-blue-200 dark:border-blue-800/50 p-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5 mb-0.5">
+              <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+                Unlock another dashboard
+              </h3>
+            </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Add access to any past or upcoming SBF launch
+            </p>
+          </div>
 
-        <div className="flex gap-2 w-full sm:w-auto min-w-0">
-          <div className="relative flex-1 sm:flex-none sm:w-48 min-w-0">
+          <div className="flex gap-2 w-full sm:w-auto min-w-0">
             <select
-              className="px-2 py-1.5 text-sm border rounded-md bg-white dark:bg-gray-800 w-full truncate pr-6"
+              className="flex-1 sm:w-44 px-2.5 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
               value={selectedPurchase[0]?.name || ''}
               onChange={handleSelectChange}
-              title={selectedPurchase[0]?.name || ''} // Show full name on hover
+              title={selectedPurchase[0]?.name || ''}
             >
               {availableDashboards.map((dashboard) => (
                 <option key={dashboard.name} value={dashboard.name}>
-                  {displayName(dashboard.name)}{dashboard.preOrder ? " (Pre-order)" : ""}
+                  {truncate(dashboard.name, 20)}{dashboard.preOrder ? " (Pre-order)" : ""}
                 </option>
               ))}
             </select>
-          </div>
 
-          <button
-            onClick={handleCheckout}
-            disabled={selectedPurchase.length === 0 || paymentLoading}
-            className={`px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium whitespace-nowrap ${
-              selectedPurchase.length === 0 || paymentLoading
-                ? 'bg-gray-200 dark:bg-gray-700 text-gray-500 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-700 text-white'
-            }`}
-          >
-            {paymentLoading ? 'Processing...' : `Add (SGD${singlePrice.toFixed(2)})`}
-          </button>
+            <button
+              onClick={handleCheckout}
+              disabled={selectedPurchase.length === 0 || paymentLoading}
+              className={`px-3 py-1.5 rounded-lg text-sm font-semibold whitespace-nowrap transition-colors ${
+                selectedPurchase.length === 0 || paymentLoading
+                  ? 'bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed'
+                  : 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm'
+              }`}
+            >
+              {paymentLoading ? 'Processing…' : `Add · SGD ${singlePrice.toFixed(2)}`}
+            </button>
+          </div>
         </div>
       </div>
     </div>

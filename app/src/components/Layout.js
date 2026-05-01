@@ -14,7 +14,7 @@ const Layout = ({ children, userEmail, isDarkMode, toggleDarkMode }) => {
 
       {/* Main Content */}
       <main
-        className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-6 pt-20"
+        className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-6 pt-16"
       >
         {/* Pass children without footer state */}
         {children}
