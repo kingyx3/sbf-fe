@@ -1,11 +1,8 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import DataTable from "./DataTable";
 import FlatMap from "./FlatMap";
 import CountChart from "./CountChart";
 import ROIAnalysisChart from "./ROIAnalysisChart";
-import FloorLevelChart from "./FloorLevelChart";
-import LocationValueChart from "./LocationValueChart";
-import AffordabilityAnalysisChart from "./AffordabilityAnalysisChart";
 import CompletionTimelineChart from "./CompletionTimelineChart";
 import RemainingLeaseAnalysisChart from "./RemainingLeaseAnalysisChart";
 import Filters from "./Filters";
@@ -18,19 +15,12 @@ import useFetchCSV from "../../hooks/useFetchCSV";
 import useGetDemand from "../../hooks/useGetDemand";
 import { envVars } from "../../config/envConfig";
 
-const SectionHeading = ({ icon, title, subtitle }) => (
-  <div className="flex items-start gap-3 mb-5">
-    <div className="w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center flex-shrink-0 text-lg">
-      {icon}
-    </div>
-    <div>
-      <h2 className="text-base font-semibold text-gray-900 dark:text-gray-100 leading-tight">
-        {title}
-      </h2>
-      {subtitle && (
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{subtitle}</p>
-      )}
-    </div>
+const LOADING_TIMEOUT_MS = 20_000;
+
+const SectionHeading = ({ title, subtitle }) => (
+  <div className="mb-5">
+    <h2 className="text-base font-semibold text-gray-900 dark:text-gray-100 leading-tight">{title}</h2>
+    {subtitle && <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{subtitle}</p>}
   </div>
 );
 
@@ -42,7 +32,8 @@ const Card = ({ children, className = "" }) => (
 
 const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode, accessibleSbfCodes }) => {
   const [selectedSbfCode, setSelectedSbfCode] = useState(latestSbfCode);
-  const [filteredData, setFilteredData] = useState([]);
+  // null = filters haven't run yet; [] = filters ran and returned nothing
+  const [filteredData, setFilteredData] = useState(null);
   const [includeLrt, setIncludeLrt] = useState(false);
   const [loadingTimeout, setLoadingTimeout] = useState(false);
   const filtersRef = useRef();
@@ -73,54 +64,44 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode, accessi
     csvData = testData;
   }
 
-  const handleFilter = (filteredResults) => {
+  // Stable callback — setFilteredData is always stable so no deps needed
+  const handleFilter = useCallback((filteredResults) => {
     setFilteredData(filteredResults);
-  };
+  }, []);
 
+  // Reset filteredData to null whenever csvData changes so we don't flash a stale empty state
   useEffect(() => {
-    let timeoutId;
-    if ((isLoadingCSV || isLoadingDemand) && !envVars.testMode && !csvData?.length) {
-      timeoutId = setTimeout(() => {
-        if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
-          console.warn('[Dashboard] Loading timeout reached - forcing error state');
-        }
-        setLoadingTimeout(true);
-      }, 60000);
-    } else {
-      setLoadingTimeout(false);
-    }
-    return () => { if (timeoutId) clearTimeout(timeoutId); };
-  }, [isLoadingCSV, isLoadingDemand, csvData?.length]);
+    setFilteredData(null);
+  }, [csvData]);
+
+  // Timeout: only for the initial network fetch, not for settled states
+  useEffect(() => {
+    if (!isLoadingCSV || envVars.testMode || csvData?.length) return;
+    const id = setTimeout(() => setLoadingTimeout(true), LOADING_TIMEOUT_MS);
+    return () => clearTimeout(id);
+  }, [isLoadingCSV, csvData?.length]);
+
+  // Clear timeout flag once loading resolves
+  useEffect(() => {
+    if (!isLoadingCSV) setLoadingTimeout(false);
+  }, [isLoadingCSV]);
 
   const handleRetry = () => {
-    if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
-      console.log('[Dashboard] Retry requested - CSV Error:', csvError, 'Demand Error:', demandError);
-    }
     setLoadingTimeout(false);
     if (csvError) refetchCSV();
     if (demandError) refetchDemand();
   };
 
-  const shouldShowErrorBoundary = () => {
-    if (csvError && (!csvData || csvData.length === 0)) return true;
-    if (loadingTimeout && (!csvData || csvData.length === 0) && !demandData?.length) return true;
-    if (csvError?.code === 'unauthenticated' || demandError?.code === 'unauthenticated') return true;
-    if (csvError?.code === 'permission-denied' || demandError?.code === 'permission-denied') return true;
-    return false;
-  };
+  const hasAuthError =
+    csvError?.code === 'unauthenticated' || demandError?.code === 'unauthenticated' ||
+    csvError?.code === 'permission-denied' || demandError?.code === 'permission-denied';
 
-  if (shouldShowErrorBoundary()) {
-    let primaryError = csvError || demandError;
-    if (loadingTimeout && !primaryError) {
-      primaryError = {
-        message: "Loading is taking longer than expected. This might be due to network issues or high server load.",
-        code: "timeout",
-        isTimeout: true,
-      };
-    }
-    if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
-      console.log('[Dashboard] Showing error boundary for critical error:', primaryError);
-    }
+  if (hasAuthError || (csvError && !csvData?.length) || loadingTimeout) {
+    const primaryError = csvError || demandError || {
+      message: "Loading is taking longer than expected. Please check your connection and try again.",
+      code: "timeout",
+      isTimeout: true,
+    };
     return (
       <NetworkErrorBoundary
         error={primaryError}
@@ -130,33 +111,21 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode, accessi
     );
   }
 
-  const isDashboardLoading =
-    isLoadingCSV || (!csvData?.length && !isRefetchingCSV);
-
-  if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
-    console.log('[Dashboard] Loading diagnosis:', {
-      isLoadingCSV, csvDataLength: csvData?.length, isRefetchingCSV,
-      isDashboardLoading, userId, paymentDocCount, selectedSbfCode,
-    });
-  }
-
-  if (isDashboardLoading) {
-    const loadingMessage = isLoadingDemand
-      ? "Loading market demand data..."
-      : "Loading dashboard data...";
-    if (envVars.REACT_APP_DEBUG || process.env.NODE_ENV === 'development') {
-      console.log('[Dashboard] Showing loading spinner:', loadingMessage);
-    }
+  // Only show full-screen spinner during the initial network fetch.
+  // Empty data or disabled-query states fall through to the content area.
+  if (isLoadingCSV) {
     return (
       <DashboardLoadingSpinner
         isUsingCachedData={isRefetchingCSV && !!csvData}
-        loadingMessage={loadingMessage}
+        loadingMessage="Loading dashboard data..."
       />
     );
   }
 
   const isDemandLoading = isLoadingDemand && !demandData?.length;
-  const shouldShowEmptyState = csvData && csvData.length > 0 && filteredData.length === 0;
+  // null = still filtering; [] = genuinely empty after filter
+  const isFilterPending = filteredData === null && csvData?.length > 0;
+  const shouldShowEmptyState = !isFilterPending && csvData?.length > 0 && filteredData?.length === 0;
   const hasMissingDemandData = !isLoadingDemand && !demandData?.length && selectedSbfCode;
 
   return (
@@ -193,31 +162,18 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode, accessi
         accessibleSbfCodes={accessibleSbfCodes}
       />
 
-      {shouldShowEmptyState ? (
+      {isFilterPending ? null : shouldShowEmptyState ? (
         <div className="mx-4 mt-6">
           <Card className="p-12 text-center">
-            <svg
-              className="mx-auto h-12 w-12 text-gray-300 dark:text-gray-600 mb-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
+            <svg className="mx-auto h-12 w-12 text-gray-300 dark:text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <h3 className="text-base font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              No units match your filters
-            </h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-              Try adjusting your filter criteria to see available units.
-            </p>
+            <h3 className="text-base font-semibold text-gray-700 dark:text-gray-300 mb-2">No units match your filters</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Try adjusting your filter criteria to see available units.</p>
             <button
               onClick={() => filtersRef.current?.resetFilters()}
-              className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-sm"
+              className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium bg-brand-600 hover:bg-brand-700 text-white transition-colors shadow-sm"
             >
               Reset Filters
             </button>
@@ -228,26 +184,23 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode, accessi
           <WarningBanner />
 
           <div className="max-w-full mx-auto mb-10 space-y-6 mt-2">
-            {/* Data Table */}
             <section>
-              <DataTable data={filteredData} isDarkMode={isDarkMode} includeLrt={includeLrt} />
+              <DataTable data={filteredData ?? []} isDarkMode={isDarkMode} includeLrt={includeLrt} />
             </section>
 
-            {/* Demand loading skeleton */}
             {isDemandLoading && (
               <Card className="p-6">
                 <div className="flex items-center justify-center h-28 gap-3">
-                  <div className="w-5 h-5 border-2 border-gray-200 dark:border-gray-700 border-t-blue-500 dark:border-t-blue-400 rounded-full animate-spin" />
+                  <div className="w-5 h-5 border-2 border-gray-200 dark:border-gray-700 border-t-brand-500 rounded-full animate-spin" />
                   <span className="text-sm text-gray-500 dark:text-gray-400">Loading market demand data...</span>
                 </div>
               </Card>
             )}
 
-            {/* Supply vs Demand Chart */}
-            {demandData?.length && (
+            {demandData?.length > 0 && (
               <Card className="p-5">
                 <CountChart
-                  data={filteredData}
+                  data={filteredData ?? []}
                   demandData={demandData}
                   capturedAt={capturedAt}
                   groupBy="project_town"
@@ -259,34 +212,28 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode, accessi
               </Card>
             )}
 
-            {/* Investment & Market Intelligence */}
             <section>
               <SectionHeading
-                icon="💰"
                 title="Investment Analysis & Market Intelligence"
                 subtitle="ROI projections, location insights, and market timing analysis"
               />
-
               <div className="space-y-5">
                 <Card className="p-5">
-                  <ROIAnalysisChart data={filteredData} isDarkMode={isDarkMode} />
+                  <ROIAnalysisChart data={filteredData ?? []} isDarkMode={isDarkMode} />
                 </Card>
-
                 <Card className="p-5">
                   <SectionHeading
-                    icon="📍"
                     title="Location Map"
                     subtitle="Interactive map showing all filtered properties with color-coded markers by flat type"
                   />
-                  <FlatMap data={filteredData} isDarkMode={isDarkMode} />
+                  <FlatMap data={filteredData ?? []} isDarkMode={isDarkMode} />
                 </Card>
-
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
                   <Card className="p-5">
-                    <RemainingLeaseAnalysisChart data={filteredData} isDarkMode={isDarkMode} />
+                    <RemainingLeaseAnalysisChart data={filteredData ?? []} isDarkMode={isDarkMode} />
                   </Card>
                   <Card className="p-5">
-                    <CompletionTimelineChart data={filteredData} isDarkMode={isDarkMode} />
+                    <CompletionTimelineChart data={filteredData ?? []} isDarkMode={isDarkMode} />
                   </Card>
                 </div>
               </div>
