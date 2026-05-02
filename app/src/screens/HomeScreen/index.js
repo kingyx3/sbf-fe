@@ -1,19 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 import { auth, db, functions } from "../../config/firebaseConfig";
 import { envVars } from "../../config/envConfig";
 
-// Hooks
 import useListSbfCodes from "../../hooks/useListSBFCodes";
-
-// Components
 import LoadingSpinner from "../../components/LoadingSpinner";
 import Dashboard from "../../components/dashboard";
 import PurchaseDashboardBlock from "./purchase/PurchaseDashboardBlock";
 import SimpleDashboardUpsell from "./purchase/SimpleDashboardUpsell";
-import { sortSBFCodesChronologically } from "../../components/helpers"
+import { sortSBFCodesChronologically } from "../../components/helpers";
 
 const HomeScreen = ({ isDarkMode, footerHeight, isFooterVisible }) => {
   const navigate = useNavigate();
@@ -28,105 +25,111 @@ const HomeScreen = ({ isDarkMode, footerHeight, isFooterVisible }) => {
   const [paymentDocCount, setPaymentDocCount] = useState(null);
   const [latestSbfCode, setLatestSbfCode] = useState(null);
   const [accessibleSbfCodes, setAccessibleSbfCodes] = useState([]);
+  // Store paid codes in state so the derived-codes effect can react to them
+  const [paidSbfCodes, setPaidSbfCodes] = useState(null);
 
-  const { dashboards: allDashboards, isLoading: isLoadingSbfCodes } = useListSbfCodes("");
+  const { dashboards: allDashboards, isLoading: isLoadingSbfCodes } = useListSbfCodes();
 
+  // Effect 1: Auth + Firestore access snapshot — no allDashboards dependency,
+  // so it never re-subscribes when the SBF code list updates.
   useEffect(() => {
     if (envVars.testMode) {
-      console.log(loading, isLoadingSbfCodes)
-      setAvailableDashboards(["Jul2025"]);
-      setLoading(false);
+      setPaidSbfCodes(new Set(["Unlimited"]));
+      setPaymentDocCount(1);
       setBoughtAccess(true);
-      setPaymentDocCount(1)
-      setHasUnlimitedAccess(true)
-      setAccessibleSbfCodes(["Jul2025"])
+      setHasUnlimitedAccess(true);
+      setLoading(false);
       return;
-    } else {
-      const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
-        if (!currentUser) {
-          // navigate("/login");
-          return;
-        }
-
-        setUserId(currentUser.uid);
-
-        const paymentsRef = collection(db, "access");
-        const q = query(paymentsRef, where("userId", "==", currentUser.uid));
-        let isFirstLoad = true;
-
-        const unsub = onSnapshot(
-          q,
-          (querySnapshot) => {
-            const currentCount = querySnapshot.size;
-            setPaymentDocCount(currentCount);
-
-            const paidSbfCodes = new Set();
-            querySnapshot.forEach((doc) => {
-              const paymentData = doc.data();
-              paidSbfCodes.add(paymentData.sbfCode.trim());
-            });
-
-            const hasUnlimited = paidSbfCodes.has("Unlimited");
-            setHasUnlimitedAccess(hasUnlimited);
-
-            if (hasUnlimited || paidSbfCodes.size > 0) {
-              // Paying user
-              setBoughtAccess(true);
-
-              let accessibleSbfCodes
-              if (hasUnlimited) {
-                // Unlimited user
-                // console.log("Unlimited user")
-                accessibleSbfCodes = allDashboards.filter(item => item.preOrder === false).map(item => item.name);
-              } else {
-                // A la carte user - filter out pre-orders
-                // console.log("Limited user")
-                accessibleSbfCodes = allDashboards
-                  .filter(item => paidSbfCodes.has(item.name) && item.preOrder === false)
-                  .map(item => item.name);
-              }
-              // console.log('accessibleSbfCodes', accessibleSbfCodes)
-              const sortedPaidSbfCodes = sortSBFCodesChronologically(accessibleSbfCodes);
-              // console.log('sortedPaidSbfCodes', sortedPaidSbfCodes)
-              const lastSbfCode = sortedPaidSbfCodes.at(0)
-              // console.log('lastSbfCode', lastSbfCode)
-              setLatestSbfCode(lastSbfCode)
-              setAccessibleSbfCodes(sortedPaidSbfCodes)
-            }
-
-            if (allDashboards?.length) {
-              const unpaid = allDashboards.filter(({ name }) => !paidSbfCodes.has(name));
-              setAvailableDashboards(unpaid);
-            }
-
-            if (isFirstLoad) {
-              setLoading(false);
-              isFirstLoad = false;
-            }
-          },
-          (error) => {
-            console.error("Access snapshot error:", error);
-            if (isFirstLoad) {
-              setLoading(false);
-              isFirstLoad = false;
-            }
-          }
-        );
-
-        return () => unsub();
-      });
-
-      return () => unsubscribe();
     }
-  }, [navigate, allDashboards]);
+
+    // Hold the snapshot unsubscriber so the effect cleanup can reach it
+    let unsubscribeSnapshot = null;
+
+    const unsubscribeAuth = auth.onAuthStateChanged((currentUser) => {
+      // Clean up any previous snapshot listener (e.g. if auth user changes)
+      if (unsubscribeSnapshot) {
+        unsubscribeSnapshot();
+        unsubscribeSnapshot = null;
+      }
+
+      if (!currentUser) {
+        setLoading(false);
+        return;
+      }
+
+      setUserId(currentUser.uid);
+
+      const q = query(collection(db, "access"), where("userId", "==", currentUser.uid));
+      let isFirstLoad = true;
+
+      unsubscribeSnapshot = onSnapshot(
+        q,
+        (snapshot) => {
+          const codes = new Set();
+          snapshot.forEach((doc) => codes.add(doc.data().sbfCode.trim()));
+
+          const hasUnlimited = codes.has("Unlimited");
+
+          setPaymentDocCount(snapshot.size);
+          setPaidSbfCodes(codes);
+          setBoughtAccess(hasUnlimited || codes.size > 0);
+          setHasUnlimitedAccess(hasUnlimited);
+
+          if (isFirstLoad) {
+            setLoading(false);
+            isFirstLoad = false;
+          }
+        },
+        (error) => {
+          console.error("Access snapshot error:", error);
+          if (isFirstLoad) {
+            setLoading(false);
+            isFirstLoad = false;
+          }
+        }
+      );
+    });
+
+    return () => {
+      unsubscribeAuth();
+      if (unsubscribeSnapshot) unsubscribeSnapshot();
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Effect 2: Derive accessible / available SBF codes whenever the source data changes.
+  // Runs when allDashboards loads OR when paidSbfCodes updates — no subscription side-effects.
+  useEffect(() => {
+    if (!allDashboards?.length || paidSbfCodes === null) return;
+
+    if (envVars.testMode) {
+      const all = allDashboards.filter((d) => !d.preOrder).map((d) => d.name);
+      const sorted = sortSBFCodesChronologically(all);
+      setLatestSbfCode(sorted[0] ?? null);
+      setAccessibleSbfCodes(sorted);
+      setAvailableDashboards(["Jul2025"]);
+      return;
+    }
+
+    const nonPreOrders = allDashboards.filter((d) => !d.preOrder).map((d) => d.name);
+
+    if (paidSbfCodes.has("Unlimited") || paidSbfCodes.size > 0) {
+      const accessible = paidSbfCodes.has("Unlimited")
+        ? nonPreOrders
+        : nonPreOrders.filter((name) => paidSbfCodes.has(name));
+
+      const sorted = sortSBFCodesChronologically(accessible);
+      setLatestSbfCode(sorted[0] ?? null);
+      setAccessibleSbfCodes(sorted);
+    }
+
+    setAvailableDashboards(allDashboards.filter(({ name }) => !paidSbfCodes.has(name)));
+  }, [allDashboards, paidSbfCodes]);
 
   const handleCheckout = async () => {
     setPaymentLoading(true);
-
     try {
       const email = auth.currentUser?.email || "test@gmail.com";
       const productCodes = selectedPurchase.map((d) => d.name);
-
       const createCheckoutSession = httpsCallable(functions, "createCheckoutSession");
       const result = await createCheckoutSession({ email, productCodes });
       window.location.href = result.data.url;
@@ -137,19 +140,20 @@ const HomeScreen = ({ isDarkMode, footerHeight, isFooterVisible }) => {
     }
   };
 
-  // Wait for all necessary data before rendering Dashboard
-  // This ensures useFetchCSV has userId and paymentDocCount to enable the query
-  // In non-test mode, both userId and paymentDocCount must be set before rendering
-  const isDataReady = envVars.testMode 
-    ? paymentDocCount !== null  // In test mode, only need paymentDocCount
-    : userId && paymentDocCount !== null;  // In normal mode, need both
-  
+  // Don't render Dashboard until all identifiers are ready — including latestSbfCode,
+  // which is derived in Effect 2. Without this guard, Dashboard mounts with
+  // selectedSbfCode = null, the query is disabled, and React Query v5 returns
+  // isLoading = false, causing a blank screen.
+  const isDataReady = envVars.testMode
+    ? paymentDocCount !== null && latestSbfCode !== null
+    : userId !== null && paymentDocCount !== null && latestSbfCode !== null;
+
   if (loading || isLoadingSbfCodes || (boughtAccess && !isDataReady)) {
     return <LoadingSpinner />;
   }
 
   return (
-    <div className="relative min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-200">
+    <div className="relative min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
       {boughtAccess ? (
         <main className="lg:ml-80 px-2 max-w-full">
           <Dashboard
