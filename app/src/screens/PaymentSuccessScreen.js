@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-// Main Component
 const PaymentSuccessScreen = () => {
   const navigate = useNavigate();
   const [countdown, setCountdown] = useState(10);
@@ -16,49 +15,44 @@ const PaymentSuccessScreen = () => {
         return prev - 1;
       });
     }, 1000);
-
     return () => clearInterval(timer);
   }, [navigate]);
 
   return (
-    <Container>
-      <Message>🎉 Payment Successful!</Message>
-      <SubMessage>
-        Redirecting you to your dashboard in <strong>{countdown}</strong> seconds...
-      </SubMessage>
-      <RedirectButton onClick={() => navigate("/home")}>
-        Go to Dashboard Now
-      </RedirectButton>
-    </Container>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center px-4">
+      <div className="w-full max-w-sm bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-card-lg p-8 text-center animate-fade-in">
+        <div className="mx-auto w-14 h-14 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mb-5">
+          <svg className="w-7 h-7 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+          </svg>
+        </div>
+
+        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+          Payment Successful
+        </h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 leading-relaxed">
+          Your subscription is now active. Welcome to full access of the SBF Hero dashboard.
+        </p>
+
+        <div className="mb-6 flex items-center justify-center gap-1.5">
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+          <span className="text-xs text-gray-500 dark:text-gray-400">
+            Redirecting in {countdown}s
+          </span>
+        </div>
+
+        <button
+          onClick={() => navigate("/home")}
+          className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white shadow-sm transition-colors"
+        >
+          Go to Dashboard
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+          </svg>
+        </button>
+      </div>
+    </div>
   );
 };
-
-// Reusable Components
-const Container = ({ children }) => (
-  <div className="flex flex-col items-center justify-center md:justify-start h-screen text-center bg-gray-50 dark:bg-gray-900 pt-20 md:pt-32">
-    {children}
-  </div>
-);
-
-const Message = ({ children }) => (
-  <h1 className="text-3xl font-bold text-green-600 dark:text-green-400">
-    {children}
-  </h1>
-);
-
-const SubMessage = ({ children }) => (
-  <p className="text-lg text-gray-700 dark:text-gray-300 mt-4">
-    {children}
-  </p>
-);
-
-const RedirectButton = ({ onClick, children }) => (
-  <button
-    onClick={onClick}
-    className="mt-6 px-6 py-2 bg-blue-600 dark:bg-blue-700 text-white font-semibold rounded-lg hover:bg-blue-700 dark:hover:bg-blue-800 transition-colors"
-  >
-    {children}
-  </button>
-);
 
 export default PaymentSuccessScreen;
