@@ -42,7 +42,16 @@ const HomeScreen = ({ isDarkMode, footerHeight, isFooterVisible }) => {
       return;
     }
 
+    // Hold the snapshot unsubscriber so the effect cleanup can reach it
+    let unsubscribeSnapshot = null;
+
     const unsubscribeAuth = auth.onAuthStateChanged((currentUser) => {
+      // Clean up any previous snapshot listener (e.g. if auth user changes)
+      if (unsubscribeSnapshot) {
+        unsubscribeSnapshot();
+        unsubscribeSnapshot = null;
+      }
+
       if (!currentUser) {
         setLoading(false);
         return;
@@ -53,7 +62,7 @@ const HomeScreen = ({ isDarkMode, footerHeight, isFooterVisible }) => {
       const q = query(collection(db, "access"), where("userId", "==", currentUser.uid));
       let isFirstLoad = true;
 
-      const unsubscribeSnapshot = onSnapshot(
+      unsubscribeSnapshot = onSnapshot(
         q,
         (snapshot) => {
           const codes = new Set();
@@ -61,7 +70,6 @@ const HomeScreen = ({ isDarkMode, footerHeight, isFooterVisible }) => {
 
           const hasUnlimited = codes.has("Unlimited");
 
-          // Batch all state updates together
           setPaymentDocCount(snapshot.size);
           setPaidSbfCodes(codes);
           setBoughtAccess(hasUnlimited || codes.size > 0);
@@ -80,11 +88,12 @@ const HomeScreen = ({ isDarkMode, footerHeight, isFooterVisible }) => {
           }
         }
       );
-
-      return () => unsubscribeSnapshot();
     });
 
-    return () => unsubscribeAuth();
+    return () => {
+      unsubscribeAuth();
+      if (unsubscribeSnapshot) unsubscribeSnapshot();
+    };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Effect 2: Derive accessible / available SBF codes whenever the source data changes.
@@ -131,10 +140,13 @@ const HomeScreen = ({ isDarkMode, footerHeight, isFooterVisible }) => {
     }
   };
 
-  // Don't render Dashboard until we have the identifiers needed to enable useFetchCSV
+  // Don't render Dashboard until all identifiers are ready — including latestSbfCode,
+  // which is derived in Effect 2. Without this guard, Dashboard mounts with
+  // selectedSbfCode = null, the query is disabled, and React Query v5 returns
+  // isLoading = false, causing a blank screen.
   const isDataReady = envVars.testMode
-    ? paymentDocCount !== null
-    : userId !== null && paymentDocCount !== null;
+    ? paymentDocCount !== null && latestSbfCode !== null
+    : userId !== null && paymentDocCount !== null && latestSbfCode !== null;
 
   if (loading || isLoadingSbfCodes || (boughtAccess && !isDataReady)) {
     return <LoadingSpinner />;

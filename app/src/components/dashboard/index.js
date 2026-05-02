@@ -111,9 +111,9 @@ const Dashboard = ({ isDarkMode, userId, paymentDocCount, latestSbfCode, accessi
     );
   }
 
-  // Only show full-screen spinner during the initial network fetch.
-  // Empty data or disabled-query states fall through to the content area.
-  if (isLoadingCSV) {
+  // Show spinner during the initial network fetch OR when no sbfCode is set yet
+  // (react-query v5 returns isLoading=false for disabled queries, so we guard explicitly)
+  if (isLoadingCSV || !selectedSbfCode) {
     return (
       <DashboardLoadingSpinner
         isUsingCachedData={isRefetchingCSV && !!csvData}
